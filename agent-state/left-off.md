@@ -6,7 +6,7 @@
 - PDF: art_3f03bc8a237f0dd4c812726c, 2435 bytes, 1 page, SHA-256 f6bc8536329b90eb6d6d35bd83d033f8189b561f31417c5940c3bed8e01c122b.
 - Audio: art_b1deeb1327e003781fb7135b, 176444 bytes, SHA-256 b1deeb1327e003781fb7135b879b9da7301e6a66e667c12b25b3cfbf5fc4d7bd. Synthetic placeholder only.
 - Share: creation 201, proof 200, revoke 1, proof after revoke 404.
-- Git: checkpoint is uncommitted at the time of this state write. Previous pushed HEAD was 791eb20.
+- Git: checkpoint 7f1b421 was pushed to origin/main. Production was redeployed from that tree as dpl_GarX6t3wzcFyxXDMfznBW36DVtqN.
 - Next: paid-ad add-on, then hardening. Start the UI as soon as the founder sends the design reference, without waiting for those.
 - Blockers: paid-ad add-on not implemented, real authorized music absent, broader hardening and refunds/disputes absent, mainnet unsupported.
 - Warnings: npm audit reports dev-tool vulnerabilities in drizzle-kit/esbuild and vitest/picomatch. Fixing them requires breaking major-version changes, so they are deferred. Vitest config still emits a CommonJS/ESM native-loader warning.
