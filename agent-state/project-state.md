@@ -21,7 +21,7 @@
 - UI: DESIGN.md is the visual source of truth. Tokens, Geist Sans/Mono, inline SVG, clearance strip, 900px breakpoint, reduced motion, visible focus. No gradients, glass, icon library, or images.
 - Production UI verification: Playwright passed landing, sign-in, home, brief, catalog, review, refused, settled license with private R2 download, purchases, profile, proof, signed-out redirect, and mobile bottom nav. No console errors. The non-allowlisted gate panel was verified locally with a real sign-up, project, quote, approval, and 403 pay attempt, then cleaned up.
 - Tests: 66 tests in 9 files passed. Typecheck, lint, build, db:check, db:check:test, r2:check passed.
-- Git: main tracks origin/main at https://github.com/JemimahEkong/Grant.git. Checkpoint 81fa80b was pushed to origin/main. Latest UI production deployment dpl_ErZjTE8qkMh8A45oGLSpwSTnnZc4. Health reports purchasesEnabled true.
+- Git: main tracks origin/main at https://github.com/JemimahEkong/Grant.git. UI checkpoint e212ead was pushed to origin/main. Latest UI production deployment dpl_ErZjTE8qkMh8A45oGLSpwSTnnZc4. Health reports purchasesEnabled true.
 - Missing: paid-ad add-on, broader hardening, real authorized music, production refunds/disputes, mainnet, multi-tenant seller onboarding. API gaps: no purchase-count cap, no artifact byte sizes, no license number in project purchase rows, and BPM/seller display names are joined from the fixture catalog rather than the purchase API.
 - UI: built from all four supplied references. Future UI work should keep DESIGN.md as the source of truth.
 - Project instructions are in AGENTS.md. Session recovery lives in agent-state/.
