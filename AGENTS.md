@@ -58,6 +58,7 @@
 - Whenever you make changes to the database schema, ALWAYS run db:generate then db:migrate.
 - NEVER run drizzle push.
 - Apply migrations to the separate Neon `test` branch with db:migrate:test. Run database integration tests only against DATABASE_URL_TEST, never the main branch.
+- Migration 0001 owns the Better Auth tables. Do not rename `user`, `session`, `account`, or `verification` without updating the Drizzle adapter config.
 
 ## TESTING
 
@@ -70,6 +71,16 @@
 - Always follow or reference the UI design system when creating or reviewing components or pages.
 - Design System: @DESIGN.md
 
+## AUTHENTICATION AND STORAGE
+
+- Use Better Auth with the Drizzle adapter on the existing Neon database. Email/password plus one OAuth provider is the agreed scope.
+- Enforce the demo allowlist server-side. Reject sign-up and existing sessions outside the allowlist. An empty allowlist fails closed.
+- Derive the owner ID only from the verified session. Never accept an owner, user, or price value from the client.
+- Require a same-origin Origin check on every mutating custom route.
+- Use Cloudflare R2 with a private bucket. Issue short-lived presigned GET URLs only after session, ownership, purchase-state, license, and artifact checks.
+- Never use public object URLs or public bucket access for licensed audio or generated PDFs.
+- Use the Node runtime for Better Auth and R2 routes.
+
 ## GRANT PROJECT WORKFLOW
 
 - Build the backend first. Ask the founder for a design reference after the backend is complete, then work on the interface.
@@ -80,3 +91,5 @@
 - Do not expose owner-scoped persistence routes until session authentication is selected and enforced.
 - Payment execution stays disabled. Persisting verified settlement evidence is not permission to enable checkout.
 - Approvals fail closed when a seller payee is missing or is not a valid Stellar public key.
+- G0 buyer/seller scripts are local-only. Never deploy buyer signer secrets, and keep the seller bound to localhost.
+- A real testnet settlement proves the protocol only. It does not prove a product purchase, license, or music ownership.

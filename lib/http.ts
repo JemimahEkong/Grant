@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { RepositoryError } from "./db/errors";
 
 const maximumBodyBytes = 16_384;
 
@@ -54,4 +55,18 @@ export async function parseJsonBody<Schema extends z.ZodType>(
   } finally {
     reader?.releaseLock();
   }
+}
+
+export function errorResponse(error: unknown) {
+  if (error instanceof RepositoryError) {
+    return jsonResponse(
+      {
+        code: error.code,
+        message: error.message,
+        ...(error.details ?? {}),
+      },
+      error.status,
+    );
+  }
+  return jsonResponse({ code: "INTERNAL_ERROR", message: "The request could not be completed." }, 500);
 }

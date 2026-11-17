@@ -1,0 +1,57 @@
+{
+  "status": "confirmed",
+  "checkedAt": "2026-11-17T17:25:57.344Z",
+  "network": "stellar:testnet",
+  "route": "http://127.0.0.1:4021/g0/license",
+  "x402Version": 2,
+  "resource": {
+    "url": "http://127.0.0.1:4021/g0/license",
+    "description": "",
+    "mimeType": ""
+  },
+  "requirements": {
+    "scheme": "exact",
+    "network": "stellar:testnet",
+    "amount": "10000000",
+    "asset": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+    "payTo": "GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB",
+    "maxTimeoutSeconds": 300,
+    "extra": {
+      "areFeesSponsored": true
+    }
+  },
+  "price": null,
+  "amount": "10000000",
+  "asset": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+  "payee": "GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB",
+  "buyer": "GAIPPBOFGQGABZ2SQ53QUIE5T24BZYCAS2ARMENZZAM7F65B3AIZWYQP",
+  "facilitator": "https://www.x402.org/facilitator",
+  "rpcUrl": "https://soroban-testnet.stellar.org",
+  "transactionHash": "e1dcd2ef7754ea822078d2aa8c8c49535f20b5a1f890d5f093117a36cc23a160",
+  "onChain": {
+    "hash": "e1dcd2ef7754ea822078d2aa8c8c49535f20b5a1f890d5f093117a36cc23a160",
+    "successful": true,
+    "ledger": 5782541,
+    "createdAt": "2026-11-17T17:25:51Z",
+    "sourceAccount": "GC6CSXBV4C6RL3HEDTW57KXYXSSXKAWKGYDEOSATXM3XNKXSR2VRYN3K",
+    "feeCharged": "11701",
+    "operationCount": 1
+  },
+  "settlement": {
+    "success": true,
+    "payer": "GAIPPBOFGQGABZ2SQ53QUIE5T24BZYCAS2ARMENZZAM7F65B3AIZWYQP",
+    "transaction": "e1dcd2ef7754ea822078d2aa8c8c49535f20b5a1f890d5f093117a36cc23a160",
+    "network": "stellar:testnet"
+  },
+  "balances": {
+    "buyerBefore": "19.9900000",
+    "buyerAfter": "18.9900000",
+    "sellerBefore": "0.0100000",
+    "sellerAfter": "1.0100000"
+  },
+  "response": {
+    "grantG0": "settled",
+    "note": "Local protocol spike only. No license, entitlement, or delivered audio is granted by this response.",
+    "servedAt": "2026-11-17T17:25:48.846Z"
+  }
+}

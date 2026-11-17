@@ -13,6 +13,10 @@
     "lint": "eslint .",
     "db:check": "node --env-file-if-exists=.env.local scripts/check-db.mjs",
     "db:check:test": "node --env-file-if-exists=.env.local scripts/check-db.mjs --test",
+    "g0:setup": "node --env-file-if-exists=.env.local scripts/g0-setup.mjs",
+    "g0:seller": "node --env-file-if-exists=.env.local scripts/g0-seller.mjs",
+    "g0:buyer": "node --env-file-if-exists=.env.local scripts/g0-buyer.mjs",
+    "r2:check": "node --env-file-if-exists=.env.local scripts/check-r2.mjs",
     "db:generate": "node --env-file-if-exists=.env.local ./node_modules/drizzle-kit/bin.cjs generate",
     "db:migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs",
     "db:migrate:test": "node --env-file-if-exists=.env.local scripts/migrate.mjs --test",
@@ -23,7 +27,15 @@
     "test:db": "node --env-file-if-exists=.env.local ./node_modules/vitest/vitest.mjs run tests/persistence.test.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "3.1170.0",
+    "@aws-sdk/s3-request-presigner": "3.1170.0",
     "@neondatabase/serverless": "1.2.1",
+    "@stellar/stellar-sdk": "17.4.0",
+    "@x402/core": "2.30.0",
+    "@x402/express": "2.30.0",
+    "@x402/fetch": "2.30.0",
+    "@x402/stellar": "2.30.0",
+    "better-auth": "1.7.25",
     "drizzle-orm": "0.45.4",
     "next": "16.4.6",
     "react": "19.3.1",
@@ -31,12 +43,14 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@types/express": "5.0.6",
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "drizzle-kit": "0.31.11",
     "eslint": "10.15.0",
     "eslint-config-next": "16.4.6",
+    "express": "5.3.0",
     "tsx": "4.23.15",
     "typescript": "~5.9.3",
     "vitest": "5.1.0"

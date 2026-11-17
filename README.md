@@ -5,20 +5,31 @@ Backend-first music licensing agent. This checkout is connected to the existing
 
 ## Current checkpoint
 
-- Next.js App Router and TypeScript API foundation, with no designed interface.
-- Durable Neon persistence with Drizzle migrations for projects, tracks, versioned offers,
-  purchases, approvals, reservations, payment attempts, licenses, receipts, artifacts,
-  share links, refusals, and budget adjustments.
-- Server-only licensing services for confirmed projects, idempotent quotes, bound human
-  approval, atomic budget reservations, unsigned reservation release, signing markers, and
-  verified settlement persistence.
-- Three illustrative catalog offers and deterministic project-use matching.
-- Seven-decimal integer budget arithmetic and focused API, rule, and database tests.
-- Payment execution, purchases over HTTP, license delivery, and the designed UI are disabled.
-- Catalog terms are fixtures. Original tracks and authority evidence are still needed.
+- Next.js App Router and TypeScript backend, no designed interface.
+- Better Auth with the Drizzle adapter on Neon. Email/password is enabled. Google OAuth is
+  wired but requires `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
+- Server-side demo allowlist, session helper, and same-origin checks on mutating routes.
+- Authenticated project creation and owner-scoped project reads. Owner IDs come only from
+  the verified session.
+- Durable Neon persistence with Drizzle migrations for licensing records and auth records.
+- Cloudflare R2 private storage adapter using the S3 SDK. Downloads are short-lived presigned
+  GET URLs issued only after an entitlement check. No public object URLs are used.
+- Confirmed G0 Stellar testnet x402 settlements. Evidence is in
+  [agent-state/g0-evidence.md](agent-state/g0-evidence.md). Payments remain disabled in the
+  product.
+- Production skeleton deployed at https://grant-roan.vercel.app.
 
-The database layer is complete enough for the licensing workflow. Authenticated HTTP routes
-remain blocked until an identity provider is selected and session ownership is enforced.
+## Public endpoints
+
+- `GET /api/health`
+- `GET /api/catalog`
+- `POST /api/license/matches`
+- `GET` and `POST /api/auth/[...all]` (Better Auth)
+- `GET /api/me` (session required)
+- `POST /api/projects` (session and same-origin required)
+- `GET /api/projects/[projectId]` (session and ownership required)
+- `GET /api/purchases/[purchaseId]/download?asset=audio|pdf` (session, ownership, and
+  entitlement required)
 
 ## Local development
 
@@ -29,34 +40,38 @@ npm ci
 npm run dev
 ```
 
-Copy `.env.example` to `.env.local` and fill in the database URLs. `DATABASE_URL` points at
-the Grant main branch. `DATABASE_URL_TEST` points at the separate Neon `test` branch used by
-integration tests. Never commit either value.
+Copy `.env.example` to `.env.local` and fill in the values you actually hold. `DATABASE_URL`
+points at the Grant main branch. `DATABASE_URL_TEST` points at the separate Neon `test`
+branch. Never commit either value.
 
-The root URL returns backend status JSON. Available public endpoints:
+Required for auth:
 
-- `GET /api/health`
-- `GET /api/catalog`
-- `POST /api/license/matches`
-
-Example match request:
-
-```json
-{
-  "intendedUse": "paid_ad",
-  "platforms": ["instagram", "tiktok"],
-  "territory": { "worldwide": true, "countries": [] },
-  "termDays": 90,
-  "clipDurationSeconds": 30,
-  "clientDelivery": true,
-  "reposting": false,
-  "futureCampaigns": false
-}
+```text
+BETTER_AUTH_SECRET
+BETTER_AUTH_URL
+APP_ORIGIN
+DEMO_ALLOWLIST_EMAILS
 ```
 
-Send `Content-Type: application/json`. Unknown fields, missing permissions, malformed
-JSON, and requests over 16 KiB are rejected. This public, stateless fixture matcher does
-not persist client details, approve spending, or grant a license.
+`DEMO_ALLOWLIST_EMAILS` is a comma-separated list. An empty list fails closed, so nobody can
+sign up or use a session. Sign-up is rejected for emails outside the list, and every
+authenticated request rechecks the list.
+
+Google OAuth needs `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. Without both values the
+provider is not registered. Email/password still works.
+
+Required for private downloads:
+
+```text
+R2_ACCOUNT_ID
+R2_ACCESS_KEY_ID
+R2_SECRET_ACCESS_KEY
+R2_BUCKET_NAME
+```
+
+The bucket must remain private. Run `npm run r2:check` to verify connectivity. It prints
+missing variable names, never values. With no R2 credentials, the download route fails
+closed with `STORAGE_NOT_CONFIGURED`.
 
 ## Database workflow
 
@@ -66,22 +81,13 @@ Generate reviewed SQL after schema changes, then apply it with the migration run
 npm run db:generate
 npm run db:migrate
 npm run db:migrate:test
-```
-
-Never run `drizzle-kit push`. Apply the same migrations to both the main and test branches.
-Seed the three illustrative tracks and offers with:
-
-```sh
 npm run db:seed
 npm run db:seed:test
 ```
 
-Check connectivity without changing schema or data:
-
-```sh
-npm run db:check
-npm run db:check:test
-```
+Never run `drizzle-kit push`. Migration `0000` contains the licensing tables. Migration
+`0001` contains the Better Auth tables: `user`, `session`, `account`, and `verification`.
+Both migrations are applied to the main and test branches.
 
 The migration runner uses the Neon HTTP driver. Application transactions use the Neon
 serverless WebSocket pool so project and purchase rows can be locked during reservations.
@@ -94,37 +100,58 @@ npm run test:db
 npm run typecheck
 npm run lint
 npm run build
+npm run r2:check
 ```
 
-`npm test` always runs unit and route tests. The persistence suite runs when
-`DATABASE_URL_TEST` is present and skips otherwise. It uses a unique test owner and removes
-its rows after the run. Do not point integration tests at the main branch.
+`npm test` runs 55 tests in 6 files. The persistence and auth suites run when
+`DATABASE_URL_TEST` is present and skip otherwise. Do not point integration tests at the
+main branch.
 
-The verified workflow covers project creation, idempotent quote reuse, rights refusals,
-bound approval, missing-payee refusal, atomic reservation, concurrent reservation
-serialization, purchase-cap and budget refusals, unsigned release, the signing marker,
-verified settlement persistence, receipt/license idempotency, and owner scoping.
+Production smoke checks passed for:
+
+- Health and database configuration.
+- Email/password sign-up and sign-in through Better Auth.
+- Session lookup through `GET /api/me`.
+- Authenticated project creation and owner-scoped project read.
+- Unauthenticated project creation returning `401`.
+- Cross-origin project creation returning `403`.
+
+## G0 testnet evidence
+
+Two real settlements were confirmed on `stellar:testnet`:
+
+- `8a7770520e5e575d37bbaa4274fdc9b17b826161d7c872253e1208fbafa8d144`, ledger `5782531`,
+  0.01 testnet USDC.
+- `e1dcd2ef7754ea822078d2aa8c8c49535f20b5a1f890d5f093117a36cc23a160`, ledger `5782541`,
+  1.00 testnet USDC.
+
+The buyer and seller balances changed by the settled amount, and Horizon reported both
+transactions successful. The local seller route granted no license or audio. The G0 scripts
+bind to localhost and must not be deployed with signer secrets.
 
 ## Safety boundaries
 
-- Purchases and payment signing are disabled.
-- Settlement finalization is a persistence primitive for a future verified payment adapter.
-  It does not prove that a transfer occurred and must not be exposed to clients.
+- Payments and payment signing are disabled in the product.
+- The G0 spike is local-only protocol evidence. It is not a purchase path.
+- Settlement persistence is a primitive for a future verified payment adapter. It does not
+  prove an on-chain transfer by itself and is not exposed to clients.
 - Fixture offers have no seller payee, so approval fails closed until a real testnet payee is
-  configured. A demo fixture match does not grant a license or verify music ownership.
-- Wallet addresses and transactions are public on-chain. Receipts are payment evidence, not
-  copyright verification.
-- No owner-scoped HTTP endpoints exist yet. Session authentication must be selected and
-  enforced before adding them.
+  configured.
+- Private audio and PDFs are served only through short-lived presigned GET URLs after session,
+  ownership, purchase-state, license, and artifact checks.
+- Catalog fixtures are metadata only. A match does not grant a license or verify music
+  ownership.
+- The UI is intentionally deferred until the founder supplies a design reference after the
+  backend work is complete.
 
-Cloud resources use the founder's personal Vercel and Neon workspaces. Never commit
-credentials or `.env` files.
+## Deployment
+
+The linked Vercel project is `kaelah-s-projects/grant` (Next.js preset). Production is
+https://grant-roan.vercel.app. Vercel environment variables are stored as sensitive values.
+No R2 credentials or Google OAuth credentials are configured yet.
 
 ## Product documents
 
 [Idea](projectidea.md), [requirements](PRD.md), [technical requirements](TRD.md),
 [architecture](architecture.md), [delivery plan](projectplan.md), and
 [messaging](messaging.md). Follow [AGENTS.md](AGENTS.md) and resume from `agent-state/`.
-
-The UI is intentionally deferred until the founder supplies a design reference after the
-backend work is complete.

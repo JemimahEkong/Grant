@@ -3,23 +3,30 @@
 - The product name is Grant. Team size is two.
 - GRANT/ is the project root. Planning documents, AGENTS.md, and agent-state/ live there.
 - T3 Code project registration points at that folder. Registration does not move or merge chat threads.
-- The founder chose Next.js/TypeScript, Neon PostgreSQL, the existing JemimahEkong/Grant repository, and personal Vercel/Neon workspaces. Do not replace the repository or modify unrelated projects.
+- The founder chose Next.js/TypeScript, Neon PostgreSQL, Better Auth with the Drizzle adapter, Cloudflare R2, the existing JemimahEkong/Grant repository, and personal Vercel/Neon workspaces. Do not replace the repository or modify unrelated projects.
 - Backend first. Ask for a design reference after backend completion, then establish DESIGN.md and build UI. DESIGN.md does not exist yet.
 - Three original or explicitly authorized demo tracks are still needed. There are no real rights-holder partners.
 - The November 28, 2026 deadline is a planning assumption. Confirm the official cutoff and timezone.
 - Preserve uncommitted work. A new chat does not authorize resetting the folder.
 - CLI identities previously verified: GitHub kaelah971, Vercel kaelah679-4114, Neon kaelah679. Recheck access safely in a new session. Auth is not proof of deployment/database connectivity.
-- Do not store secret values in state files or commit .env files. DATABASE_URL and DATABASE_URL_TEST live only in ignored .env.local.
+- Do not store secret values in state files or commit .env files. DATABASE_URL, DATABASE_URL_TEST, BETTER_AUTH_SECRET, and all G0 signer secrets live only in ignored .env.local.
 - Neon Grant project: dry-brook-80399258 in org-green-paper-10610153. Main branch is the app database. Separate `test` branch is copy-on-write and is used by integration tests.
 - Use Drizzle ORM. Schema changes require db:generate then db:migrate/db:migrate:test. Never drizzle push.
 - Migrations run over the Neon HTTP driver. Interactive transactions and row locks use the Neon serverless WebSocket pool, cached on globalThis.
-- Integration tests use DATABASE_URL_TEST, a unique owner ID, and explicit cleanup. Never point them at the main branch. Test timeout is 30 seconds because Neon round trips are slow.
-- Seed data: three fixture tracks and three versioned base offers. Offers are immutable; bump the version instead of rewriting terms. Fixture offers have no payee, so approval fails closed until a real testnet seller payee is configured.
-- Settlement finalization requires an existing signing marker, matching amount/network/asset/payee, a unique Stellar transaction hash, a unique settlement reference, and an active reservation. It is a persistence primitive, not a payment verifier.
-- The project fingerprint binds owner, project, request hash, coverage hash, offer version, price, term, network, asset, payee, and quote expiry. Changing any of those invalidates approval.
-- Available budget = project budget - adjustments - confirmed settled spend - active reservations. Confirmed spend counts settled, issuing, and ready purchases. Never count an active reservation and settled spend twice.
-- No owner-scoped HTTP routes until identity is selected and session ownership is enforced. Do not trust caller-supplied owner IDs or prices.
-- Payments remain disabled until server-side human approval, durable reservations, idempotency, verified settlement, and reconciliation are implemented and tested.
+- Integration tests use DATABASE_URL_TEST, unique owner IDs, and explicit cleanup. Never point them at the main branch. Test timeout is 30 seconds because Neon round trips are slow.
+- Better Auth tables are `user`, `session`, `account`, and `verification`. Keep the Better Auth model names and snake_case SQL columns aligned. Migration 0001 owns them.
+- Demo allowlist: comma-separated DEMO_ALLOWLIST_EMAILS. Sign-up is rejected outside the list and every session is rechecked. An empty list fails closed. Do not accept an owner or user ID from the client.
+- Custom mutating routes must call assertSameOrigin before reading the body or acting. Better Auth has its own trusted-origin and CSRF handling.
+- Google OAuth is wired but disabled until GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET exist. Email/password works without it.
+- Vercel production: https://grant-roan.vercel.app. The project framework preset was changed from Other to Next.js. Env vars are sensitive. BETTER_AUTH_URL and APP_ORIGIN point at the production alias.
+- The Vercel project initially deployed as production because it was the first deployment. Future plain `vercel deploy` calls are previews unless `--prod` is passed.
+- R2 uses the S3 SDK with region "auto" and endpoint https://ACCOUNT_ID.r2.cloudflarestorage.com. Bucket is private. Only presigned GET URLs are allowed, issued after entitlement checks. No public object URLs.
+- R2 keys are not configured. `npm run r2:check` fails closed with missing variable names. The download route returns STORAGE_NOT_CONFIGURED until credentials are supplied.
+- G0 is proven. 0.01 USDC tx 8a7770520e5e575d37bbaa4274fdc9b17b826161d7c872253e1208fbafa8d144 ledger 5782531. 1.00 USDC tx e1dcd2ef7754ea822078d2aa8c8c49535f20b5a1f890d5f093117a36cc23a160 ledger 5782541. Both on stellar:testnet with the x402.org facilitator.
+- G0 scripts are local-only. The seller binds 127.0.0.1. Never deploy the buyer or seller secret. The seller response granted no license or audio.
+- Testnet buyer and seller public keys and the settlement evidence are public information and may be committed. Secret keys may not.
+- The G0 local route is not a product purchase path. Payments stay disabled until approval, durable reservations, idempotency, verified settlement, reconciliation, and protected delivery are connected and tested.
+- Available budget = project budget - adjustments - confirmed settled spend - active reservations. Confirmed spend counts settled, issuing, and ready purchases.
+- Fixture offers have no payee, so approval fails closed until a real testnet seller payee is configured.
 - Fixture catalog matching is a demonstration of term checks. It does not grant a license, verify music ownership, or prove seller authority.
-- A payment receipt is not copyright verification. Wallet addresses and transactions are publicly observable.
 - Follow AGENTS.md writing, checkpoint, state, and database rules. Keep replies concise.
