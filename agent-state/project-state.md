@@ -1,0 +1,22 @@
+# Project state
+
+- Product: Grant, a music-licensing agent for freelance video editors.
+- Project root: GRANT/ inside the original scratch workspace. Run project commands from GRANT/.
+- T3 Code project: Grant, registered and pinned. Project ID: mcp:9554abd0-ae9d-4637-bb6c-e54d969fccfe.
+- Built: Next.js/TypeScript backend starter, fixture coverage matching/refusals, integer budget arithmetic, durable Neon persistence, server-only licensing services, and tests. No designed UI. Purchases disabled.
+- Public routes: GET /, GET /api/health, GET /api/catalog, POST /api/license/matches. No owner-scoped HTTP routes yet.
+- Foundation: Next.js 16.4.6, React 19.3.1, Node 24, Vitest 5.1.0, Zod 4.6.7, Drizzle ORM 0.45.4, drizzle-kit 0.31.11, Neon serverless 1.2.1, Vercel. Auth/private storage undecided.
+- Canonical documents: PRD.md, TRD.md, architecture.md, projectplan.md, projectidea.md, messaging.md. MVP_PLAN.md is historical.
+- Scope: structured coverage matching, human approval, budget caps, Stellar testnet x402 payment, audio/PDF delivery, shareable proof, paid-ad add-ons, and history/refusals.
+- Demo defaults: 5 testnet USDC project budget, 2 purchase cap, 1 base price, 1 add-on price. Stellar USDC uses 7 decimal places.
+- Persistence: 13 tables with enums, checks, composite ownership FKs, partial unique indexes, and append-only offer versions. Tables: projects, tracks, offers, purchases, approvals, payment_attempts, reservations, licenses, receipts, artifacts, share_links, refusals, budget_adjustments.
+- Licensing services: createProject, getProjectForOwner, addBudgetAdjustment, quotePurchase, approvePurchase, claimAttemptAndReserve, markSigningStarted, releaseUnsignedReservation, finalizeSettlement, getPurchaseForOwner.
+- Safety invariants implemented: idempotency key plus logical-intent uniqueness, approval bound to immutable quote fingerprint, one unconsumed approval, one active reservation, row-locked project/purchase reservation, signing marker before settlement, unique receipt transaction/reference, unique license per purchase, owner-scoped reads.
+- Neon: personal org-green-paper-10610153, project Grant dry-brook-80399258, aws-eu-central-1, PostgreSQL 17. Main branch and test branch both migrated. Three fixture tracks/offers seeded. DATABASE_URL and DATABASE_URL_TEST are configured in ignored .env.local; values were never printed or committed.
+- Payments remain disabled. Only an actual confirmed testnet settlement may later count as payment evidence. Settlement persistence is not a verifier or payment executor.
+- Git: main tracks origin/main at https://github.com/JemimahEkong/Grant.git. Starter/docs/persistence are uncommitted at the time of this state write. GitHub kaelah971 has verified WRITE access.
+- Personal Vercel: kaelah-s-projects, linked grant project prj_avAWQNXh17bhL2tWG2bgNkbkAIMo, organization team_36qlc0TAz1yefxAw7qjwovhI. No deployment or verified GitHub auto-deploy integration.
+- Last checks: 40 tests in 4 files passed; typecheck, lint, and build passed. db:check and db:check:test passed. Main and test schemas are at migration 0000.
+- Missing: identity/session auth, authenticated project/quote/approval routes, seller payee configuration, payment adapter/signer/facilitator, live settlement verification, reconciliation, artifact generation, private audio storage, deliverables, share links, paid-ad add-ons.
+- Next architecture blocker: identity provider selection. Do not invent an owner header or expose persistence routes before it.
+- Project instructions are in AGENTS.md. Session recovery lives in agent-state/.

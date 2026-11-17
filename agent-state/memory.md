@@ -1,0 +1,25 @@
+# Durable memory
+
+- The product name is Grant. Team size is two.
+- GRANT/ is the project root. Planning documents, AGENTS.md, and agent-state/ live there.
+- T3 Code project registration points at that folder. Registration does not move or merge chat threads.
+- The founder chose Next.js/TypeScript, Neon PostgreSQL, the existing JemimahEkong/Grant repository, and personal Vercel/Neon workspaces. Do not replace the repository or modify unrelated projects.
+- Backend first. Ask for a design reference after backend completion, then establish DESIGN.md and build UI. DESIGN.md does not exist yet.
+- Three original or explicitly authorized demo tracks are still needed. There are no real rights-holder partners.
+- The November 28, 2026 deadline is a planning assumption. Confirm the official cutoff and timezone.
+- Preserve uncommitted work. A new chat does not authorize resetting the folder.
+- CLI identities previously verified: GitHub kaelah971, Vercel kaelah679-4114, Neon kaelah679. Recheck access safely in a new session. Auth is not proof of deployment/database connectivity.
+- Do not store secret values in state files or commit .env files. DATABASE_URL and DATABASE_URL_TEST live only in ignored .env.local.
+- Neon Grant project: dry-brook-80399258 in org-green-paper-10610153. Main branch is the app database. Separate `test` branch is copy-on-write and is used by integration tests.
+- Use Drizzle ORM. Schema changes require db:generate then db:migrate/db:migrate:test. Never drizzle push.
+- Migrations run over the Neon HTTP driver. Interactive transactions and row locks use the Neon serverless WebSocket pool, cached on globalThis.
+- Integration tests use DATABASE_URL_TEST, a unique owner ID, and explicit cleanup. Never point them at the main branch. Test timeout is 30 seconds because Neon round trips are slow.
+- Seed data: three fixture tracks and three versioned base offers. Offers are immutable; bump the version instead of rewriting terms. Fixture offers have no payee, so approval fails closed until a real testnet seller payee is configured.
+- Settlement finalization requires an existing signing marker, matching amount/network/asset/payee, a unique Stellar transaction hash, a unique settlement reference, and an active reservation. It is a persistence primitive, not a payment verifier.
+- The project fingerprint binds owner, project, request hash, coverage hash, offer version, price, term, network, asset, payee, and quote expiry. Changing any of those invalidates approval.
+- Available budget = project budget - adjustments - confirmed settled spend - active reservations. Confirmed spend counts settled, issuing, and ready purchases. Never count an active reservation and settled spend twice.
+- No owner-scoped HTTP routes until identity is selected and session ownership is enforced. Do not trust caller-supplied owner IDs or prices.
+- Payments remain disabled until server-side human approval, durable reservations, idempotency, verified settlement, and reconciliation are implemented and tested.
+- Fixture catalog matching is a demonstration of term checks. It does not grant a license, verify music ownership, or prove seller authority.
+- A payment receipt is not copyright verification. Wallet addresses and transactions are publicly observable.
+- Follow AGENTS.md writing, checkpoint, state, and database rules. Keep replies concise.

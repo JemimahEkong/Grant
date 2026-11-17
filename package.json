@@ -1,0 +1,44 @@
+{
+  "name": "grant",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "db:check": "node --env-file-if-exists=.env.local scripts/check-db.mjs",
+    "db:check:test": "node --env-file-if-exists=.env.local scripts/check-db.mjs --test",
+    "db:generate": "node --env-file-if-exists=.env.local ./node_modules/drizzle-kit/bin.cjs generate",
+    "db:migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs",
+    "db:migrate:test": "node --env-file-if-exists=.env.local scripts/migrate.mjs --test",
+    "db:seed": "node --env-file-if-exists=.env.local --import tsx scripts/seed.ts",
+    "db:seed:test": "node --env-file-if-exists=.env.local --import tsx scripts/seed.ts --test",
+    "test": "node --env-file-if-exists=.env.local ./node_modules/vitest/vitest.mjs run",
+    "test:watch": "node --env-file-if-exists=.env.local ./node_modules/vitest/vitest.mjs",
+    "test:db": "node --env-file-if-exists=.env.local ./node_modules/vitest/vitest.mjs run tests/persistence.test.ts"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "1.2.1",
+    "drizzle-orm": "0.45.4",
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "drizzle-kit": "0.31.11",
+    "eslint": "10.15.0",
+    "eslint-config-next": "16.4.6",
+    "tsx": "4.23.15",
+    "typescript": "~5.9.3",
+    "vitest": "5.1.0"
+  }
+}
