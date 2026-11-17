@@ -8,6 +8,7 @@ export async function GET() {
     const context = await requireDemoSession();
     return jsonResponse({
       user: context.user,
+      demoAllowlisted: context.demoAllowlisted,
       session: { expiresAt: context.session.expiresAt },
     });
   } catch (error) {

@@ -1,0 +1,220 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useMe, useProjects } from "../../../components/providers";
+import { EmptyState, PageHeader } from "../../../components/ui";
+import {
+  getAgentWallet,
+  getCatalog,
+  getProject,
+  getShareStatus,
+  revokeShare,
+  signOut,
+} from "../../../lib/ui/actions";
+import type { AgentWallet, CatalogResponse, ProjectView } from "../../../lib/ui/api";
+import { formatUsdcDecimal, initials, shortAddress } from "../../../lib/ui/format";
+
+export default function ProfilePage() {
+  const router = useRouter();
+  const { me } = useMe();
+  const { projects, selectedProject, selectedProjectId, selectProjectId } = useProjects();
+  const [wallet, setWallet] = useState<AgentWallet | null>(null);
+  const [view, setView] = useState<ProjectView | null>(null);
+  const [catalog, setCatalog] = useState<CatalogResponse | null>(null);
+  const [shareStatuses, setShareStatuses] = useState<Record<string, boolean>>({});
+  const [error, setError] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [signingOut, setSigningOut] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    getAgentWallet()
+      .then(result => {
+        if (active) setWallet(result);
+      })
+      .catch(failure => {
+        if (active) setError((failure as Error).message);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    if (!selectedProjectId) {
+      setView(null);
+      return;
+    }
+    Promise.all([getProject(selectedProjectId), getCatalog()])
+      .then(async ([projectView, catalogResponse]) => {
+        if (!active) return;
+        setView(projectView);
+        setCatalog(catalogResponse);
+        const settled = projectView.purchases.filter(purchase =>
+          ["settled", "issuing", "ready"].includes(purchase.status),
+        );
+        const statuses = await Promise.all(
+          settled.map(async purchase => {
+            try {
+              const status = await getShareStatus(purchase.id);
+              return [purchase.id, status.active] as const;
+            } catch {
+              return [purchase.id, false] as const;
+            }
+          }),
+        );
+        if (active) setShareStatuses(Object.fromEntries(statuses));
+      })
+      .catch(failure => {
+        if (active) setError((failure as Error).message);
+      });
+    return () => {
+      active = false;
+    };
+  }, [selectedProjectId]);
+
+  const trackById = useMemo(() => new Map(catalog?.items.map(item => [item.trackId, item]) ?? []), [catalog]);
+
+  async function revoke(purchaseId: string) {
+    setBusyId(purchaseId);
+    setError(null);
+    try {
+      await revokeShare(purchaseId);
+      setShareStatuses(current => ({ ...current, [purchaseId]: false }));
+    } catch (failure) {
+      setError((failure as Error).message);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function logOut() {
+    setSigningOut(true);
+    try {
+      await signOut();
+      router.push("/");
+      router.refresh();
+    } catch (failure) {
+      setError((failure as Error).message);
+      setSigningOut(false);
+    }
+  }
+
+  const settled = view?.purchases.filter(purchase => ["settled", "issuing", "ready"].includes(purchase.status)) ?? [];
+
+  return (
+    <>
+      <PageHeader title="Profile" lede="Account, read-only agent wallet, projects, and share links." />
+      <div className="profile-head">
+        <div className="profile-avatar">{initials(me.user.name || me.user.email)}</div>
+        <div>
+          <div className="n">{me.user.name || "Grant user"}</div>
+          <div className="e">{me.user.email}</div>
+        </div>
+      </div>
+
+      {error ? <p className="error-text" role="alert">{error}</p> : null}
+
+      <div className="wallet-card">
+        <div className="k">Agent wallet · read-only</div>
+        <div className="ad" title={wallet?.address ?? undefined}>
+          {wallet?.address ? shortAddress(wallet.address) : "not configured"}
+        </div>
+        <div className="bt">
+          <div className="v">{wallet?.balance ? formatUsdcDecimal(wallet.balance) : "—"}</div>
+          <div className="l">{wallet?.network ?? "stellar:testnet"} · testnet USDC</div>
+        </div>
+      </div>
+
+      <div className="section-label" style={{ marginTop: 20 }}>
+        <span className="micro">Projects</span>
+        <Link href="/app/new" className="muted" style={{ fontSize: 9.5 }}>
+          New project
+        </Link>
+      </div>
+      {projects.length === 0 ? (
+        <EmptyState
+          title="No projects"
+          description="A project holds one confirmed brief, a budget, and a purchase cap."
+          action={
+            <Link href="/app/new" className="btn btn-secondary">
+              Create a project
+            </Link>
+          }
+        />
+      ) : (
+        <div>
+          {projects.map(project => (
+            <button
+              key={project.id}
+              type="button"
+              className="list-row"
+              style={{ width: "100%", background: "transparent", border: 0, textAlign: "left" }}
+              onClick={() => selectProjectId(project.id)}
+            >
+              <span>{project.publicDisplayLabel}</span>
+              {project.id === selectedProjectId ? <span className="micro">Active</span> : <span className="m">Select ›</span>}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="section-label" style={{ marginTop: 20 }}>
+        <span className="micro">Share links</span>
+        <span className="muted" style={{ fontSize: 9 }}>
+          {settled.filter(purchase => shareStatuses[purchase.id]).length} live
+        </span>
+      </div>
+      {settled.length === 0 ? (
+        <p className="fine-note" style={{ margin: 0 }}>
+          Share links appear after a settled license. They are public, revocable, and never expose audio.
+        </p>
+      ) : (
+        <div>
+          {settled.map(purchase => {
+            const track = trackById.get(purchase.trackId);
+            const live = shareStatuses[purchase.id];
+            return (
+              <div key={purchase.id} className="list-row">
+                <span>
+                  {track?.title ?? purchase.trackId}
+                  <span className="m" style={{ display: "block", marginTop: 2 }}>
+                    {live ? "Live proof link" : "No active link"}
+                  </span>
+                </span>
+                {live ? (
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    style={{ minHeight: 30, padding: "5px 10px", fontSize: 9.5 }}
+                    disabled={busyId === purchase.id}
+                    onClick={() => void revoke(purchase.id)}
+                  >
+                    {busyId === purchase.id ? "Revoking…" : "Revoke"}
+                  </button>
+                ) : (
+                  <Link href={`/app/purchase/${purchase.id}`} className="muted" style={{ fontSize: 9.5 }}>
+                    Open license
+                  </Link>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <div style={{ marginTop: 22 }}>
+        <button className="btn btn-secondary btn-wide" type="button" onClick={() => void logOut()} disabled={signingOut}>
+          <span>{signingOut ? "Signing out…" : "Sign out"}</span>
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
+      <p className="fine-note">
+        {selectedProject ? `Showing share links for ${selectedProject.publicDisplayLabel}.` : "Select a project to see its share links."}
+      </p>
+    </>
+  );
+}

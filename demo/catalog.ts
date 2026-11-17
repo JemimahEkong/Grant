@@ -10,7 +10,9 @@ export type DemoTrack = {
   id: string;
   title: string;
   sellerId: string;
+  sellerName: string;
   durationSeconds: number;
+  bpm: number;
   audioObjectKey: string | null;
   authorityComposition: boolean | null;
   authorityMaster: boolean | null;
@@ -20,17 +22,17 @@ export type DemoTrack = {
 
 export const demoTracks: readonly DemoTrack[] = [
   {
-    id: "morning-edit", title: "Morning Edit", sellerId: "seller-demo-morning", durationSeconds: 60,
+    id: "morning-edit", title: "Morning Edit", sellerId: "seller-demo-morning", sellerName: "Halcyon Fields", durationSeconds: 72, bpm: 98,
     audioObjectKey: null, authorityComposition: true, authorityMaster: true,
     provenanceReference: "Demo seller self-assertion only. No composition or master evidence supplied.", isFixture: true,
   },
   {
-    id: "quiet-cut", title: "Quiet Cut", sellerId: "seller-demo-quiet", durationSeconds: 60,
+    id: "quiet-cut", title: "Quiet Cut", sellerId: "seller-demo-quiet", sellerName: "Northline Audio", durationSeconds: 42, bpm: 120,
     audioObjectKey: null, authorityComposition: true, authorityMaster: true,
     provenanceReference: "Demo seller self-assertion only. No composition or master evidence supplied.", isFixture: true,
   },
   {
-    id: "studio-pulse", title: "Studio Pulse", sellerId: "seller-demo-studio", durationSeconds: 30,
+    id: "studio-pulse", title: "Studio Pulse", sellerId: "seller-demo-studio", sellerName: "Kite & Co.", durationSeconds: 58, bpm: 104,
     audioObjectKey: null, authorityComposition: true, authorityMaster: true,
     provenanceReference: "Demo seller self-assertion only. No composition or master evidence supplied.", isFixture: true,
   },

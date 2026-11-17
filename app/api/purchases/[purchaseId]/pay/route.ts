@@ -18,6 +18,7 @@ import {
 } from "../../../../../lib/db/repositories";
 import { jsonSafe } from "../../../../../lib/db/serialize";
 import { errorResponse, jsonResponse } from "../../../../../lib/http";
+import { isDemoAllowlisted } from "../../../../../lib/auth/allowlist";
 import { createAttemptToken } from "../../../../../lib/payments/attempt-token";
 import { paymentsEnabled } from "../../../../../lib/payments/flags";
 import { getHorizonTransaction, getUsdcBalance, verifyTransferDelta } from "../../../../../lib/payments/verify-settlement";
@@ -52,6 +53,13 @@ export async function POST(request: Request, context: { params: Promise<{ purcha
     const auth = await requireDemoSession(request.headers);
     if (!paymentsEnabled()) {
       throw new RepositoryError("PAYMENTS_DISABLED", "Payments are disabled.", 503);
+    }
+    if (!isDemoAllowlisted(auth.user.email)) {
+      throw new RepositoryError(
+        "DEMO_ACCOUNT_REQUIRED",
+        "This account can review coverage but cannot spend testnet funds. Sign in with a demo account to pay.",
+        403,
+      );
     }
     const { purchaseId } = await context.params;
     const db = getDatabase();

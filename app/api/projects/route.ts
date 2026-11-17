@@ -2,7 +2,7 @@ import { z } from "zod";
 import { assertSameOrigin } from "../../../lib/auth/origin";
 import { requireDemoSession } from "../../../lib/auth/session";
 import { getDatabase } from "../../../lib/db/client";
-import { createProject } from "../../../lib/db/repositories";
+import { createProject, listProjectsForOwner } from "../../../lib/db/repositories";
 import { jsonSafe } from "../../../lib/db/serialize";
 import { errorResponse, jsonResponse, parseJsonBody } from "../../../lib/http";
 import { briefSchema } from "../../../lib/licensing/schema";
@@ -14,6 +14,16 @@ const createProjectSchema = z.strictObject({
   publicDisplayLabel: z.string().min(1).max(200),
   brief: briefSchema,
 });
+
+export async function GET(request: Request) {
+  try {
+    const auth = await requireDemoSession(request.headers);
+    const projects = await listProjectsForOwner(getDatabase(), auth.ownerId);
+    return jsonResponse(jsonSafe({ projects }));
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
 
 export async function POST(request: Request) {
   try {

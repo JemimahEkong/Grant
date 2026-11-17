@@ -1,4 +1,4 @@
-import { stellarTestnetUsdc } from "../demo/catalog";
+import { demoOffers } from "../demo/catalog";
 import { createDatabase, resolveDatabaseUrl } from "../lib/db/client";
 import { offers } from "../lib/db/schema";
 
@@ -8,46 +8,59 @@ async function main() {
   const payee = process.env.X402_SELLER_PUBLIC;
   if (!payee) throw new Error("X402_SELLER_PUBLIC is not configured.");
 
-  await database.db
-    .insert(offers)
-    .values({
-      id: "morning-edit-testnet-base",
-      version: 1,
-      trackId: "morning-edit",
-      sellerId: "seller-demo-morning",
-      kind: "base",
-      parentOfferId: null,
-      parentOfferVersion: null,
-      authorityComposition: true,
-      authorityMaster: true,
-      platformsOrganic: ["instagram", "facebook", "tiktok", "youtube"],
-      platformsPaidAd: ["instagram", "facebook", "tiktok", "youtube"],
-      territoryWorldwide: true,
-      territoryCountries: [],
-      maximumTermDays: 90,
-      maximumClipSeconds: 60,
-      clientDelivery: true,
-      reposting: true,
-      futureCampaigns: false,
-      amountBaseUnits: 10_000_000n,
-      network: stellarTestnetUsdc.network,
-      assetContractId: stellarTestnetUsdc.assetContractId,
-      assetDecimals: stellarTestnetUsdc.assetDecimals,
-      payeeAddress: payee,
-      active: true,
-      activeFrom: new Date("2020-01-01T00:00:00Z"),
-      expiresAt: null,
-    })
-    .onConflictDoUpdate({
-      target: [offers.id, offers.version],
-      set: {
+  let count = 0;
+  for (const offer of demoOffers) {
+    await database.db
+      .insert(offers)
+      .values({
+        id: `${offer.trackId}-testnet-base`,
+        version: 1,
+        trackId: offer.trackId,
+        sellerId: offer.sellerId,
+        kind: "base",
+        parentOfferId: null,
+        parentOfferVersion: null,
+        authorityComposition: offer.authority.composition,
+        authorityMaster: offer.authority.master,
+        platformsOrganic: offer.platformsByUse.organic ?? [],
+        platformsPaidAd: offer.platformsByUse.paid_ad ?? [],
+        territoryWorldwide: offer.territory.worldwide,
+        territoryCountries: offer.territory.countries,
+        maximumTermDays: offer.maximumTermDays,
+        maximumClipSeconds: offer.maximumClipSeconds,
+        clientDelivery: offer.clientDelivery,
+        reposting: offer.reposting,
+        futureCampaigns: offer.futureCampaigns,
+        amountBaseUnits: BigInt(offer.amountBaseUnits),
+        network: offer.network,
+        assetContractId: offer.assetContractId,
+        assetDecimals: offer.assetDecimals,
         payeeAddress: payee,
-        amountBaseUnits: 10_000_000n,
         active: true,
-      },
-    });
+        activeFrom: new Date("2020-01-01T00:00:00Z"),
+        expiresAt: null,
+      })
+      .onConflictDoUpdate({
+        target: [offers.id, offers.version],
+        set: {
+          payeeAddress: payee,
+          amountBaseUnits: BigInt(offer.amountBaseUnits),
+          active: true,
+          platformsOrganic: offer.platformsByUse.organic ?? [],
+          platformsPaidAd: offer.platformsByUse.paid_ad ?? [],
+          territoryWorldwide: offer.territory.worldwide,
+          territoryCountries: offer.territory.countries,
+          maximumTermDays: offer.maximumTermDays,
+          maximumClipSeconds: offer.maximumClipSeconds,
+          clientDelivery: offer.clientDelivery,
+          reposting: offer.reposting,
+          futureCampaigns: offer.futureCampaigns,
+        },
+      });
+    count += 1;
+  }
 
-  console.log("Testnet demo offer ready: morning-edit-testnet-base version 1.");
+  console.log(`Testnet demo offers ready: ${count} base offers.`);
 }
 
 main()

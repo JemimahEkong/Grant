@@ -3,9 +3,20 @@ import { requireDemoSession } from "../../../../../lib/auth/session";
 import { getDatabase } from "../../../../../lib/db/client";
 import { consumeRateLimit } from "../../../../../lib/db/rate-limit";
 import { errorResponse, jsonResponse } from "../../../../../lib/http";
-import { createShareLink, revokeShareLink } from "../../../../../lib/documents/share";
+import { createShareLink, getShareStatus, revokeShareLink } from "../../../../../lib/documents/share";
 
 export const runtime = "nodejs";
+
+export async function GET(request: Request, context: { params: Promise<{ purchaseId: string }> }) {
+  try {
+    const auth = await requireDemoSession(request.headers);
+    const { purchaseId } = await context.params;
+    const result = await getShareStatus(getDatabase(), { ownerId: auth.ownerId, purchaseId });
+    return jsonResponse(result);
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
 
 export async function POST(request: Request, context: { params: Promise<{ purchaseId: string }> }) {
   try {

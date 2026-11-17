@@ -70,6 +70,9 @@
 
 - Always follow or reference the UI design system when creating or reviewing components or pages.
 - Design System: @DESIGN.md
+- Use the exact tokens, Geist Sans/Mono, inline SVG icons, the 900px breakpoint, and the clearance strip. No gradients, glass, decorative shadows, icon libraries, or images.
+- Registration is public. The demo allowlist gates spending only. Non-allowlisted owners can review and be refused. The pay route returns 403 DEMO_ACCOUNT_REQUIRED and the review screen renders an explanatory panel.
+- Pending has exactly one action, Check again. Never add a retry that can sign again.
 
 ## AUTHENTICATION AND STORAGE
 

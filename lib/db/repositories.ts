@@ -20,6 +20,7 @@ import {
   receipts,
   refusals,
   reservations,
+  tracks,
   type ApprovalRow,
   type ArtifactRow,
   type BudgetAdjustmentRow,
@@ -28,6 +29,7 @@ import {
   type PaymentAttemptRow,
   type ProjectRow,
   type PurchaseRow,
+  type TrackRow,
   type ReceiptRow,
   type RefusalRow,
   type ReservationRow,
@@ -148,6 +150,8 @@ export type ProjectView = {
 
 export type PurchaseView = {
   purchase: PurchaseRow;
+  project: ProjectRow | null;
+  track: TrackRow | null;
   approval: ApprovalRow | null;
   reservation: ReservationRow | null;
   attempts: PaymentAttemptRow[];
@@ -355,6 +359,14 @@ export async function createProject(
     })
     .returning();
   return project;
+}
+
+export async function listProjectsForOwner(db: GrantDatabase, ownerId: string): Promise<ProjectRow[]> {
+  return db
+    .select()
+    .from(projects)
+    .where(eq(projects.ownerId, ownerId))
+    .orderBy(desc(projects.createdAt));
 }
 
 export async function getProjectForOwner(
@@ -1401,13 +1413,15 @@ export async function getPurchaseForOwner(
     .limit(1);
   if (!purchase) throw notFound();
 
-  const [approvalRows, reservationRows, attemptRows, receiptRows, licenseRows, refusalRows] = await Promise.all([
+  const [approvalRows, reservationRows, attemptRows, receiptRows, licenseRows, refusalRows, projectRows, trackRows] = await Promise.all([
     db.select().from(approvals).where(eq(approvals.purchaseId, purchase.id)).orderBy(desc(approvals.createdAt)).limit(1),
     db.select().from(reservations).where(eq(reservations.purchaseId, purchase.id)).orderBy(desc(reservations.createdAt)).limit(1),
     db.select().from(paymentAttempts).where(eq(paymentAttempts.purchaseId, purchase.id)).orderBy(paymentAttempts.attemptNumber),
     db.select().from(receipts).where(eq(receipts.purchaseId, purchase.id)).limit(1),
     db.select().from(licenses).where(eq(licenses.purchaseId, purchase.id)).limit(1),
     db.select().from(refusals).where(eq(refusals.purchaseId, purchase.id)).orderBy(desc(refusals.createdAt)).limit(1),
+    db.select().from(projects).where(eq(projects.id, purchase.projectId)).limit(1),
+    db.select().from(tracks).where(eq(tracks.id, purchase.trackId)).limit(1),
   ]);
 
   const license = licenseRows[0] ?? null;
@@ -1417,6 +1431,8 @@ export async function getPurchaseForOwner(
 
   return {
     purchase,
+    project: projectRows[0] ?? null,
+    track: trackRows[0] ?? null,
     approval: approvalRows[0] ?? null,
     reservation: reservationRows[0] ?? null,
     attempts: attemptRows,

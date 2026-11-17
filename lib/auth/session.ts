@@ -5,6 +5,7 @@ import { getAuth } from "./server";
 
 export type DemoAuthContext = {
   ownerId: string;
+  demoAllowlisted: boolean;
   user: { id: string; email: string; name: string };
   session: { id: string; expiresAt: Date };
 };
@@ -19,9 +20,10 @@ async function readSession(requestHeaders?: Headers): Promise<SessionResult> {
 
 export async function getOptionalDemoSession(requestHeaders?: Headers): Promise<DemoAuthContext | null> {
   const result = await readSession(requestHeaders);
-  if (!result?.user || !isDemoAllowlisted(result.user.email)) return null;
+  if (!result?.user) return null;
   return {
     ownerId: result.user.id,
+    demoAllowlisted: isDemoAllowlisted(result.user.email),
     user: { id: result.user.id, email: result.user.email, name: result.user.name },
     session: { id: result.session.id, expiresAt: result.session.expiresAt },
   };
@@ -32,11 +34,9 @@ export async function requireDemoSession(requestHeaders?: Headers): Promise<Demo
   if (!result?.user) {
     throw new RepositoryError("UNAUTHENTICATED", "Sign in to continue.", 401);
   }
-  if (!isDemoAllowlisted(result.user.email)) {
-    throw new RepositoryError("NOT_ALLOWLISTED", "This account is not on the Grant demo allowlist.", 403);
-  }
   return {
     ownerId: result.user.id,
+    demoAllowlisted: isDemoAllowlisted(result.user.email),
     user: { id: result.user.id, email: result.user.email, name: result.user.name },
     session: { id: result.session.id, expiresAt: result.session.expiresAt },
   };

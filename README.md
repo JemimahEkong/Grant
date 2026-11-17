@@ -5,7 +5,8 @@ Backend-first music licensing agent. This checkout is connected to the existing
 
 ## Current checkpoint
 
-- Next.js App Router and TypeScript backend, no designed interface.
+- Next.js App Router and TypeScript backend with the complete Grant interface.
+- DESIGN.md is the visual source of truth. The clearance strip appears on the landing, catalog, review, license, and proof.
 - Better Auth with the Drizzle adapter on Neon. Email/password is enabled. OAuth is
   deferred.
 - Server-side demo allowlist, session helper, and same-origin checks on mutating routes.
@@ -25,6 +26,18 @@ Backend-first music licensing agent. This checkout is connected to the existing
 - PDF license generation and private R2 upload. Audio delivery through a private artifact.
   Share/proof links with revocation.
 - Production skeleton deployed at https://grant-roan.vercel.app.
+
+## Screens
+
+- `/` landing
+- `/signin` sign in and public registration
+- `/app` home with project switcher, budget, recent purchases, and read-only agent wallet
+- `/app/new` brief editor with authoritative chips and a generated sentence
+- `/app/catalog` three fixture tracks with coverage strips
+- `/app/purchase/[id]` review, approval, pending, refused, and settled license states
+- `/app/purchases` durable ledger
+- `/app/profile` account, wallet, projects, and share-link revocation
+- `/proof/[token]` public, redacted, revocable proof
 
 ## Public endpoints
 
@@ -128,7 +141,9 @@ npm run build
 npm run r2:check
 ```
 
-`npm test` runs 66 tests in 9 files. The persistence and auth suites run when
+`npm test` runs 66 tests in 9 files. The production UI was verified with Playwright:
+landing, sign-in, home, brief, catalog, review, refused state, settled license with a
+private R2 download, purchases, profile, proof, signed-out redirect, and mobile bottom nav. The persistence and auth suites run when
 `DATABASE_URL_TEST` is present and skip otherwise. Do not point integration tests at the
 main branch.
 
@@ -156,6 +171,9 @@ The payment evidence includes:
 
 ## Safety boundaries
 
+- Registration is public. The demo allowlist gates spending only. Non-allowlisted owners can
+  create projects, quote, review coverage, and keep a refusal record. Their pay attempt returns
+  `403 DEMO_ACCOUNT_REQUIRED`, rendered as an explanatory panel.
 - Payments are enabled in Production behind the allowlist, the 6 USDC buyer ceiling, the
   `PAYMENTS_ENABLED` flag, and durable per-owner rate limits.
 - The buyer secret is Production-only. Preview and Development must not have it.
@@ -180,6 +198,7 @@ R2 credentials are configured for Production. OAuth is deferred.
 
 ## Product documents
 
-[Idea](projectidea.md), [requirements](PRD.md), [technical requirements](TRD.md),
-[architecture](architecture.md), [delivery plan](projectplan.md), and
-[messaging](messaging.md). Follow [AGENTS.md](AGENTS.md) and resume from `agent-state/`.
+[Design system](DESIGN.md), [idea](projectidea.md), [requirements](PRD.md),
+[technical requirements](TRD.md), [architecture](architecture.md),
+[delivery plan](projectplan.md), and [messaging](messaging.md). Follow
+[AGENTS.md](AGENTS.md) and resume from `agent-state/`.

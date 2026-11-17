@@ -83,7 +83,6 @@ dbDescribe("Better Auth with the Drizzle adapter", () => {
     auth = createAuth(db, {
       secret: "grant-auth-test-secret-".padEnd(48, "x"),
       baseURL: "http://localhost:3000",
-      allowlistEmails: [testEmail],
       trustedOrigins: ["http://localhost:3000"],
     });
   }, 30_000);
@@ -118,11 +117,11 @@ dbDescribe("Better Auth with the Drizzle adapter", () => {
     expect(resolved?.session.userId).toBe(signUp.response.user.id);
   });
 
-  it("rejects a sign-up outside the demo allowlist", async () => {
-    await expect(
-      auth.api.signUpEmail({
-        body: { email: blockedEmail, password, name: "Blocked User" },
-      }),
-    ).rejects.toThrow(/allowlist/i);
+  it("allows a non-allowlisted user to register without spending access", async () => {
+    const signUp = await auth.api.signUpEmail({
+      body: { email: blockedEmail, password, name: "Non Demo User" },
+    });
+    expect(signUp.user.email).toBe(blockedEmail);
+    expect(isDemoAllowlisted(blockedEmail)).toBe(false);
   });
 });

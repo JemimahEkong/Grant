@@ -1,6 +1,7 @@
 import { and, eq, isNull } from "drizzle-orm";
-import { demoDisclosure } from "../../demo/catalog";
+import { demoTracks } from "../../demo/catalog";
 import type { GrantDatabase } from "../db/client";
+import type { Platform } from "../licensing/schema";
 import { randomId, randomToken, sha256Raw } from "../db/crypto";
 import { RepositoryError } from "../db/errors";
 import { getPurchaseForOwner } from "../db/repositories";
@@ -10,14 +11,15 @@ export type PublicProof = {
   product: "Grant";
   demoDisclosure: string;
   projectLabel: string;
-  track: { title: string; sellerId: string };
+  trackId: string;
+  track: { title: string; sellerId: string; sellerName: string };
   license: {
     number: string;
     startsAt: string;
     endsAt: string;
     coverage: {
       intendedUse: string;
-      platforms: string[];
+      platforms: Platform[];
       territory: { worldwide: boolean; countries: string[] };
       termDays: number;
       clipDurationSeconds: number;
@@ -95,6 +97,20 @@ export async function revokeShareLink(
   return { revoked: revoked.length };
 }
 
+export async function getShareStatus(
+  db: GrantDatabase,
+  input: { ownerId: string; purchaseId: string },
+): Promise<{ active: boolean; shareLinkId: string | null }> {
+  const view = await getPurchaseForOwner(db, input);
+  if (!view.license) return { active: false, shareLinkId: null };
+  const [link] = await db
+    .select({ id: shareLinks.id })
+    .from(shareLinks)
+    .where(and(eq(shareLinks.licenseId, view.license.id), isNull(shareLinks.revokedAt)))
+    .limit(1);
+  return { active: Boolean(link), shareLinkId: link?.id ?? null };
+}
+
 export async function getPublicProof(db: GrantDatabase, token: string): Promise<PublicProof | null> {
   const tokenHash = sha256Raw(token);
   const [link] = await db
@@ -117,9 +133,15 @@ export async function getPublicProof(db: GrantDatabase, token: string): Promise<
   const request = license.coverageSnapshot.request;
   return {
     product: "Grant",
-    demoDisclosure,
+    demoDisclosure:
+      "Demo license record on Stellar testnet. Authority evidence has not been independently verified. This proof does not transfer copyright and is not legal advice.",
     projectLabel: project.publicDisplayLabel,
-    track: { title: track.title, sellerId: license.coverageSnapshot.offer.sellerId },
+    trackId: track.id,
+    track: {
+      title: track.title,
+      sellerId: license.coverageSnapshot.offer.sellerId,
+      sellerName: demoTracks.find(candidate => candidate.id === track.id)?.sellerName ?? license.coverageSnapshot.offer.sellerId,
+    },
     license: {
       number: license.licenseNumber,
       startsAt: license.startsAt.toISOString(),

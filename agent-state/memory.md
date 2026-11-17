@@ -16,7 +16,7 @@
 - Migrations run over the Neon HTTP driver. Interactive transactions and row locks use the Neon serverless WebSocket pool, cached on globalThis.
 - Integration tests use DATABASE_URL_TEST, unique owner IDs, and explicit cleanup. Never point them at the main branch. Test timeout is 30 seconds.
 - Better Auth tables are `user`, `session`, `account`, `verification`. Migration 0001 owns them.
-- Demo allowlist: comma-separated DEMO_ALLOWLIST_EMAILS. Sign-up is rejected outside the list and every session is rechecked. An empty list fails closed. Do not accept an owner or user ID from the client.
+- Registration is public. The demo allowlist is comma-separated DEMO_ALLOWLIST_EMAILS and gates spending only. An empty list fails closed for spending. Non-allowlisted owners can create projects, quote, review, and be refused. Pay returns 403 DEMO_ACCOUNT_REQUIRED. Do not accept an owner or user ID from the client.
 - Custom mutating routes must call assertSameOrigin before reading the body or acting.
 - R2 bucket is grant-private. Only presigned GET URLs are allowed, issued after entitlement checks. No public object URLs.
 - Production payments are enabled behind PAYMENTS_ENABLED=true, the allowlist, durable rate limits, and a buyer wallet funded to exactly 6.0000000 USDC.
@@ -28,9 +28,14 @@
 - The PDF is generated from the immutable license snapshot with pdf-lib, uploaded to licenses/<licenseId>/license-1.pdf, and served only through the entitlement download route. Repeat generation is idempotent.
 - The audio artifact references the track's private audio key and hash. The current WAV is synthetic. The download route serves it only after purchase, license, and artifact checks.
 - Share tokens are 32 random bytes, stored only as SHA-256 hashes. Raw tokens are returned once. Creating a new link revokes the previous active link. Proof views are no-store and noindex and exclude private client data, object keys, and audio entitlement.
-- Production Vercel URL: https://grant-roan.vercel.app. Latest code deployment dpl_8BN81a9J5rhjex9oFkczodvKgBNA. Framework preset is Next.js. Env vars are sensitive.
+- Production Vercel URL: https://grant-roan.vercel.app. Latest UI deployment dpl_ErZjTE8qkMh8A45oGLSpwSTnnZc4. Framework preset is Next.js. Env vars are sensitive.
 - G0 scripts are local-only. The seller binds 127.0.0.1. Never deploy the G0 buyer or seller secret.
 - Fixture catalog matching does not grant a license, verify music ownership, or prove seller authority.
 - Payments are testnet-only. A settlement proves the protocol, not production custody, refunds, or copyright coverage.
+- The UI follows DESIGN.md: base/panel/hairline tokens, Geist Sans and Mono, inline SVG, 900px breakpoint, mobile bottom nav and desktop rail, clearance strip, no gradients/glass/shadows/icon libraries/images.
+- Screens: landing, signin, home, brief, catalog, purchase review/refused/license, purchases, profile, proof. The purchase page owns review, approval, pending, refused, and license states.
+- App routes are static client shells that fetch live API data. Landing, proof, and sign-in are dynamic. The landing reads DEMO_PROOF_PATH and renders the linked proof card; the proof view is noindex/no-store and revocable.
+- The demo proof link is stored in DEMO_PROOF_PATH. Do not print the raw token. The landing "See a real license" link resolves it.
+- Missing API fields: no purchase-count cap, no artifact byte sizes, no license number in project purchase rows, and BPM/seller display names are joined from the fixture catalog because the purchase API does not include them.
 - Paid-ad add-ons and broader hardening remain.
 - Follow AGENTS.md writing, checkpoint, state, and database rules. Keep replies concise.
