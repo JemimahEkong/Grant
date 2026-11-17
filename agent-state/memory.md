@@ -27,7 +27,7 @@
 - Approved payment evidence: 1.00 USDC tx 03619c78787f6c56dc1f94338907cdbcb6d560a2059e64564a1bf0f387fccfcf ledger 5783809, license GRANT-2026-10014776FD. The seller route on Vercel settled the payment.
 - Reconciliation never signs again and never creates a new attempt. A settled purchase returns 200 ALREADY_SETTLED. A pending attempt without a transaction hash returns 202 OPERATOR_REVIEW_REQUIRED.
 - Testnet demo offer: morning-edit-testnet-base version 1, 1 USDC, payee is the throwaway G0 seller. It is a demo offer, not a real rights-holder listing.
-- Vercel production: https://grant-roan.vercel.app. Latest code deployment dpl_4gRyrFYw49EDhaTAymKb2ut9vXvy. Framework preset is Next.js. Env vars are sensitive.
+- Vercel production: https://grant-roan.vercel.app. Latest code deployment dpl_7UJPLWmczHc2vLrCYXcq77V1XuRj. Framework preset is Next.js. Env vars are sensitive.
 - The Vercel project first deployed as production because it was the first deployment. Plain `vercel deploy` calls are previews unless `--prod` is passed.
 - G0 scripts are local-only. The seller binds 127.0.0.1. Never deploy the G0 buyer or seller secret. The G0 seller public key is public and may be committed.
 - Fixture catalog matching is a demonstration of term checks. It does not grant a license, verify music ownership, or prove seller authority.

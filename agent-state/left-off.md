@@ -5,7 +5,7 @@
 - Verified: R2 local owner 200 with matching SHA-256, local unauthenticated 401, local non-owner 404, production owner 200, production unauthenticated 401. Vercel spike tx b1e67dfcb0c4e8940609ec101d3b6755dd2dd50fa4c6d4f359cb119b7c1698bf ledger 5783689. Approved purchase tx 03619c78787f6c56dc1f94338907cdbcb6d560a2059e64564a1bf0f387fccfcf ledger 5783809, license GRANT-2026-10014776FD.
 - Reconciliation: settled purchase 200 ALREADY_SETTLED. Pending attempt without a transaction hash 202 OPERATOR_REVIEW_REQUIRED. No new attempt or signature.
 - Tests: 60 tests in 7 files passed. Typecheck, lint, build, db checks, r2:check passed.
-- Git: checkpoint is uncommitted at the time of this state write. Previous pushed HEAD was a2f3d2c.
+- Git: checkpoint a4db371 was pushed to origin/main. Production was redeployed from that tree as dpl_7UJPLWmczHc2vLrCYXcq77V1XuRj.
 - Next: decide whether to deploy the testnet buyer signer to enable the pay route in production. Do not deploy it without explicit founder approval. Then add PDF generation/upload, authorized audio, share links, paid-ad add-ons, rate limiting, and Google OAuth credentials.
 - Blockers: Google OAuth credentials absent, production buyer signer intentionally absent, no authorized audio, no generated PDFs, no share links, no paid-ad add-ons, no production rate limiter, no refunds/disputes.
 - Warnings: npm audit reports dev-tool vulnerabilities in drizzle-kit/esbuild and vitest/picomatch. Fixing them requires breaking major-version changes, so they are deferred. Vitest config still emits a CommonJS/ESM native-loader warning.

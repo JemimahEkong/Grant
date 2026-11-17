@@ -17,10 +17,10 @@
 - Signer boundary: X402_BUYER_SECRET remains local-only. The deployed pay route returns 503 PAYMENT_EXECUTION_NOT_CONFIGURED. The buyer orchestration is not deployed.
 - G0 evidence: earlier local settlements 0.01 USDC tx 8a7770520e5e575d37bbaa4274fdc9b17b826161d7c872253e1208fbafa8d144 ledger 5782531 and 1.00 USDC tx e1dcd2ef7754ea822078d2aa8c8c49535f20b5a1f890d5f093117a36cc23a160 ledger 5782541.
 - Neon: personal org-green-paper-10610153, project Grant dry-brook-80399258, aws-eu-central-1, PostgreSQL 17. Main and test branches at migration 0001. Fixtures and a testnet demo offer seeded.
-- Vercel: kaelah-s-projects/grant, Next.js preset. Production https://grant-roan.vercel.app. Latest code deployment dpl_4gRyrFYw49EDhaTAymKb2ut9vXvy. R2 credentials and x402 attempt secret configured in Production. Buyer signer intentionally absent.
+- Vercel: kaelah-s-projects/grant, Next.js preset. Production https://grant-roan.vercel.app. Latest code deployment dpl_7UJPLWmczHc2vLrCYXcq77V1XuRj. R2 credentials and x402 attempt secret configured in Production. Buyer signer intentionally absent.
 - Production smoke: health 200, Better Auth sign-in 200, session 200, project create 201, owner read 200, unauthenticated 401, cross-origin 403.
 - Tests: 60 tests in 7 files passed. Typecheck, lint, and build passed. db:check and db:check:test passed. r2:check passed.
 - Payments in production remain disabled. The approved path is proven with a local testnet signer against the deployed seller route. Enabling production payment execution requires explicit founder approval to deploy the signer.
 - Missing: Google OAuth credentials, production buyer signer approval, PDF generation/upload job, authorized audio, share links, paid-ad add-ons, rate limiting, refunds/disputes, mainnet, designed UI.
-- Git: main tracks origin/main at https://github.com/JemimahEkong/Grant.git. Current checkpoint is uncommitted at the time of this state write.
+- Git: main tracks origin/main at https://github.com/JemimahEkong/Grant.git. Checkpoint a4db371 was pushed to origin/main.
 - Project instructions are in AGENTS.md. Session recovery lives in agent-state/.
