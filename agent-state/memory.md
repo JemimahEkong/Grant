@@ -18,7 +18,7 @@
 - Demo allowlist: comma-separated DEMO_ALLOWLIST_EMAILS. Sign-up is rejected outside the list and every session is rechecked. An empty list fails closed. Do not accept an owner or user ID from the client.
 - Custom mutating routes must call assertSameOrigin before reading the body or acting. Better Auth has its own trusted-origin and CSRF handling.
 - Google OAuth is wired but disabled until GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET exist. Email/password works without it.
-- Vercel production: https://grant-roan.vercel.app. The project framework preset was changed from Other to Next.js. Env vars are sensitive. BETTER_AUTH_URL and APP_ORIGIN point at the production alias.
+- Vercel production: https://grant-roan.vercel.app. Latest checkpoint deployment dpl_22UxLcW7onzk6uAUP4RePuupcsir. The project framework preset was changed from Other to Next.js. Env vars are sensitive. BETTER_AUTH_URL and APP_ORIGIN point at the production alias.
 - The Vercel project initially deployed as production because it was the first deployment. Future plain `vercel deploy` calls are previews unless `--prod` is passed.
 - R2 uses the S3 SDK with region "auto" and endpoint https://ACCOUNT_ID.r2.cloudflarestorage.com. Bucket is private. Only presigned GET URLs are allowed, issued after entitlement checks. No public object URLs.
 - R2 keys are not configured. `npm run r2:check` fails closed with missing variable names. The download route returns STORAGE_NOT_CONFIGURED until credentials are supplied.
