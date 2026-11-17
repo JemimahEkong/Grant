@@ -28,7 +28,7 @@
 - The PDF is generated from the immutable license snapshot with pdf-lib, uploaded to licenses/<licenseId>/license-1.pdf, and served only through the entitlement download route. Repeat generation is idempotent.
 - The audio artifact references the track's private audio key and hash. The current WAV is synthetic. The download route serves it only after purchase, license, and artifact checks.
 - Share tokens are 32 random bytes, stored only as SHA-256 hashes. Raw tokens are returned once. Creating a new link revokes the previous active link. Proof views are no-store and noindex and exclude private client data, object keys, and audio entitlement.
-- Production Vercel URL: https://grant-roan.vercel.app. Latest code deployment dpl_GarX6t3wzcFyxXDMfznBW36DVtqN. Framework preset is Next.js. Env vars are sensitive.
+- Production Vercel URL: https://grant-roan.vercel.app. Latest code deployment dpl_8BN81a9J5rhjex9oFkczodvKgBNA. Framework preset is Next.js. Env vars are sensitive.
 - G0 scripts are local-only. The seller binds 127.0.0.1. Never deploy the G0 buyer or seller secret.
 - Fixture catalog matching does not grant a license, verify music ownership, or prove seller authority.
 - Payments are testnet-only. A settlement proves the protocol, not production custody, refunds, or copyright coverage.

@@ -18,7 +18,7 @@
 - Neon: personal org-green-paper-10610153, project Grant dry-brook-80399258, aws-eu-central-1, PostgreSQL 17. Main and test at migration 0003.
 - Vercel: kaelah-s-projects/grant, Next.js preset. Production https://grant-roan.vercel.app. R2, X402_ATTEMPT_SECRET, X402_BUYER_SECRET, and PAYMENTS_ENABLED are Production-only where required.
 - Tests: 66 tests in 9 files passed. Typecheck, lint, build, db:check, db:check:test, r2:check passed.
-- Git: main tracks origin/main at https://github.com/JemimahEkong/Grant.git. Checkpoint 7f1b421 was pushed to origin/main. Latest production deployment dpl_GarX6t3wzcFyxXDMfznBW36DVtqN.
+- Git: main tracks origin/main at https://github.com/JemimahEkong/Grant.git. Checkpoint 81fa80b was pushed to origin/main. Latest production deployment dpl_8BN81a9J5rhjex9oFkczodvKgBNA. Health reports purchasesEnabled true.
 - Missing: paid-ad add-on, broader hardening, real authorized music, shared UI design reference, production refunds/disputes, mainnet, multi-tenant seller onboarding.
 - UI: start as soon as the founder sends a design reference. Do not wait for paid-ad add-ons or hardening.
 - Project instructions are in AGENTS.md. Session recovery lives in agent-state/.
