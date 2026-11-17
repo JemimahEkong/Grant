@@ -22,7 +22,6 @@ export async function seedDemoCatalog(db: GrantDatabase): Promise<{ tracks: numb
         set: {
           title: track.title,
           sellerId: track.sellerId,
-          audioObjectKey: track.audioObjectKey,
           durationSeconds: track.durationSeconds,
           authorityComposition: track.authorityComposition,
           authorityMaster: track.authorityMaster,

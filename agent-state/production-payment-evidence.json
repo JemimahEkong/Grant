@@ -1,0 +1,38 @@
+{
+  "status": "confirmed",
+  "checkedAt": "2026-11-17T19:39:21.605Z",
+  "route": "https://grant-roan.vercel.app/api/purchases/pur_4547cd9755e74c77bcaf7d28e30f1c00/pay -> https://grant-roan.vercel.app/api/x402/license",
+  "projectId": "prj_d29067c15b4b4dc691e93f47533f2e8d",
+  "purchaseId": "pur_4547cd9755e74c77bcaf7d28e30f1c00",
+  "licenseId": "lic_59ad65d0579a444d9600a685d0507f96",
+  "licenseNumber": "GRANT-2026-74E7341FC8",
+  "transactionHash": "7d289d0c3e30f75841159b1c4151ba5d3a6fc61309b867d7c2a751dfef8d31b2",
+  "ledger": "5784141",
+  "amountBaseUnits": "10000000",
+  "network": "stellar:testnet",
+  "assetContractId": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+  "payee": "GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB",
+  "buyerAddress": "GAIPPBOFGQGABZ2SQ53QUIE5T24BZYCAS2ARMENZZAM7F65B3AIZWYQP",
+  "buyerBefore": "6.0000000",
+  "buyerAfterFirst": "5.0000000",
+  "buyerAfterRepeat": "5.0000000",
+  "reservation": {
+    "id": "res_d73d79aa4d5847c19971f95ee296deb7",
+    "state": "settled",
+    "amountBaseUnits": "10000000"
+  },
+  "receipt": {
+    "id": "rcp_4d682301f04c4126921785e420ba5795",
+    "transactionHash": "7d289d0c3e30f75841159b1c4151ba5d3a6fc61309b867d7c2a751dfef8d31b2",
+    "settlementReference": "stellar:testnet:7d289d0c3e30f75841159b1c4151ba5d3a6fc61309b867d7c2a751dfef8d31b2:0",
+    "verificationSource": "horizon+balance_delta"
+  },
+  "licenseEndsAt": "2027-02-15T19:39:11.000Z",
+  "repeatPay": {
+    "status": 200,
+    "code": "PURCHASE_ALREADY_SETTLED"
+  },
+  "attemptsBeforeRepeat": 1,
+  "attemptsAfterRepeat": 1,
+  "noSecondSignature": true
+}

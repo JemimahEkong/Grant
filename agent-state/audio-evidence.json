@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "checkedAt": "2026-11-17T19:53:00.585Z",
+  "purchaseId": "pur_4547cd9755e74c77bcaf7d28e30f1c00",
+  "artifactId": "art_b1deeb1327e003781fb7135b",
+  "artifactKind": "audio",
+  "objectKey": "audio/morning-edit/demo-tone.wav",
+  "contentHash": "b1deeb1327e003781fb7135b879b9da7301e6a66e667c12b25b3cfbf5fc4d7bd",
+  "downloadedBytes": 176444,
+  "downloadedSha256": "b1deeb1327e003781fb7135b879b9da7301e6a66e667c12b25b3cfbf5fc4d7bd",
+  "hashMatches": true,
+  "purchaseStatus": "ready",
+  "deliveryStatus": 200,
+  "unauthenticatedStatus": 401,
+  "signedUrlPublished": false,
+  "note": "The WAV is a synthetic placeholder prepared for private storage and delivery verification. It is not a licensed music track."
+}

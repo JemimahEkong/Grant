@@ -73,20 +73,22 @@
 
 ## AUTHENTICATION AND STORAGE
 
-- Use Better Auth with the Drizzle adapter on the existing Neon database. Email/password plus one OAuth provider is the agreed scope.
+- Use Better Auth with the Drizzle adapter on the existing Neon database. Email/password is the current scope. OAuth is deferred.
 - Enforce the demo allowlist server-side. Reject sign-up and existing sessions outside the allowlist. An empty allowlist fails closed.
 - Derive the owner ID only from the verified session. Never accept an owner, user, or price value from the client.
 - Require a same-origin Origin check on every mutating custom route.
 - Use Cloudflare R2 with a private bucket. Issue short-lived presigned GET URLs only after session, ownership, purchase-state, license, and artifact checks.
 - Never use public object URLs or public bucket access for licensed audio or generated PDFs.
 - Use the Node runtime for Better Auth and R2 routes.
-- Keep the testnet buyer signer local-only. The deployed pay route must return 503 when X402_BUYER_SECRET is absent. Do not deploy the signer without explicit founder approval.
+- The testnet buyer signer is approved for Vercel Production only. Never set X402_BUYER_SECRET in Preview or Development. Keep the buyer wallet funded to the approved hard ceiling, currently 6 USDC.
+- The pay route must return 503 unless PAYMENTS_ENABLED is exactly "true". Keep durable per-owner rate limits on quote, approve, pay, reconcile, delivery, and share before enabling payments.
 - The seller route must derive price, asset, and payee from the immutable purchase, never from client-supplied values. Bind it with a short-lived server-signed attempt token.
 - Reconciliation must never create a new attempt or signature. It may only verify and finalize the existing attempt.
+- Share tokens are high-entropy and stored only as hashes. Never expose a raw token after creation. Proof views must exclude private client names, owner emails, object keys, and audio entitlement.
 
 ## GRANT PROJECT WORKFLOW
 
-- Build the backend first. Ask the founder for a design reference after the backend is complete, then work on the interface.
+- Build the backend first. Start the interface as soon as the founder sends a design reference. Do not wait for paid-ad add-ons, hardening, or share-link polish.
 - Use the existing collaboration repository at https://github.com/JemimahEkong/Grant. Do not create a replacement GitHub repository.
 - Use the founder's personal Vercel and Neon workspaces for Grant resources. Do not modify unrelated projects.
 - Keep payments disabled until server-side human approval, persistent budget reservations, verified settlement, and safe reconciliation are implemented.

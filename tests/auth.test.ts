@@ -85,7 +85,6 @@ dbDescribe("Better Auth with the Drizzle adapter", () => {
       baseURL: "http://localhost:3000",
       allowlistEmails: [testEmail],
       trustedOrigins: ["http://localhost:3000"],
-      google: null,
     });
   }, 30_000);
 

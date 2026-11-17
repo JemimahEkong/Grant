@@ -2,6 +2,7 @@ import { assertSameOrigin } from "../../../../../lib/auth/origin";
 import { requireDemoSession } from "../../../../../lib/auth/session";
 import { getDatabase } from "../../../../../lib/db/client";
 import { RepositoryError } from "../../../../../lib/db/errors";
+import { consumeRateLimit } from "../../../../../lib/db/rate-limit";
 import { finalizeSettlement, getPurchaseForOwner } from "../../../../../lib/db/repositories";
 import { jsonSafe } from "../../../../../lib/db/serialize";
 import { errorResponse, jsonResponse } from "../../../../../lib/http";
@@ -48,6 +49,7 @@ export async function POST(request: Request, context: { params: Promise<{ purcha
     const auth = await requireDemoSession(request.headers);
     const { purchaseId } = await context.params;
     const db = getDatabase();
+    await consumeRateLimit(db, { ownerId: auth.ownerId, action: "reconcile" });
     const view = await getPurchaseForOwner(db, { ownerId: auth.ownerId, purchaseId });
 
     if (isSettled(view.purchase.status)) {

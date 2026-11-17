@@ -7,6 +7,7 @@ import { requireDemoSession } from "../../../../../lib/auth/session";
 import { getDatabase } from "../../../../../lib/db/client";
 import { sha256Raw } from "../../../../../lib/db/crypto";
 import { RepositoryError } from "../../../../../lib/db/errors";
+import { consumeRateLimit } from "../../../../../lib/db/rate-limit";
 import {
   claimAttemptAndReserve,
   finalizeSettlement,
@@ -18,6 +19,7 @@ import {
 import { jsonSafe } from "../../../../../lib/db/serialize";
 import { errorResponse, jsonResponse } from "../../../../../lib/http";
 import { createAttemptToken } from "../../../../../lib/payments/attempt-token";
+import { paymentsEnabled } from "../../../../../lib/payments/flags";
 import { getHorizonTransaction, getUsdcBalance, verifyTransferDelta } from "../../../../../lib/payments/verify-settlement";
 
 export const runtime = "nodejs";
@@ -48,8 +50,12 @@ export async function POST(request: Request, context: { params: Promise<{ purcha
   try {
     assertSameOrigin(request);
     const auth = await requireDemoSession(request.headers);
+    if (!paymentsEnabled()) {
+      throw new RepositoryError("PAYMENTS_DISABLED", "Payments are disabled.", 503);
+    }
     const { purchaseId } = await context.params;
     const db = getDatabase();
+    await consumeRateLimit(db, { ownerId: auth.ownerId, action: "pay" });
     const current = await getPurchaseForOwner(db, { ownerId: auth.ownerId, purchaseId });
 
     if (isSettled(current.purchase.status)) {

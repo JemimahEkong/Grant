@@ -14,6 +14,7 @@
     "db:check": "node --env-file-if-exists=.env.local scripts/check-db.mjs",
     "db:check:test": "node --env-file-if-exists=.env.local scripts/check-db.mjs --test",
     "g0:setup": "node --env-file-if-exists=.env.local scripts/g0-setup.mjs",
+    "buyer:ceiling": "node --env-file-if-exists=.env.local scripts/fund-buyer-ceiling.mjs",
     "g0:seller": "node --env-file-if-exists=.env.local scripts/g0-seller.mjs",
     "g0:buyer": "node --env-file-if-exists=.env.local scripts/g0-buyer.mjs",
     "x402:vercel:buyer": "node --env-file-if-exists=.env.local scripts/x402-vercel-buyer.mjs",
@@ -27,6 +28,10 @@
     "r2:proof:setup": "node --env-file-if-exists=.env.local --import tsx scripts/r2-proof-setup.ts",
     "r2:proof:check": "node --env-file-if-exists=.env.local scripts/r2-proof-check.mjs",
     "payment:proof": "node --env-file-if-exists=.env.local --import tsx scripts/approved-payment-proof.ts",
+    "payment:proof:production": "node --env-file-if-exists=.env.local scripts/production-payment-proof.mjs",
+    "pdf:proof": "node --env-file-if-exists=.env.local scripts/pdf-delivery-proof.mjs",
+    "audio:proof": "node --env-file-if-exists=.env.local scripts/audio-delivery-proof.mjs",
+    "share:proof": "node --env-file-if-exists=.env.local scripts/share-proof.mjs",
     "test": "node --env-file-if-exists=.env.local ./node_modules/vitest/vitest.mjs run",
     "test:watch": "node --env-file-if-exists=.env.local ./node_modules/vitest/vitest.mjs",
     "test:db": "node --env-file-if-exists=.env.local ./node_modules/vitest/vitest.mjs run tests/persistence.test.ts"
@@ -44,6 +49,7 @@
     "better-auth": "1.7.25",
     "drizzle-orm": "0.45.4",
     "next": "16.4.6",
+    "pdf-lib": "1.17.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "zod": "4.6.7"

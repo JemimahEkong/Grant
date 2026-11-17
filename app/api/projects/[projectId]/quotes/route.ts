@@ -2,6 +2,7 @@ import { z } from "zod";
 import { assertSameOrigin } from "../../../../../lib/auth/origin";
 import { requireDemoSession } from "../../../../../lib/auth/session";
 import { getDatabase } from "../../../../../lib/db/client";
+import { consumeRateLimit } from "../../../../../lib/db/rate-limit";
 import { getProjectForOwner, quotePurchase } from "../../../../../lib/db/repositories";
 import { jsonSafe } from "../../../../../lib/db/serialize";
 import { errorResponse, jsonResponse, parseJsonBody } from "../../../../../lib/http";
@@ -24,11 +25,13 @@ export async function POST(request: Request, context: { params: Promise<{ projec
     const parsed = await parseJsonBody(request, quoteSchema);
     if ("response" in parsed) return parsed.response;
 
-    const projectView = await getProjectForOwner(getDatabase(), {
+    const db = getDatabase();
+    await consumeRateLimit(db, { ownerId: auth.ownerId, action: "quote" });
+    const projectView = await getProjectForOwner(db, {
       ownerId: auth.ownerId,
       projectId,
     });
-    const outcome = await quotePurchase(getDatabase(), {
+    const outcome = await quotePurchase(db, {
       ownerId: auth.ownerId,
       projectId,
       trackId: parsed.data.trackId,

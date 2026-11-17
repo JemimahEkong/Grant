@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "checkedAt": "2026-11-17T19:47:38.949Z",
+  "purchaseId": "pur_4547cd9755e74c77bcaf7d28e30f1c00",
+  "artifactId": "art_3f03bc8a237f0dd4c812726c",
+  "artifactKind": "license_pdf",
+  "objectKey": "licenses/lic_59ad65d0579a444d9600a685d0507f96/license-1.pdf",
+  "contentHash": "f6bc8536329b90eb6d6d35bd83d033f8189b561f31417c5940c3bed8e01c122b",
+  "bytes": 2435,
+  "pageCount": 1,
+  "purchaseStatus": "issuing",
+  "firstGeneration": {
+    "status": 201,
+    "generated": true
+  },
+  "repeatGeneration": {
+    "status": 200,
+    "generated": false,
+    "sameArtifact": true
+  },
+  "signedUrlPublished": false,
+  "note": "The PDF was generated from the immutable license snapshot and uploaded to the private R2 bucket. It was downloaded through a presigned GET URL after the owner entitlement check."
+}

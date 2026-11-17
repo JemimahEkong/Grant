@@ -12,16 +12,10 @@ export type CreateAuthOptions = {
   baseURL?: string;
   allowlistEmails?: string[];
   trustedOrigins?: string[];
-  google?: { clientId: string; clientSecret: string } | null;
 };
 
 export function createAuth(database: GrantDatabase, options: CreateAuthOptions = {}) {
   const allowlist = (options.allowlistEmails ?? getDemoAllowlist()).map(email => email.trim().toLowerCase()).filter(Boolean);
-  const google =
-    options.google ??
-    (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
-      ? { clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET }
-      : null);
 
   return betterAuth({
     appName: "Grant",
@@ -36,7 +30,6 @@ export function createAuth(database: GrantDatabase, options: CreateAuthOptions =
       requireEmailVerification: false,
       autoSignIn: true,
     },
-    socialProviders: google ? { google } : {},
     trustedOrigins: options.trustedOrigins ?? getTrustedOrigins(),
     databaseHooks: {
       user: {

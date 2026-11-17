@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createAttemptToken, verifyAttemptToken } from "../lib/payments/attempt-token";
+import { paymentsEnabled } from "../lib/payments/flags";
 import { usdcToBaseUnits } from "../lib/payments/verify-settlement";
 
 const previousSecret = process.env.X402_ATTEMPT_SECRET;
@@ -66,3 +67,13 @@ describe("USDC base-unit conversion", () => {
 });
 
 process.env.X402_ATTEMPT_SECRET = previousSecret;
+
+describe("payments flag", () => {
+  it("defaults to false and requires the exact string true", () => {
+    expect(paymentsEnabled({})).toBe(false);
+    expect(paymentsEnabled({ PAYMENTS_ENABLED: "false" })).toBe(false);
+    expect(paymentsEnabled({ PAYMENTS_ENABLED: "TRUE" })).toBe(false);
+    expect(paymentsEnabled({ PAYMENTS_ENABLED: "1" })).toBe(false);
+    expect(paymentsEnabled({ PAYMENTS_ENABLED: "true" })).toBe(true);
+  });
+});

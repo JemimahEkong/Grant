@@ -15,6 +15,20 @@
       "when": 1794936663259,
       "tag": "0001_lethal_warhawk",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794943969984,
+      "tag": "0002_zippy_omega_flight",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794944882766,
+      "tag": "0003_elite_ultron",
+      "breakpoints": true
     }
   ]
 }

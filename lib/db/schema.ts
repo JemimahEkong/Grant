@@ -129,6 +129,24 @@ export const verification = pgTable(
   table => [index("verification_identifier_idx").on(table.identifier)],
 );
 
+
+export const rateLimits = pgTable(
+  "rate_limits",
+  {
+    ownerId: text("owner_id").notNull(),
+    action: text("action").notNull(),
+    windowStart: timestamp("window_start", { withTimezone: true, mode: "date" }).notNull(),
+    count: integer("count").notNull().default(0),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  table => [
+    primaryKey({ name: "rate_limits_pk", columns: [table.ownerId, table.action, table.windowStart] }),
+    index("rate_limits_window_idx").on(table.windowStart),
+    check("rate_limits_count_nonnegative", sql`${table.count} >= 0`),
+  ],
+);
+
 export const projects = pgTable(
   "projects",
   {
@@ -161,6 +179,7 @@ export const tracks = pgTable(
     title: text("title").notNull(),
     sellerId: text("seller_id").notNull(),
     audioObjectKey: text("audio_object_key"),
+    audioContentHash: text("audio_content_hash"),
     durationSeconds: integer("duration_seconds").notNull(),
     authorityComposition: boolean("authority_composition"),
     authorityMaster: boolean("authority_master"),
@@ -575,6 +594,7 @@ export const budgetAdjustments = pgTable(
   ],
 );
 
+export type RateLimitRow = typeof rateLimits.$inferSelect;
 export type UserRow = typeof user.$inferSelect;
 export type AuthSessionRow = typeof session.$inferSelect;
 export type AccountRow = typeof account.$inferSelect;

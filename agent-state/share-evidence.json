@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "checkedAt": "2026-11-17T19:55:58.456Z",
+  "purchaseId": "pur_4547cd9755e74c77bcaf7d28e30f1c00",
+  "shareCreation": {
+    "status": 201,
+    "shareLinkId": "shr_1123e5cf6fcf49c5a3279f7d31658ebb"
+  },
+  "proofRead": {
+    "status": 200,
+    "product": "Grant",
+    "projectLabel": "Production Payment Project",
+    "licenseNumber": "GRANT-2026-74E7341FC8",
+    "trackTitle": "Morning Edit",
+    "transactionHash": "7d289d0c3e30f75841159b1c4151ba5d3a6fc61309b867d7c2a751dfef8d31b2",
+    "cacheControl": "no-store",
+    "robots": "noindex, nofollow"
+  },
+  "revoke": {
+    "status": 200,
+    "revoked": 1
+  },
+  "afterRevoke": {
+    "status": 404
+  },
+  "rawTokenRecorded": false,
+  "signedUrlPublished": false,
+  "note": "The proof URL returned a public-safe view without private client names, object keys, raw tokens, or audio entitlement."
+}

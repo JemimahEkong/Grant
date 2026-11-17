@@ -1,6 +1,7 @@
 import { assertSameOrigin } from "../../../../../lib/auth/origin";
 import { requireDemoSession } from "../../../../../lib/auth/session";
 import { getDatabase } from "../../../../../lib/db/client";
+import { consumeRateLimit } from "../../../../../lib/db/rate-limit";
 import { approvePurchase } from "../../../../../lib/db/repositories";
 import { jsonSafe } from "../../../../../lib/db/serialize";
 import { errorResponse, jsonResponse } from "../../../../../lib/http";
@@ -12,7 +13,9 @@ export async function POST(request: Request, context: { params: Promise<{ purcha
     assertSameOrigin(request);
     const auth = await requireDemoSession(request.headers);
     const { purchaseId } = await context.params;
-    const outcome = await approvePurchase(getDatabase(), {
+    const db = getDatabase();
+    await consumeRateLimit(db, { ownerId: auth.ownerId, action: "approve" });
+    const outcome = await approvePurchase(db, {
       ownerId: auth.ownerId,
       purchaseId,
       approvingHuman: auth.user.email,
