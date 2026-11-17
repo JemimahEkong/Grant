@@ -995,10 +995,11 @@ export async function markSigningStarted(
 
       if (approval.expiresAt <= now || !validateOfferStillMatchesPurchase(offer, purchase, now)) {
         const reasonCode = approval.expiresAt <= now ? "APPROVAL_EXPIRED" : offer ? "OFFER_CHANGED" : "OFFER_INACTIVE";
-        await tx
+        const [releasedReservation] = await tx
           .update(reservations)
           .set({ state: "released", releasedAt: now })
-          .where(eq(reservations.id, reservation.id));
+          .where(eq(reservations.id, reservation.id))
+          .returning();
         const [releasedAttempt] = await tx
           .update(paymentAttempts)
           .set({ phase: "no_settlement_verified", reconciliationState: "no_settlement", reconciledAt: now })
@@ -1013,7 +1014,7 @@ export async function markSigningStarted(
           outcome: "expired",
           purchase: expiredPurchase,
           attempt: releasedAttempt,
-          reservation,
+          reservation: releasedReservation,
           reasonCode,
         };
       }
