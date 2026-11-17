@@ -1,12 +1,12 @@
 # Left off
 
-- Current task: auth, R2 adapter, G0 evidence, and Vercel skeleton are implemented and verified. Update state, commit, and push the checkpoint.
-- Done: Better Auth with the Drizzle adapter, migration 0001 auth tables, email/password, server-side allowlist, session helper, origin checks, authenticated project create/read, R2 presigned-download adapter with entitlement checks, local G0 x402 seller/buyer, two confirmed testnet settlements, Vercel production deployment, and production smoke tests.
-- Verified: 55 tests in 6 files passed. Typecheck, lint, and production build passed. Main and test branches at migration 0001. Production health/auth/project/ownership/origin smoke tests passed.
-- G0 evidence: 0.01 USDC tx 8a7770520e5e575d37bbaa4274fdc9b17b826161d7c872253e1208fbafa8d144 ledger 5782531. 1.00 USDC tx e1dcd2ef7754ea822078d2aa8c8c49535f20b5a1f890d5f093117a36cc23a160 ledger 5782541. See agent-state/g0-evidence.md.
-- Deployment: https://grant-roan.vercel.app. Latest production deployment dpl_22UxLcW7onzk6uAUP4RePuupcsir. Vercel framework preset is Next.js. Sensitive env vars are set, including DATABASE_URL, BETTER_AUTH_SECRET, BETTER_AUTH_URL, APP_ORIGIN, and DEMO_ALLOWLIST_EMAILS.
-- Git: checkpoint 2db62aa was pushed to origin/main. Production was redeployed from that tree.
-- Next: obtain Google OAuth credentials and R2 credentials. Then implement real artifact generation/upload, connect the approved payment path to the verified settlement persistence, and add bounded reconciliation. Keep payments disabled until that full path is tested.
-- Blockers: no GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET, no R2 credentials, no seller payee, no buyer signer integration, no payment execution adapter, no reconciliation, no authorized audio, no generated PDFs.
+- Current task: R2 proof, Vercel x402 seller route, approved payment path, and bounded reconciliation are implemented and verified. Update state, commit, and push the checkpoint.
+- Done: R2 credentials in Vercel Production, production redeploy, real private upload and presigned download with owner/unauthenticated/non-owner checks, Next.js x402 seller route on Vercel, real 0.01 USDC spike settlement, purchase-scoped seller route, authenticated quote/approve/pay/status/reconcile routes, real 1.00 USDC approved purchase settlement, receipt/license finalization, and reconciliation state tests.
+- Verified: R2 local owner 200 with matching SHA-256, local unauthenticated 401, local non-owner 404, production owner 200, production unauthenticated 401. Vercel spike tx b1e67dfcb0c4e8940609ec101d3b6755dd2dd50fa4c6d4f359cb119b7c1698bf ledger 5783689. Approved purchase tx 03619c78787f6c56dc1f94338907cdbcb6d560a2059e64564a1bf0f387fccfcf ledger 5783809, license GRANT-2026-10014776FD.
+- Reconciliation: settled purchase 200 ALREADY_SETTLED. Pending attempt without a transaction hash 202 OPERATOR_REVIEW_REQUIRED. No new attempt or signature.
+- Tests: 60 tests in 7 files passed. Typecheck, lint, build, db checks, r2:check passed.
+- Git: checkpoint is uncommitted at the time of this state write. Previous pushed HEAD was a2f3d2c.
+- Next: decide whether to deploy the testnet buyer signer to enable the pay route in production. Do not deploy it without explicit founder approval. Then add PDF generation/upload, authorized audio, share links, paid-ad add-ons, rate limiting, and Google OAuth credentials.
+- Blockers: Google OAuth credentials absent, production buyer signer intentionally absent, no authorized audio, no generated PDFs, no share links, no paid-ad add-ons, no production rate limiter, no refunds/disputes.
 - Warnings: npm audit reports dev-tool vulnerabilities in drizzle-kit/esbuild and vitest/picomatch. Fixing them requires breaking major-version changes, so they are deferred. Vitest config still emits a CommonJS/ESM native-loader warning.
-- Do not ask for the UI design reference yet. Payment execution, reconciliation, artifacts, and delivery remain backend work.
+- The UI remains deferred until the backend is complete and the founder supplies a design reference.

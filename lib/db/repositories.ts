@@ -1280,6 +1280,116 @@ export async function finalizeSettlement(
   }
 }
 
+
+export async function recordAttemptAuthorization(
+  db: GrantDatabase,
+  input: {
+    ownerId: string;
+    purchaseId: string;
+    attemptId: string;
+    authorizationDigest: string;
+    nonce?: string | null;
+    authorizationValidUntil: Date;
+    now?: Date;
+  },
+): Promise<PaymentAttemptRow> {
+  const now = input.now ?? new Date();
+  const authorizationDigest = z
+    .string()
+    .regex(/^[0-9a-f]{64}$/, "Use a lowercase SHA-256 hexadecimal digest.")
+    .parse(input.authorizationDigest);
+
+  return db.transaction(async tx => {
+    const [purchase] = await tx
+      .select()
+      .from(purchases)
+      .where(and(eq(purchases.id, input.purchaseId), eq(purchases.ownerId, input.ownerId)))
+      .for("update");
+    if (!purchase) throw notFound();
+    if (purchase.status !== "reserved" && purchase.status !== "payment_pending") {
+      throw new RepositoryError("PURCHASE_NOT_SIGNING", "The purchase is not in a signing state.", 409);
+    }
+    const [attempt] = await tx
+      .select()
+      .from(paymentAttempts)
+      .where(and(eq(paymentAttempts.id, input.attemptId), eq(paymentAttempts.purchaseId, purchase.id)))
+      .limit(1);
+    if (!attempt) throw notFound("The payment attempt was not found for this purchase.");
+    if (attempt.phase !== "signing_started") {
+      throw new RepositoryError("ATTEMPT_PHASE_CONFLICT", "The attempt is not ready for an authorization digest.", 409);
+    }
+    if (attempt.authorizationDigest && attempt.authorizationDigest !== authorizationDigest) {
+      throw new RepositoryError("AUTHORIZATION_MISMATCH", "The attempt already has a different authorization digest.", 409);
+    }
+    const [updated] = await tx
+      .update(paymentAttempts)
+      .set({
+        authorizationDigest,
+        nonce: input.nonce ?? attempt.nonce,
+        authorizationValidUntil: input.authorizationValidUntil,
+        updatedAt: now,
+      })
+      .where(eq(paymentAttempts.id, attempt.id))
+      .returning();
+    return updated;
+  });
+}
+
+export async function recordAttemptSubmission(
+  db: GrantDatabase,
+  input: {
+    ownerId: string;
+    purchaseId: string;
+    attemptId: string;
+    transactionHash: string;
+    settlementMetadata: Record<string, unknown>;
+    now?: Date;
+  },
+): Promise<PaymentAttemptRow> {
+  const now = input.now ?? new Date();
+  const transactionHash = z
+    .string()
+    .regex(/^[0-9a-f]{64}$/, "Use a lowercase Stellar transaction hash.")
+    .parse(input.transactionHash);
+
+  return db.transaction(async tx => {
+    const [purchase] = await tx
+      .select()
+      .from(purchases)
+      .where(and(eq(purchases.id, input.purchaseId), eq(purchases.ownerId, input.ownerId)))
+      .for("update");
+    if (!purchase) throw notFound();
+    if (purchase.status !== "reserved" && purchase.status !== "payment_pending") {
+      throw new RepositoryError("PURCHASE_NOT_PENDING", "The purchase is not pending settlement.", 409);
+    }
+    const [attempt] = await tx
+      .select()
+      .from(paymentAttempts)
+      .where(and(eq(paymentAttempts.id, input.attemptId), eq(paymentAttempts.purchaseId, purchase.id)))
+      .limit(1);
+    if (!attempt) throw notFound("The payment attempt was not found for this purchase.");
+    if (attempt.phase !== "signing_started" && attempt.phase !== "submitted" && attempt.phase !== "uncertain") {
+      throw new RepositoryError("ATTEMPT_PHASE_CONFLICT", "The attempt cannot record a submission in its current phase.", 409);
+    }
+    if (attempt.transactionHash && attempt.transactionHash !== transactionHash) {
+      throw new RepositoryError("TRANSACTION_MISMATCH", "The attempt already has a different transaction hash.", 409);
+    }
+    const [updated] = await tx
+      .update(paymentAttempts)
+      .set({
+        phase: "submitted",
+        transactionHash,
+        providerReference: JSON.stringify(input.settlementMetadata),
+        submittedAt: now,
+        reconciliationState: "pending",
+        updatedAt: now,
+      })
+      .where(eq(paymentAttempts.id, attempt.id))
+      .returning();
+    return updated;
+  });
+}
+
 export async function getPurchaseForOwner(
   db: GrantDatabase,
   input: { ownerId: string; purchaseId: string },

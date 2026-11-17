@@ -80,6 +80,9 @@
 - Use Cloudflare R2 with a private bucket. Issue short-lived presigned GET URLs only after session, ownership, purchase-state, license, and artifact checks.
 - Never use public object URLs or public bucket access for licensed audio or generated PDFs.
 - Use the Node runtime for Better Auth and R2 routes.
+- Keep the testnet buyer signer local-only. The deployed pay route must return 503 when X402_BUYER_SECRET is absent. Do not deploy the signer without explicit founder approval.
+- The seller route must derive price, asset, and payee from the immutable purchase, never from client-supplied values. Bind it with a short-lived server-signed attempt token.
+- Reconciliation must never create a new attempt or signature. It may only verify and finalize the existing attempt.
 
 ## GRANT PROJECT WORKFLOW
 
@@ -93,3 +96,4 @@
 - Approvals fail closed when a seller payee is missing or is not a valid Stellar public key.
 - G0 buyer/seller scripts are local-only. Never deploy buyer signer secrets, and keep the seller bound to localhost.
 - A real testnet settlement proves the protocol only. It does not prove a product purchase, license, or music ownership.
+- The approved payment evidence is in agent-state/payment-evidence.md. The Vercel seller route and the local buyer orchestration were both exercised with real testnet settlements.

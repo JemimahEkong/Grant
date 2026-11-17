@@ -9,7 +9,7 @@
 - The November 28, 2026 deadline is a planning assumption. Confirm the official cutoff and timezone.
 - Preserve uncommitted work. A new chat does not authorize resetting the folder.
 - CLI identities previously verified: GitHub kaelah971, Vercel kaelah679-4114, Neon kaelah679. Recheck access safely in a new session. Auth is not proof of deployment/database connectivity.
-- Do not store secret values in state files or commit .env files. DATABASE_URL, DATABASE_URL_TEST, BETTER_AUTH_SECRET, and all G0 signer secrets live only in ignored .env.local.
+- Do not store secret values in state files or commit .env files. DATABASE_URL, DATABASE_URL_TEST, BETTER_AUTH_SECRET, R2 keys, X402_ATTEMPT_SECRET, and X402_BUYER_SECRET live only in ignored .env.local and, where appropriate, Vercel sensitive env.
 - Neon Grant project: dry-brook-80399258 in org-green-paper-10610153. Main branch is the app database. Separate `test` branch is copy-on-write and is used by integration tests.
 - Use Drizzle ORM. Schema changes require db:generate then db:migrate/db:migrate:test. Never drizzle push.
 - Migrations run over the Neon HTTP driver. Interactive transactions and row locks use the Neon serverless WebSocket pool, cached on globalThis.
@@ -17,16 +17,19 @@
 - Better Auth tables are `user`, `session`, `account`, and `verification`. Keep the Better Auth model names and snake_case SQL columns aligned. Migration 0001 owns them.
 - Demo allowlist: comma-separated DEMO_ALLOWLIST_EMAILS. Sign-up is rejected outside the list and every session is rechecked. An empty list fails closed. Do not accept an owner or user ID from the client.
 - Custom mutating routes must call assertSameOrigin before reading the body or acting. Better Auth has its own trusted-origin and CSRF handling.
-- Google OAuth is wired but disabled until GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET exist. Email/password works without it.
-- Vercel production: https://grant-roan.vercel.app. Latest checkpoint deployment dpl_22UxLcW7onzk6uAUP4RePuupcsir. The project framework preset was changed from Other to Next.js. Env vars are sensitive. BETTER_AUTH_URL and APP_ORIGIN point at the production alias.
-- The Vercel project initially deployed as production because it was the first deployment. Future plain `vercel deploy` calls are previews unless `--prod` is passed.
-- R2 uses the S3 SDK with region "auto" and endpoint https://ACCOUNT_ID.r2.cloudflarestorage.com. Bucket is private. Only presigned GET URLs are allowed, issued after entitlement checks. No public object URLs.
-- R2 keys are not configured. `npm run r2:check` fails closed with missing variable names. The download route returns STORAGE_NOT_CONFIGURED until credentials are supplied.
-- G0 is proven. 0.01 USDC tx 8a7770520e5e575d37bbaa4274fdc9b17b826161d7c872253e1208fbafa8d144 ledger 5782531. 1.00 USDC tx e1dcd2ef7754ea822078d2aa8c8c49535f20b5a1f890d5f093117a36cc23a160 ledger 5782541. Both on stellar:testnet with the x402.org facilitator.
-- G0 scripts are local-only. The seller binds 127.0.0.1. Never deploy the buyer or seller secret. The seller response granted no license or audio.
-- Testnet buyer and seller public keys and the settlement evidence are public information and may be committed. Secret keys may not.
-- The G0 local route is not a product purchase path. Payments stay disabled until approval, durable reservations, idempotency, verified settlement, reconciliation, and protected delivery are connected and tested.
-- Available budget = project budget - adjustments - confirmed settled spend - active reservations. Confirmed spend counts settled, issuing, and ready purchases.
-- Fixture offers have no payee, so approval fails closed until a real testnet seller payee is configured.
+- Google OAuth is wired but disabled until GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET exist.
+- R2 bucket is grant-private. The S3 SDK uses region "auto" and the account R2 endpoint. Only presigned GET URLs are allowed, issued after entitlement checks. No public object URLs.
+- R2 is fully verified: real upload, owner download 200 with matching SHA-256, unauthenticated 401, non-owner 404, production owner download 200. Evidence in agent-state/r2-evidence.md.
+- x402 seller routes use `withX402` from @x402/next on the Node runtime. `/api/x402/spike` is a fixed 0.01 USDC protocol spike. `/api/x402/license` derives price, asset, and payee from the immutable purchase.
+- The seller route is bound by a short-lived HMAC attempt token in the query string. X402_ATTEMPT_SECRET must match between the pay route and the seller route. Tokens are scoped to one purchase and attempt and expire after five minutes.
+- The approved payment path reserves budget, persists the signing marker, signs exactly one payment, records the authorization digest, submits to the seller, records the transaction hash, verifies Horizon success and buyer/seller USDC deltas, then finalizes the receipt and license.
+- X402_BUYER_SECRET is local-only. The deployed pay route returns 503 without it. Do not deploy the testnet signer without explicit founder approval.
+- Approved payment evidence: 1.00 USDC tx 03619c78787f6c56dc1f94338907cdbcb6d560a2059e64564a1bf0f387fccfcf ledger 5783809, license GRANT-2026-10014776FD. The seller route on Vercel settled the payment.
+- Reconciliation never signs again and never creates a new attempt. A settled purchase returns 200 ALREADY_SETTLED. A pending attempt without a transaction hash returns 202 OPERATOR_REVIEW_REQUIRED.
+- Testnet demo offer: morning-edit-testnet-base version 1, 1 USDC, payee is the throwaway G0 seller. It is a demo offer, not a real rights-holder listing.
+- Vercel production: https://grant-roan.vercel.app. Latest code deployment dpl_4gRyrFYw49EDhaTAymKb2ut9vXvy. Framework preset is Next.js. Env vars are sensitive.
+- The Vercel project first deployed as production because it was the first deployment. Plain `vercel deploy` calls are previews unless `--prod` is passed.
+- G0 scripts are local-only. The seller binds 127.0.0.1. Never deploy the G0 buyer or seller secret. The G0 seller public key is public and may be committed.
 - Fixture catalog matching is a demonstration of term checks. It does not grant a license, verify music ownership, or prove seller authority.
+- Payments in production remain disabled. A testnet settlement proves the protocol, not production custody, refunds, or copyright coverage.
 - Follow AGENTS.md writing, checkpoint, state, and database rules. Keep replies concise.

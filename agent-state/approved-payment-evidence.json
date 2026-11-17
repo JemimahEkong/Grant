@@ -1,0 +1,60 @@
+{
+  "status": "confirmed",
+  "checkedAt": "2026-11-17T19:12:01.837Z",
+  "route": "local authenticated pay route -> Vercel Next.js x402 seller",
+  "projectId": "prj_34f5415eb1754f98b46f02dd64561d2f",
+  "purchaseId": "pur_f70c723d832543598a1671252f71cd98",
+  "licenseId": "lic_6433c8b64968439180025ca3eb9b3d88",
+  "licenseNumber": "GRANT-2026-10014776FD",
+  "transactionHash": "03619c78787f6c56dc1f94338907cdbcb6d560a2059e64564a1bf0f387fccfcf",
+  "ledger": "5783809",
+  "amountBaseUnits": "10000000",
+  "network": "stellar:testnet",
+  "assetContractId": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+  "payee": "GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB",
+  "settlementMetadata": {
+    "settlement": {
+      "success": true,
+      "payer": "GAIPPBOFGQGABZ2SQ53QUIE5T24BZYCAS2ARMENZZAM7F65B3AIZWYQP",
+      "transaction": "03619c78787f6c56dc1f94338907cdbcb6d560a2059e64564a1bf0f387fccfcf",
+      "network": "stellar:testnet"
+    },
+    "buyer": "GAIPPBOFGQGABZ2SQ53QUIE5T24BZYCAS2ARMENZZAM7F65B3AIZWYQP",
+    "payee": "GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB",
+    "amountBaseUnits": "10000000",
+    "network": "stellar:testnet",
+    "assetContractId": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+    "buyerBefore": "18.9800000",
+    "sellerBefore": "1.0200000",
+    "recordedAt": "2026-11-17T19:11:32.048Z"
+  },
+  "licenseEndsAt": "2027-02-15T19:11:31.000Z",
+  "reconcileSettled": {
+    "status": 200,
+    "code": "ALREADY_SETTLED"
+  },
+  "reconcilePending": {
+    "status": 202,
+    "code": "OPERATOR_REVIEW_REQUIRED",
+    "purchaseId": "pur_d644b73182cb42a0bb8441aa64aeec44",
+    "attemptId": "att_68771b5c26564f72a425ca4f69f5340a"
+  },
+  "notes": [
+    "The seller route is the deployed Next.js route on Vercel.",
+    "The buyer orchestration ran locally because the testnet signer is not deployed.",
+    "The pending reconcile fixture confirmed no new signature or attempt was created."
+  ],
+  "onChain": {
+    "hash": "03619c78787f6c56dc1f94338907cdbcb6d560a2059e64564a1bf0f387fccfcf",
+    "successful": true,
+    "ledger": 5783809,
+    "createdAt": "2026-11-17T19:11:31Z",
+    "sourceAccount": "GC6CSXBV4C6RL3HEDTW57KXYXSSXKAWKGYDEOSATXM3XNKXSR2VRYN3K",
+    "feeCharged": "11701",
+    "operationCount": 1
+  },
+  "currentBalances": {
+    "buyer": "17.9800000",
+    "seller": "2.0200000"
+  }
+}

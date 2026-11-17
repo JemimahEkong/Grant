@@ -1,0 +1,54 @@
+{
+  "status": "confirmed",
+  "checkedAt": "2026-11-17T19:01:37.679Z",
+  "route": "https://grant-roan.vercel.app/api/x402/spike",
+  "x402Version": 2,
+  "resource": {
+    "url": "https://grant-roan.vercel.app/api/x402/spike",
+    "description": "Grant x402 testnet protocol spike",
+    "mimeType": "application/json"
+  },
+  "requirements": {
+    "scheme": "exact",
+    "network": "stellar:testnet",
+    "amount": "100000",
+    "asset": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+    "payTo": "GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB",
+    "maxTimeoutSeconds": 300,
+    "extra": {
+      "areFeesSponsored": true
+    }
+  },
+  "buyer": "GAIPPBOFGQGABZ2SQ53QUIE5T24BZYCAS2ARMENZZAM7F65B3AIZWYQP",
+  "payee": "GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB",
+  "facilitator": "https://www.x402.org/facilitator",
+  "transactionHash": "b1e67dfcb0c4e8940609ec101d3b6755dd2dd50fa4c6d4f359cb119b7c1698bf",
+  "onChain": {
+    "hash": "b1e67dfcb0c4e8940609ec101d3b6755dd2dd50fa4c6d4f359cb119b7c1698bf",
+    "successful": true,
+    "ledger": 5783689,
+    "createdAt": "2026-11-17T19:01:31Z",
+    "sourceAccount": "GC6CSXBV4C6RL3HEDTW57KXYXSSXKAWKGYDEOSATXM3XNKXSR2VRYN3K",
+    "feeCharged": "11701",
+    "operationCount": 1
+  },
+  "settlement": {
+    "success": true,
+    "payer": "GAIPPBOFGQGABZ2SQ53QUIE5T24BZYCAS2ARMENZZAM7F65B3AIZWYQP",
+    "transaction": "b1e67dfcb0c4e8940609ec101d3b6755dd2dd50fa4c6d4f359cb119b7c1698bf",
+    "network": "stellar:testnet"
+  },
+  "balances": {
+    "buyerBefore": "18.9900000",
+    "buyerAfter": "18.9800000",
+    "sellerBefore": "1.0100000",
+    "sellerAfter": "1.0200000"
+  },
+  "response": {
+    "grantX402": "settled",
+    "mode": "nextjs-testnet-spike",
+    "network": "stellar:testnet",
+    "note": "Protocol proof only. No license, audio, PDF, entitlement, or product purchase is granted.",
+    "servedAt": "2026-11-17T19:01:26.824Z"
+  }
+}
