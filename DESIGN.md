@@ -70,3 +70,21 @@ Every money surface labels TESTNET.
 - Keyboard order follows visual order.
 - Reduced motion disables transitions and animations.
 - Pending never simulates progress and never offers a retry that could sign again.
+
+## Funding and onboarding
+
+- Every user has a Stellar testnet account. Onboarding is a gated sequence with one action per
+  screen: generate wallet, activate account, add USDC trustline, fund, then Home.
+- Onboarding uses a minimal shell with the Grant mark, TESTNET badge, step progress, and one
+  primary action. No bottom navigation during onboarding.
+- Balance is read from chain and may be cached for at most 30 seconds. A project budget is a
+  spending cap over that balance. It is never the balance itself.
+- The wallet screen shows the address with copy and QR, live balance, Refresh, Fund, transaction
+  history, and a custody disclosure. The QR is an inline SVG with dark modules on a warm light
+  panel for scan contrast.
+- Wallet is reached from the balance on Home and from the Profile wallet row. It is never a sixth
+  navigation slot.
+- Faucet states: available, one grant already used, daily treasury cap reached, and treasury empty.
+  The empty state shows the treasury address and manual funding instructions.
+- Insufficient balance is a designed panel on the review route. It shows the current balance,
+  the price, and a link to Fund. It never shows a pay button that will fail.

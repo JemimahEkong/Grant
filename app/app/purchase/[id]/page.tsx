@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useMe } from "../../../../components/providers";
 import { ClearanceStrip, Legend, PageHeader, Spinner, StatusChip } from "../../../../components/ui";
 import {
   approvePurchase,
@@ -13,22 +12,23 @@ import {
   getDownloadUrl,
   getProject,
   getPurchase,
+  getWallet,
   payPurchase,
   reconcilePurchase,
 } from "../../../../lib/ui/actions";
-import type { ApiFailure, CatalogResponse, ProjectView, PurchaseView } from "../../../../lib/ui/api";
-import { formatDate, formatDuration, formatUsdc, shortHash, subtractBaseUnits } from "../../../../lib/ui/format";
+import type { ApiFailure, CatalogResponse, ProjectView, PurchaseView, WalletView } from "../../../../lib/ui/api";
+import { effectivePurchaseStatus, formatDate, formatDuration, formatUsdc, formatUsdcDecimal, shortHash, subtractBaseUnits, usdcAmountToBaseUnits } from "../../../../lib/ui/format";
 import { buildExclusions, buildReviewStrip } from "../../../../lib/ui/strip";
 
-type PanelState = "none" | "demo" | "disabled" | "pending" | "refused" | "expired";
+type PanelState = "none" | "disabled" | "pending" | "refused" | "expired";
 
 export default function PurchasePage() {
   const params = useParams<{ id: string }>();
   const purchaseId = params.id;
-  const { me } = useMe();
   const [view, setView] = useState<PurchaseView | null>(null);
   const [projectView, setProjectView] = useState<ProjectView | null>(null);
   const [catalog, setCatalog] = useState<CatalogResponse | null>(null);
+  const [wallet, setWallet] = useState<WalletView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [panel, setPanel] = useState<PanelState>("none");
@@ -52,11 +52,12 @@ export default function PurchasePage() {
 
   useEffect(() => {
     let active = true;
-    Promise.all([getPurchase(purchaseId), getCatalog()])
-      .then(async ([next, catalogResponse]) => {
+    Promise.all([getPurchase(purchaseId), getCatalog(), getWallet()])
+      .then(async ([next, catalogResponse, walletView]) => {
         if (!active) return;
         setView(next);
         setCatalog(catalogResponse);
+        setWallet(walletView);
         if (next.purchase.projectId) {
           const project = await getProject(next.purchase.projectId);
           if (active) setProjectView(project);
@@ -117,14 +118,18 @@ export default function PurchasePage() {
   const title = view.track?.title ?? trackItem?.title ?? purchase.trackId;
   const seller = trackItem?.sellerName ?? offer.sellerId;
   const meta = `${seller}${trackItem ? ` · ${formatDuration(trackItem.durationSeconds)} · ${trackItem.bpm ?? "—"} BPM` : ""}`;
-  const isSettled = ["settled", "issuing", "ready"].includes(purchase.status);
-  const isPending = ["reserved", "payment_pending"].includes(purchase.status);
-  const isRefused = ["refused", "expired", "failed_no_settlement"].includes(purchase.status);
-  const isReview = purchase.status === "quoted" || purchase.status === "approved";
+  const status = effectivePurchaseStatus(purchase);
+  const isSettled = ["settled", "issuing", "ready"].includes(status);
+  const isPending = ["reserved", "payment_pending"].includes(status);
+  const isExpired = status === "expired";
+  const isRefused = status === "refused" || status === "failed_no_settlement";
+  const isReview = status === "quoted" || status === "approved";
   const budget = projectView?.budget;
   const afterApproval = budget ? subtractBaseUnits(budget.availableBaseUnits, purchase.priceBaseUnits) : null;
   const receipt = view.receipt;
   const license = view.license;
+  const walletReady = wallet?.step === "complete";
+  const canPay = Boolean(walletReady && wallet && usdcAmountToBaseUnits(wallet.balance) >= BigInt(purchase.priceBaseUnits));
   const pdfReady = view.artifacts.some(artifact => artifact.kind === "license_pdf" && artifact.state === "ready");
   const audioReady = view.artifacts.some(artifact => artifact.kind === "audio" && artifact.state === "ready");
 
@@ -149,19 +154,9 @@ export default function PurchasePage() {
         setPanel("disabled");
         return;
       }
-      if (payment.code === "DEMO_ACCOUNT_REQUIRED") {
-        await refresh();
-        setPanel("demo");
-        return;
-      }
       setPanel("pending");
     } catch (failure) {
       const apiFailure = failure as ApiFailure;
-      if (apiFailure.code === "DEMO_ACCOUNT_REQUIRED") {
-        await refresh();
-        setPanel("demo");
-        return;
-      }
       if (apiFailure.code === "PAYMENTS_DISABLED") {
         setPanel("disabled");
         return;
@@ -174,6 +169,11 @@ export default function PurchasePage() {
       if (apiFailure.code === "PROJECT_BUDGET_EXCEEDED" || apiFailure.code === "PURCHASE_CAP_EXCEEDED") {
         setPanel("refused");
         await refresh();
+        return;
+      }
+      if (["WALLET_NOT_FUNDED", "WALLET_EMPTY", "INSUFFICIENT_BALANCE"].includes(apiFailure.code)) {
+        setWallet(await getWallet());
+        setActionError(apiFailure.message);
         return;
       }
       setActionError(apiFailure.message || "The purchase could not continue.");
@@ -189,10 +189,6 @@ export default function PurchasePage() {
     try {
       const payment = await payPurchase(purchaseId);
       const next = await refresh();
-      if (payment.code === "DEMO_ACCOUNT_REQUIRED") {
-        setPanel("demo");
-        return;
-      }
       if (payment.code === "PAYMENTS_DISABLED") {
         setPanel("disabled");
         return;
@@ -203,15 +199,17 @@ export default function PurchasePage() {
       setPanel("pending");
     } catch (failure) {
       const apiFailure = failure as ApiFailure;
-      if (apiFailure.code === "DEMO_ACCOUNT_REQUIRED") {
-        await refresh();
-        setPanel("demo");
-      }
-      else if (apiFailure.code === "PAYMENTS_DISABLED") setPanel("disabled");
-      else if (apiFailure.code === "PROJECT_BUDGET_EXCEEDED" || apiFailure.code === "PURCHASE_CAP_EXCEEDED") {
+      if (apiFailure.code === "PAYMENTS_DISABLED") {
+        setPanel("disabled");
+      } else if (apiFailure.code === "PROJECT_BUDGET_EXCEEDED" || apiFailure.code === "PURCHASE_CAP_EXCEEDED") {
         setPanel("refused");
         await refresh();
-      } else setActionError(apiFailure.message);
+      } else if (["WALLET_NOT_FUNDED", "WALLET_EMPTY", "INSUFFICIENT_BALANCE"].includes(apiFailure.code)) {
+        setWallet(await getWallet());
+        setActionError(apiFailure.message);
+      } else {
+        setActionError(apiFailure.message);
+      }
     } finally {
       setBusy(false);
     }
@@ -293,12 +291,31 @@ export default function PurchasePage() {
           <h1 className="review-title">{title}</h1>
           <div className="review-by">{meta}</div>
         </div>
-        <StatusChip status={purchase.status} />
+        <StatusChip status={status} />
       </div>
       <div className="review-price">
         <span className="p">{formatUsdc(purchase.priceBaseUnits)}</span>
         <span className="u">USDC · testnet · one purchase</span>
       </div>
+
+      {isExpired ? (
+        <>
+          <div style={{ marginTop: 16 }}>
+            <ClearanceStrip segments={strip} />
+            <Legend />
+          </div>
+          <div className="explain-panel" role="status">
+            <div className="h">Quote expired</div>
+            <p>
+              The five-minute quote window closed. Nothing was signed, reserved, or charged. Start a new review for a
+              fresh price and approval.
+            </p>
+            <Link href="/app/catalog" className="btn btn-secondary" style={{ marginTop: 10 }}>
+              Review another track
+            </Link>
+          </div>
+        </>
+      ) : null}
 
       {isReview || isPending || isRefused ? (
         <>
@@ -344,13 +361,26 @@ export default function PurchasePage() {
                 </b>
               </div>
 
-              {panel === "demo" || (!me.demoAllowlisted && purchase.status === "approved") ? (
+              {wallet && wallet.step !== "complete" ? (
                 <div className="explain-panel" role="status">
-                  <div className="h">Demo account required</div>
+                  <div className="h">Finish wallet setup</div>
+                  <p>Grant needs an activated, trustline-enabled, funded wallet before it can sign this purchase.</p>
+                  <Link href={`/app/onboarding/${wallet.step}`} className="btn btn-secondary" style={{ marginTop: 10 }}>
+                    Continue setup
+                  </Link>
+                </div>
+              ) : null}
+
+              {walletReady && !canPay ? (
+                <div className="explain-panel" role="status">
+                  <div className="h">Insufficient testnet balance</div>
                   <p>
-                    This account can review coverage and keep a refusal record, but spending testnet USDC is limited to
-                    demo accounts. Your approval is saved. No signature, reservation, or charge was created.
+                    Your wallet holds {formatUsdcDecimal(wallet?.balance ?? "0")} USDC. This license costs{" "}
+                    {formatUsdc(purchase.priceBaseUnits)} USDC. Fund the wallet before approving.
                   </p>
+                  <Link href="/app/wallet" className="btn btn-secondary" style={{ marginTop: 10 }}>
+                    Open wallet
+                  </Link>
                 </div>
               ) : null}
 
@@ -384,7 +414,7 @@ export default function PurchasePage() {
                 </div>
               ) : null}
 
-              {purchase.status === "quoted" && panel === "none" ? (
+              {status === "quoted" && panel === "none" && canPay ? (
                 <>
                   <p className="fine-note">
                     You approve these exact terms. Nothing is charged, signed, or reserved until you approve.
@@ -396,7 +426,7 @@ export default function PurchasePage() {
                 </>
               ) : null}
 
-              {purchase.status === "approved" && me.demoAllowlisted && panel === "none" ? (
+              {status === "approved" && canPay && panel === "none" ? (
                 <>
                   <p className="fine-note">Approved. The exact terms are bound to this purchase. Payment has not started.</p>
                   <button className="btn btn-primary btn-wide" style={{ marginTop: 14 }} onClick={() => void payApproved()} disabled={busy}>

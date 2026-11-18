@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { getMe, listProjects } from "../lib/ui/actions";
+import { getMe, getWallet, listProjects } from "../lib/ui/actions";
 import type { Me, Project } from "../lib/ui/api";
 import { initials } from "../lib/ui/format";
 import { HomeIcon, PlusIcon, ProfileIcon, PurchasesIcon, TracksIcon } from "./icons";
-import { EmptyState, Spinner, TestnetBadge } from "./ui";
+import { EmptyState, Logo, Spinner, TestnetBadge } from "./ui";
 
 type MeContextValue = {
   me: Me;
@@ -146,6 +146,55 @@ function ProjectsProvider({ children }: { children: ReactNode }) {
       {children}
     </ProjectsContext.Provider>
   );
+}
+
+function WalletGate({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [ready, setReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    getWallet()
+      .then(wallet => {
+        if (!active) return;
+        if (wallet.step !== "complete") router.replace(`/app/onboarding/${wallet.step}`);
+        else setReady(true);
+      })
+      .catch(failure => {
+        if (active) setError((failure as Error).message);
+      });
+    return () => {
+      active = false;
+    };
+  }, [pathname, router]);
+
+  if (error) {
+    return (
+      <div className="page" style={{ padding: 24 }}>
+        <EmptyState title="Workspace unavailable" description={error} />
+      </div>
+    );
+  }
+  if (!ready) return <FullPageLoading />;
+  return <AppShell>{children}</AppShell>;
+}
+
+export function WorkspaceFrame({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  if (pathname.startsWith("/app/onboarding")) {
+    return (
+      <div className="onboarding-shell">
+        <header className="onboarding-top">
+          <Logo href="/app" />
+          <TestnetBadge />
+        </header>
+        <main className="onboarding-main">{children}</main>
+      </div>
+    );
+  }
+  return <WalletGate>{children}</WalletGate>;
 }
 
 export function AppShell({ children }: { children: ReactNode }) {

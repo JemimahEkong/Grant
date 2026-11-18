@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { inArray } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { isDemoAllowlisted } from "../lib/auth/allowlist";
 import { assertSameOrigin } from "../lib/auth/origin";
 import { createAuth } from "../lib/auth/server";
 import { createDatabase, type GrantDatabase } from "../lib/db/client";
@@ -10,7 +9,7 @@ import { account, session, user } from "../lib/db/schema";
 const testDatabaseUrl = process.env.DATABASE_URL_TEST;
 const dbDescribe = testDatabaseUrl ? describe : describe.skip;
 const testEmail = `auth-test-${randomUUID()}@example.com`;
-const blockedEmail = `auth-blocked-${randomUUID()}@example.com`;
+const secondEmail = `auth-blocked-${randomUUID()}@example.com`;
 const password = "grant-test-password-12345";
 
 let client: ReturnType<typeof createDatabase>;
@@ -23,32 +22,7 @@ function requestWithOrigin(url: string, origin: string | null) {
   return new Request(url, { method: "POST", headers });
 }
 
-describe("demo allowlist and origin policy", () => {
-  it("fails closed when the allowlist is empty", () => {
-    const previous = process.env.DEMO_ALLOWLIST_EMAILS;
-    delete process.env.DEMO_ALLOWLIST_EMAILS;
-    try {
-      expect(isDemoAllowlisted("anyone@example.com")).toBe(false);
-      expect(isDemoAllowlisted(null)).toBe(false);
-    } finally {
-      if (previous === undefined) delete process.env.DEMO_ALLOWLIST_EMAILS;
-      else process.env.DEMO_ALLOWLIST_EMAILS = previous;
-    }
-  });
-
-  it("matches allowlisted emails case-insensitively", () => {
-    const previous = process.env.DEMO_ALLOWLIST_EMAILS;
-    process.env.DEMO_ALLOWLIST_EMAILS = "Founder@Example.com, demo@grant.local";
-    try {
-      expect(isDemoAllowlisted("founder@example.com")).toBe(true);
-      expect(isDemoAllowlisted("FOUNDER@EXAMPLE.COM")).toBe(true);
-      expect(isDemoAllowlisted("other@example.com")).toBe(false);
-    } finally {
-      if (previous === undefined) delete process.env.DEMO_ALLOWLIST_EMAILS;
-      else process.env.DEMO_ALLOWLIST_EMAILS = previous;
-    }
-  });
-
+describe("origin policy", () => {
   it("requires a same-origin Origin header on mutating requests", () => {
     expect(() =>
       assertSameOrigin(requestWithOrigin("http://localhost:3000/api/projects", "http://localhost:3000")),
@@ -92,7 +66,7 @@ dbDescribe("Better Auth with the Drizzle adapter", () => {
     const rows = await db
       .select({ id: user.id })
       .from(user)
-      .where(inArray(user.email, [testEmail, blockedEmail]));
+      .where(inArray(user.email, [testEmail, secondEmail]));
     const ids = rows.map(row => row.id);
     if (ids.length > 0) {
       await db.delete(session).where(inArray(session.userId, ids));
@@ -102,7 +76,7 @@ dbDescribe("Better Auth with the Drizzle adapter", () => {
     await client.close();
   }, 30_000);
 
-  it("creates an allowlisted email/password user and resolves its session", async () => {
+  it("creates a regular email/password user and resolves its session", async () => {
     const signUp = await auth.api.signUpEmail({
       body: { email: testEmail, password, name: "Auth Test" },
       returnHeaders: true,
@@ -117,11 +91,10 @@ dbDescribe("Better Auth with the Drizzle adapter", () => {
     expect(resolved?.session.userId).toBe(signUp.response.user.id);
   });
 
-  it("allows a non-allowlisted user to register without spending access", async () => {
+  it("allows a second regular user to register", async () => {
     const signUp = await auth.api.signUpEmail({
-      body: { email: blockedEmail, password, name: "Non Demo User" },
+      body: { email: secondEmail, password, name: "Non Demo User" },
     });
-    expect(signUp.user.email).toBe(blockedEmail);
-    expect(isDemoAllowlisted(blockedEmail)).toBe(false);
+    expect(signUp.user.email).toBe(secondEmail);
   });
 });

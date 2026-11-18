@@ -3,7 +3,7 @@ import { requireDemoSession } from "../../../../../lib/auth/session";
 import { getDatabase } from "../../../../../lib/db/client";
 import { RepositoryError } from "../../../../../lib/db/errors";
 import { consumeRateLimit } from "../../../../../lib/db/rate-limit";
-import { finalizeSettlement, getPurchaseForOwner } from "../../../../../lib/db/repositories";
+import { finalizeSettlement, getPurchaseForOwner, releaseUnsignedReservation } from "../../../../../lib/db/repositories";
 import { jsonSafe } from "../../../../../lib/db/serialize";
 import { errorResponse, jsonResponse } from "../../../../../lib/http";
 import { getHorizonTransaction, verifyTransferDelta } from "../../../../../lib/payments/verify-settlement";
@@ -67,6 +67,22 @@ export async function POST(request: Request, context: { params: Promise<{ purcha
 
     const attempt = view.attempts.at(-1);
     if (!attempt) return pending("NO_ATTEMPT", null);
+    if (attempt.phase === "created") {
+      const released = await releaseUnsignedReservation(db, {
+        ownerId: auth.ownerId,
+        purchaseId,
+        attemptId: attempt.id,
+      });
+      return jsonResponse(
+        jsonSafe({
+          code: "UNSIGNED_RESERVATION_RELEASED",
+          purchase: released.purchase,
+          reservation: released.reservation,
+          retryPolicy: "The unsigned reservation was released. A new purchase requires a fresh quote and approval.",
+        }),
+        200,
+      );
+    }
     if (!attempt.transactionHash || !attempt.providerReference) {
       return pending("OPERATOR_REVIEW_REQUIRED", attempt.id);
     }

@@ -3,6 +3,7 @@ import { assertSameOrigin } from "../../../lib/auth/origin";
 import { requireDemoSession } from "../../../lib/auth/session";
 import { getDatabase } from "../../../lib/db/client";
 import { createProject, listProjectsForOwner } from "../../../lib/db/repositories";
+import { requireFundedWallet } from "../../../lib/wallet/service";
 import { jsonSafe } from "../../../lib/db/serialize";
 import { errorResponse, jsonResponse, parseJsonBody } from "../../../lib/http";
 import { briefSchema } from "../../../lib/licensing/schema";
@@ -32,7 +33,9 @@ export async function POST(request: Request) {
     const parsed = await parseJsonBody(request, createProjectSchema);
     if ("response" in parsed) return parsed.response;
 
-    const project = await createProject(getDatabase(), {
+    const db = getDatabase();
+    await requireFundedWallet(db, context.ownerId);
+    const project = await createProject(db, {
       ownerId: context.ownerId,
       clientPrivateName: parsed.data.clientPrivateName,
       publicDisplayLabel: parsed.data.publicDisplayLabel,

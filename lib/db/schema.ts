@@ -51,6 +51,8 @@ export const reconciliationStateEnum = pgEnum("reconciliation_state", [
 ]);
 export const artifactKindEnum = pgEnum("artifact_kind", ["license_pdf", "combined_pdf", "audio"]);
 export const artifactStateEnum = pgEnum("artifact_state", ["pending", "ready", "failed"]);
+export const walletStatusEnum = pgEnum("wallet_status", ["created", "activated", "trustline", "funded"]);
+export const faucetGrantStatusEnum = pgEnum("faucet_grant_status", ["pending", "confirmed", "failed"]);
 
 const money = (name: string) => bigint(name, { mode: "bigint" });
 const createdAt = () => timestamp("created_at", { withTimezone: true, mode: "date" }).notNull().defaultNow();
@@ -144,6 +146,57 @@ export const rateLimits = pgTable(
     primaryKey({ name: "rate_limits_pk", columns: [table.ownerId, table.action, table.windowStart] }),
     index("rate_limits_window_idx").on(table.windowStart),
     check("rate_limits_count_nonnegative", sql`${table.count} >= 0`),
+  ],
+);
+
+export const wallets = pgTable(
+  "wallets",
+  {
+    id: text("id").primaryKey(),
+    ownerId: text("owner_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+    publicKey: text("public_key").notNull(),
+    encryptedSecret: text("encrypted_secret").notNull(),
+    secretIv: text("secret_iv").notNull(),
+    network: text("network").notNull().default("stellar:testnet"),
+    status: walletStatusEnum("status").notNull().default("created"),
+    activatedAt: timestamp("activated_at", { withTimezone: true, mode: "date" }),
+    trustlineAt: timestamp("trustline_at", { withTimezone: true, mode: "date" }),
+    fundedAt: timestamp("funded_at", { withTimezone: true, mode: "date" }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  table => [
+    uniqueIndex("wallets_owner_unique").on(table.ownerId),
+    uniqueIndex("wallets_public_key_unique").on(table.publicKey),
+    check("wallets_public_key_format", sql`${table.publicKey} ~ '^G[A-Z2-7]{55}$'`),
+    check("wallets_network_testnet", sql`${table.network} = 'stellar:testnet'`),
+    check("wallets_secret_nonempty", sql`length(${table.encryptedSecret}) > 0`),
+    check("wallets_iv_nonempty", sql`length(${table.secretIv}) > 0`),
+  ],
+);
+
+export const faucetGrants = pgTable(
+  "faucet_grants",
+  {
+    id: text("id").primaryKey(),
+    ownerId: text("owner_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+    walletId: text("wallet_id").notNull().references(() => wallets.id, { onDelete: "cascade" }),
+    amountBaseUnits: bigint("amount_base_units", { mode: "bigint" }).notNull(),
+    status: faucetGrantStatusEnum("status").notNull().default("pending"),
+    transactionHash: text("transaction_hash"),
+    errorCode: text("error_code"),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  table => [
+    uniqueIndex("faucet_grants_one_per_owner")
+      .on(table.ownerId)
+      .where(sql`${table.status} in ('pending', 'confirmed')`),
+    uniqueIndex("faucet_grants_transaction_hash_unique")
+      .on(table.transactionHash)
+      .where(sql`${table.transactionHash} is not null`),
+    index("faucet_grants_created_status_idx").on(table.createdAt, table.status),
+    check("faucet_grants_amount_positive", sql`${table.amountBaseUnits} > 0`),
   ],
 );
 
@@ -594,6 +647,8 @@ export const budgetAdjustments = pgTable(
   ],
 );
 
+export type WalletRow = typeof wallets.$inferSelect;
+export type FaucetGrantRow = typeof faucetGrants.$inferSelect;
 export type RateLimitRow = typeof rateLimits.$inferSelect;
 export type UserRow = typeof user.$inferSelect;
 export type AuthSessionRow = typeof session.$inferSelect;

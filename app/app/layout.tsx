@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
-import { AppShell, AuthGate } from "../../components/providers";
+import { AuthGate, WorkspaceFrame } from "../../components/providers";
 
 export default function WorkspaceLayout({ children }: { children: ReactNode }) {
   return (
     <AuthGate>
-      <AppShell>{children}</AppShell>
+      <WorkspaceFrame>{children}</WorkspaceFrame>
     </AuthGate>
   );
 }

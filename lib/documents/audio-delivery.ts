@@ -1,5 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import type { GrantDatabase } from "../db/client";
+import { randomId } from "../db/crypto";
 import { RepositoryError } from "../db/errors";
 import { getPurchaseForOwner } from "../db/repositories";
 import { artifacts, purchases, tracks, type ArtifactRow, type PurchaseRow } from "../db/schema";
@@ -34,7 +35,7 @@ export async function attachAudioArtifact(
   const [artifact] = await db
     .insert(artifacts)
     .values({
-      id: existing?.id ?? `art_${track.audioContentHash.slice(0, 24)}`,
+      id: existing?.id ?? randomId("art"),
       licenseId: view.license.id,
       kind: "audio",
       objectKey: track.audioObjectKey,

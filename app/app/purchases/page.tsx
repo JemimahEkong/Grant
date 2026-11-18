@@ -6,7 +6,7 @@ import { useProjects } from "../../../components/providers";
 import { EmptyState, PageHeader, StatusChip } from "../../../components/ui";
 import { getCatalog, getProject } from "../../../lib/ui/actions";
 import type { CatalogResponse, ProjectView } from "../../../lib/ui/api";
-import { formatDate, formatUsdc, statusMeta } from "../../../lib/ui/format";
+import { effectivePurchaseStatus, formatDate, formatUsdc, statusMeta } from "../../../lib/ui/format";
 
 type Filter = "all" | "settled" | "pending" | "refused";
 
@@ -48,9 +48,10 @@ export default function PurchasesPage() {
 
   const purchases = view
     ? view.purchases.filter(purchase => {
-        if (filter === "settled") return ["settled", "issuing", "ready"].includes(purchase.status);
-        if (filter === "pending") return ["approved", "reserved", "payment_pending"].includes(purchase.status);
-        if (filter === "refused") return ["refused", "expired", "failed_no_settlement"].includes(purchase.status);
+        const status = effectivePurchaseStatus(purchase);
+        if (filter === "settled") return ["settled", "issuing", "ready"].includes(status);
+        if (filter === "pending") return ["approved", "reserved", "payment_pending"].includes(status);
+        if (filter === "refused") return ["refused", "expired", "failed_no_settlement"].includes(status);
         return true;
       })
     : [];
@@ -131,8 +132,9 @@ export default function PurchasesPage() {
             <div>
               {purchases.map(purchase => {
                 const track = trackById.get(purchase.trackId);
-                const refused = ["refused", "expired", "failed_no_settlement"].includes(purchase.status);
-                const meta = statusMeta(purchase.status);
+                const status = effectivePurchaseStatus(purchase);
+                const refused = ["refused", "expired", "failed_no_settlement"].includes(status);
+                const meta = statusMeta(status);
                 const reason = refusalByPurchase.get(purchase.id);
                 return (
                   <Link key={purchase.id} href={`/app/purchase/${purchase.id}`} className="ledger-row">
@@ -146,7 +148,7 @@ export default function PurchasesPage() {
                       <div className="ledger-amount" style={{ color: meta.chipClass === "chip-pending" ? "var(--accent)" : refused ? "var(--dim)" : undefined }}>
                         {refused ? "—" : formatUsdc(purchase.priceBaseUnits)}
                       </div>
-                      <StatusChip status={purchase.status} />
+                      <StatusChip status={status} />
                     </div>
                     <span className="chev" aria-hidden="true">›</span>
                   </Link>

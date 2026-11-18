@@ -48,7 +48,6 @@ export async function request<T>(path: string, init: RequestInit = {}): Promise<
 
 export type Me = {
   user: { id: string; email: string; name: string };
-  demoAllowlisted: boolean;
   session: { expiresAt: string };
 };
 
@@ -327,11 +326,31 @@ export type PayOutcome = {
   retryPolicy?: string;
 };
 
-export type AgentWallet = {
+export type WalletStep = "wallet" | "activate" | "trustline" | "fund" | "complete";
+
+export type WalletView = {
   configured: boolean;
-  readOnly: true;
+  id: string | null;
   address: string | null;
   network: "stellar:testnet";
-  asset: "USDC";
-  balance: string | null;
+  status: "created" | "activated" | "trustline" | "funded" | null;
+  step: WalletStep;
+  balance: string;
+  xlm: string;
+  exists: boolean;
+  treasuryAddress: string | null;
+  faucetAmountBaseUnits: string;
+  dailyCapBaseUnits: string;
+  custody: string;
+};
+
+export type WalletTransaction = {
+  hash: string;
+  createdAt: string;
+  successful: boolean;
+  type: string;
+  label: string;
+  amount: string | null;
+  asset: string | null;
+  direction: "in" | "out" | null;
 };

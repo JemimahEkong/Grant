@@ -6,21 +6,21 @@ import { useEffect, useMemo, useState } from "react";
 import { useMe, useProjects } from "../../../components/providers";
 import { EmptyState, PageHeader } from "../../../components/ui";
 import {
-  getAgentWallet,
+  getWallet,
   getCatalog,
   getProject,
   getShareStatus,
   revokeShare,
   signOut,
 } from "../../../lib/ui/actions";
-import type { AgentWallet, CatalogResponse, ProjectView } from "../../../lib/ui/api";
+import type { CatalogResponse, ProjectView, WalletView } from "../../../lib/ui/api";
 import { formatUsdcDecimal, initials, shortAddress } from "../../../lib/ui/format";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { me } = useMe();
   const { projects, selectedProject, selectedProjectId, selectProjectId } = useProjects();
-  const [wallet, setWallet] = useState<AgentWallet | null>(null);
+  const [wallet, setWallet] = useState<WalletView | null>(null);
   const [view, setView] = useState<ProjectView | null>(null);
   const [catalog, setCatalog] = useState<CatalogResponse | null>(null);
   const [shareStatuses, setShareStatuses] = useState<Record<string, boolean>>({});
@@ -30,7 +30,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     let active = true;
-    getAgentWallet()
+    getWallet()
       .then(result => {
         if (active) setWallet(result);
       })
@@ -118,16 +118,19 @@ export default function ProfilePage() {
 
       {error ? <p className="error-text" role="alert">{error}</p> : null}
 
-      <div className="wallet-card">
-        <div className="k">Agent wallet · read-only</div>
+      <Link href="/app/wallet" className="wallet-card" style={{ display: "block" }}>
+        <div className="row-between">
+          <div className="k">Wallet · read-only</div>
+          <span className="muted" style={{ fontSize: 9.5 }}>Open wallet ›</span>
+        </div>
         <div className="ad" title={wallet?.address ?? undefined}>
           {wallet?.address ? shortAddress(wallet.address) : "not configured"}
         </div>
         <div className="bt">
-          <div className="v">{wallet?.balance ? formatUsdcDecimal(wallet.balance) : "—"}</div>
+          <div className="v">{wallet ? formatUsdcDecimal(wallet.balance) : "—"}</div>
           <div className="l">{wallet?.network ?? "stellar:testnet"} · testnet USDC</div>
         </div>
-      </div>
+      </Link>
 
       <div className="section-label" style={{ marginTop: 20 }}>
         <span className="micro">Projects</span>

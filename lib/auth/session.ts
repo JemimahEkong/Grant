@@ -1,11 +1,9 @@
 import { headers } from "next/headers";
 import { RepositoryError } from "../db/errors";
-import { isDemoAllowlisted } from "./allowlist";
 import { getAuth } from "./server";
 
 export type DemoAuthContext = {
   ownerId: string;
-  demoAllowlisted: boolean;
   user: { id: string; email: string; name: string };
   session: { id: string; expiresAt: Date };
 };
@@ -23,7 +21,6 @@ export async function getOptionalDemoSession(requestHeaders?: Headers): Promise<
   if (!result?.user) return null;
   return {
     ownerId: result.user.id,
-    demoAllowlisted: isDemoAllowlisted(result.user.email),
     user: { id: result.user.id, email: result.user.email, name: result.user.name },
     session: { id: result.session.id, expiresAt: result.session.expiresAt },
   };
@@ -36,7 +33,6 @@ export async function requireDemoSession(requestHeaders?: Headers): Promise<Demo
   }
   return {
     ownerId: result.user.id,
-    demoAllowlisted: isDemoAllowlisted(result.user.email),
     user: { id: result.user.id, email: result.user.email, name: result.user.name },
     session: { id: result.session.id, expiresAt: result.session.expiresAt },
   };

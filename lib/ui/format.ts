@@ -8,6 +8,12 @@ export function formatUsdc(value: string | number | bigint | null | undefined, d
   return `${whole}.${fraction.slice(0, decimals)}`;
 }
 
+export function usdcAmountToBaseUnits(value: string | null | undefined): bigint {
+  if (!value) return 0n;
+  const [whole, fraction = ""] = value.split(".");
+  return BigInt(whole || "0") * 10_000_000n + BigInt((fraction + "0000000").slice(0, 7));
+}
+
 export function formatUsdcDecimal(value: string | null | undefined, decimals = 2): string {
   if (!value) return "0.00";
   const [whole, fraction = ""] = value.split(".");
@@ -70,6 +76,13 @@ export function initials(name: string): string {
 }
 
 export type StatusMeta = { label: string; chipClass: string };
+
+export function effectivePurchaseStatus(purchase: { status: string; quoteExpiresAt: string }): string {
+  if ((purchase.status === "quoted" || purchase.status === "approved") && new Date(purchase.quoteExpiresAt) <= new Date()) {
+    return "expired";
+  }
+  return purchase.status;
+}
 
 export function statusMeta(status: string): StatusMeta {
   switch (status) {

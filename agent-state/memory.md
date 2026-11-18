@@ -4,38 +4,29 @@
 - GRANT/ is the project root. Planning documents, AGENTS.md, and agent-state/ live there.
 - T3 Code project registration points at that folder. Registration does not move or merge chat threads.
 - The founder chose Next.js/TypeScript, Neon PostgreSQL, Better Auth, Cloudflare R2, the existing JemimahEkong/Grant repository, and personal Vercel/Neon workspaces. Do not replace the repository or modify unrelated projects.
-- Email/password auth is the current scope. OAuth is skipped/deferred.
-- Start the UI as soon as the founder sends a design reference. Do not wait for paid-ad add-ons or hardening.
-- Three original or explicitly authorized tracks are still needed. The current audio artifact is a synthetic placeholder, not a licensed track.
-- The November 28, 2026 deadline is a planning assumption. Confirm the official cutoff and timezone.
-- Preserve uncommitted work. A new chat does not authorize resetting the folder.
-- CLI identities previously verified: GitHub kaelah971, Vercel kaelah679-4114, Neon kaelah679. Recheck access safely in a new session.
-- Do not store secret values in state files or commit .env files. DATABASE_URL, DATABASE_URL_TEST, BETTER_AUTH_SECRET, R2 keys, X402_ATTEMPT_SECRET, and X402_BUYER_SECRET live only in ignored .env.local and, where appropriate, Vercel sensitive env.
-- Neon Grant project: dry-brook-80399258 in org-green-paper-10610153. Main branch is the app database. Separate `test` branch is copy-on-write and used by integration tests.
-- Use Drizzle ORM. Schema changes require db:generate then db:migrate/db:migrate:test. Never drizzle push.
-- Migrations run over the Neon HTTP driver. Interactive transactions and row locks use the Neon serverless WebSocket pool, cached on globalThis.
-- Integration tests use DATABASE_URL_TEST, unique owner IDs, and explicit cleanup. Never point them at the main branch. Test timeout is 30 seconds.
-- Better Auth tables are `user`, `session`, `account`, `verification`. Migration 0001 owns them.
-- Registration is public. The demo allowlist is comma-separated DEMO_ALLOWLIST_EMAILS and gates spending only. An empty list fails closed for spending. Non-allowlisted owners can create projects, quote, review, and be refused. Pay returns 403 DEMO_ACCOUNT_REQUIRED. Do not accept an owner or user ID from the client.
-- Custom mutating routes must call assertSameOrigin before reading the body or acting.
-- R2 bucket is grant-private. Only presigned GET URLs are allowed, issued after entitlement checks. No public object URLs.
-- Production payments are enabled behind PAYMENTS_ENABLED=true, the allowlist, durable rate limits, and a buyer wallet funded to exactly 6.0000000 USDC.
-- X402_BUYER_SECRET is in Vercel Production only. Never set it in Preview or Development.
-- The production purchase tx is 7d289d0c3e30f75841159b1c4151ba5d3a6fc61309b867d7c2a751dfef8d31b2, ledger 5784141, license GRANT-2026-74E7341FC8. Buyer went 6.0000000 to 5.0000000 USDC. Repeat pay returned 200 PURCHASE_ALREADY_SETTLED with one attempt before and after.
-- Rate limits are durable in the rate_limits table, keyed by owner and action and fixed 60-second windows. Defaults: quote 20, approve 20, pay 5, reconcile 10, delivery 10, share 10.
-- The seller route binds price, asset, and payee to the immutable purchase with a short-lived HMAC attempt token. X402_ATTEMPT_SECRET must match between the pay route and seller route.
-- Reconciliation never signs again or creates a new attempt. Settled returns 200 ALREADY_SETTLED. A pending attempt without a transaction hash returns 202 OPERATOR_REVIEW_REQUIRED.
-- The PDF is generated from the immutable license snapshot with pdf-lib, uploaded to licenses/<licenseId>/license-1.pdf, and served only through the entitlement download route. Repeat generation is idempotent.
-- The audio artifact references the track's private audio key and hash. The current WAV is synthetic. The download route serves it only after purchase, license, and artifact checks.
-- Share tokens are 32 random bytes, stored only as SHA-256 hashes. Raw tokens are returned once. Creating a new link revokes the previous active link. Proof views are no-store and noindex and exclude private client data, object keys, and audio entitlement.
-- Production Vercel URL: https://grant-roan.vercel.app. Latest UI deployment dpl_ErZjTE8qkMh8A45oGLSpwSTnnZc4. Framework preset is Next.js. Env vars are sensitive.
-- G0 scripts are local-only. The seller binds 127.0.0.1. Never deploy the G0 buyer or seller secret.
-- Fixture catalog matching does not grant a license, verify music ownership, or prove seller authority.
-- Payments are testnet-only. A settlement proves the protocol, not production custody, refunds, or copyright coverage.
-- The UI follows DESIGN.md: base/panel/hairline tokens, Geist Sans and Mono, inline SVG, 900px breakpoint, mobile bottom nav and desktop rail, clearance strip, no gradients/glass/shadows/icon libraries/images.
-- Screens: landing, signin, home, brief, catalog, purchase review/refused/license, purchases, profile, proof. The purchase page owns review, approval, pending, refused, and license states.
-- App routes are static client shells that fetch live API data. Landing, proof, and sign-in are dynamic. The landing reads DEMO_PROOF_PATH and renders the linked proof card; the proof view is noindex/no-store and revocable.
+- Email/password auth is the current scope. OAuth is skipped/deferred. Registration is public.
+- There is no spending allowlist. Spending is bounded by the user's on-chain balance, faucet caps, project budget, approval, reservation, rate limits, and settlement checks.
+- Every user gets a Stellar testnet wallet. The secret is encrypted with AES-256-GCM using WALLET_ENCRYPTION_KEY and a per-row IV. Never log, return, or commit a wallet secret.
+- The pay route signs with the owner's encrypted wallet. X402_BUYER_SECRET and the old shared buyer signer are retired and removed from Vercel Production.
+- WALLET_ENCRYPTION_KEY and FAUCET_TREASURY_SECRET are Production-only secrets. The faucet treasury is the seller payee account.
+- Balance is always read from chain and cached at most 30 seconds. A project budget is a spending cap over that balance, never the balance itself.
+- Onboarding is a four-step gate: generate wallet, activate with minimum XLM, add USDC trustline, fund, then Home. /app and the other app routes redirect into the first incomplete step.
+- The faucet sends one 5 testnet USDC grant per wallet under a hard 15 USDC daily treasury cap. If the treasury is empty, show the user's address and manual funding instructions.
+- Production funding proof: wallet GAPYFLWNKSGSQIOH2P6SRIIZ32GYVXIYRUQZ4G4OT7JMDSK2A5U5TMHD. Faucet tx 5a6672727f59d685cd97f4feb1a953e11142d50dc32ed11b9347117c4ec3f03f. Purchase tx 90be474e0a4c1b0faa5fba821f4e21a37396b9cbdb5c788f21a99f3f497f7968, ledger 5787225, license GRANT-2026-9A30B34453. Buyer 4.0000000 USDC, treasury 11.0000000 USDC.
+- The UI follows DESIGN.md and the five supplied references: dark tokens, Geist Sans/Mono, inline SVG, 900px breakpoint, mobile bottom nav and desktop rail, clearance strip, no gradients/glass/shadows/icon libraries/images.
+- Screens: landing, signin, onboarding wallet/activate/trustline/fund, home, brief, catalog, purchase review/refused/pending/license, purchases, wallet, profile, proof.
+- App routes are static client shells that fetch live API data. Landing, proof, and sign-in are dynamic. The landing reads DEMO_PROOF_PATH and renders the linked proof card. The proof view is noindex/no-store and revocable.
 - The demo proof link is stored in DEMO_PROOF_PATH. Do not print the raw token. The landing "See a real license" link resolves it.
-- Missing API fields: no purchase-count cap, no artifact byte sizes, no license number in project purchase rows, and BPM/seller display names are joined from the fixture catalog because the purchase API does not include them.
-- Paid-ad add-ons and broader hardening remain.
+- Missing API fields: no purchase-count cap, no artifact byte sizes, no license number in project purchase rows, BPM/seller display names are joined from the fixture catalog, and wallet history labels are limited by Horizon operation data.
+- The wallet QR is generated as inline SVG with qrcode. It is not an image asset and not an icon library.
+- Purchase states are URL-driven. Pending has exactly one action, Check again. Refused, insufficient balance, cap exceeded, empty, and expired are designed panels, not toasts.
+- Migration 0004 owns wallets and faucet grants. Do not add a balance column.
+- R2 bucket is grant-private. Only short-lived presigned GET URLs after entitlement checks. No public object URLs.
+- The seller route derives price, asset, and payee from the immutable purchase and a short-lived HMAC attempt token. X402_ATTEMPT_SECRET must match.
+- Reconciliation never signs again or creates a new attempt.
+- Share tokens are 32 random bytes, stored only as SHA-256 hashes. Raw tokens are not committed or printed. Proof views exclude private data.
+- Production Vercel URL: https://grant-roan.vercel.app. Latest funding deployment dpl_G7fySBf6yAfW2mo6LeiwGurvNrkt.
+- G0 scripts are local-only. The seller binds 127.0.0.1. The G0 buyer and seller secrets are not deployed.
+- Fixture catalog matching does not grant a license, verify music ownership, or prove seller authority.
+- Paid-ad add-ons, broader hardening, and real authorized music remain.
 - Follow AGENTS.md writing, checkpoint, state, and database rules. Keep replies concise.

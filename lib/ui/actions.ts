@@ -2,7 +2,8 @@ import {
   ApiFailure,
   parseBody,
   request,
-  type AgentWallet,
+  type WalletView,
+  type WalletTransaction,
   type ApprovalOutcome,
   type Artifact,
   type CatalogResponse,
@@ -147,8 +148,32 @@ export async function getDownloadUrl(
   return request(`/api/purchases/${purchaseId}/download?asset=${asset}`);
 }
 
-export async function getAgentWallet(): Promise<AgentWallet> {
-  return request("/api/agent-wallet");
+export async function getWallet(refresh = false): Promise<WalletView> {
+  return request(`/api/wallet${refresh ? "?refresh=1" : ""}`);
+}
+
+export async function createWallet(): Promise<WalletView> {
+  return request("/api/wallet", { method: "POST", body: JSON.stringify({}) });
+}
+
+export async function activateWallet(): Promise<WalletView> {
+  return request("/api/wallet/activate", { method: "POST", body: JSON.stringify({}) });
+}
+
+export async function addWalletTrustline(): Promise<WalletView> {
+  return request("/api/wallet/trustline", { method: "POST", body: JSON.stringify({}) });
+}
+
+export async function fundWallet(): Promise<Record<string, unknown> & { wallet?: WalletView }> {
+  return request("/api/wallet/faucet", { method: "POST", body: JSON.stringify({}) });
+}
+
+export async function refreshWallet(): Promise<WalletView> {
+  return request("/api/wallet/refresh", { method: "POST", body: JSON.stringify({}) });
+}
+
+export async function getWalletTransactions(): Promise<{ transactions: WalletTransaction[] }> {
+  return request("/api/wallet/transactions");
 }
 
 export async function createShare(purchaseId: string): Promise<{ token: string; url: string; shareLinkId: string }> {

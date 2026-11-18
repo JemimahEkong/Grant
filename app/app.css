@@ -1187,3 +1187,172 @@
     padding-top: 20px;
   }
 }
+
+.onboarding-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--base);
+}
+
+.onboarding-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #1a1a1e;
+}
+
+.onboarding-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 34px 18px 60px;
+}
+
+.onboarding-card {
+  width: min(540px, 100%);
+  border: 1px solid var(--hairline);
+  background: var(--panel);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.onboarding-steps {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.onboarding-step {
+  flex: 1;
+  border-top: 2px solid var(--hairline);
+  padding-top: 7px;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+  font-weight: 700;
+}
+
+.onboarding-step.on {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.onboarding-step.done {
+  border-color: var(--covered);
+  color: var(--covered);
+}
+
+.onboarding-title {
+  margin: 10px 0 0;
+  font-size: clamp(28px, 6vw, 34px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  font-weight: 640;
+}
+
+.wallet-address {
+  margin-top: 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: var(--panel-2);
+  padding: 14px;
+}
+
+.wallet-address.compact {
+  margin-top: 0;
+}
+
+.wallet-address-text {
+  margin-top: 5px;
+  font-size: 10px;
+  color: #c9c6c0;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+
+.wallet-qr {
+  width: 150px;
+  height: 150px;
+  margin-top: 14px;
+  padding: 8px;
+  background: var(--text);
+  border-radius: 8px;
+}
+
+.wallet-qr svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.wallet-overview {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.wallet-balance-card {
+  flex: 1 1 280px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: var(--panel);
+  padding: 16px;
+}
+
+.wallet-balance-card .big {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: clamp(36px, 7vw, 46px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tx-list {
+  margin-top: 4px;
+}
+
+.tx-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid #1b1b1f;
+}
+
+.tx-row:last-child {
+  border-bottom: 0;
+}
+
+.tx-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.tx-title {
+  font-size: 11px;
+  font-weight: 550;
+}
+
+.tx-sub {
+  margin-top: 2px;
+  font-size: 9px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.tx-amount {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10.5px;
+  text-align: right;
+}
+
+@media (min-width: 900px) {
+  .onboarding-top {
+    padding: 22px 34px;
+  }
+}

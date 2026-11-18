@@ -9,7 +9,7 @@ Backend-first music licensing agent. This checkout is connected to the existing
 - DESIGN.md is the visual source of truth. The clearance strip appears on the landing, catalog, review, license, and proof.
 - Better Auth with the Drizzle adapter on Neon. Email/password is enabled. OAuth is
   deferred.
-- Server-side demo allowlist, session helper, and same-origin checks on mutating routes.
+- Per-user Stellar testnet wallets with AES-256-GCM encrypted secrets, a gated four-step onboarding flow, a real testnet faucet, and on-chain balances. Registration is public and there is no spending allowlist.
 - Authenticated projects, quotes, approvals, payment orchestration, purchase status, and
   bounded reconciliation.
 - Durable Neon persistence with Drizzle migrations for licensing records and auth records.
@@ -20,23 +20,25 @@ Backend-first music licensing agent. This checkout is connected to the existing
 - Approved payment path proven with a real 1.00 USDC production testnet settlement, a
   finalized receipt, a license, and bounded reconciliation. A repeat pay call returned
   ALREADY_SETTLED with no second signature.
-- The testnet buyer signer is deployed in Vercel Production only. The buyer wallet is capped
-  at 6 USDC. `PAYMENTS_ENABLED=true` is set in Production only, and durable per-owner rate
-  limits protect quote, approve, pay, reconcile, delivery, and share.
+- Each user signs with their own encrypted wallet. The old operator buyer signer and allowlist
+  are retired. `PAYMENTS_ENABLED=true` is set in Production only, and durable per-owner rate
+  limits protect quote, approve, pay, reconcile, delivery, share, wallet, and faucet.
 - PDF license generation and private R2 upload. Audio delivery through a private artifact.
   Share/proof links with revocation.
-- Production skeleton deployed at https://grant-roan.vercel.app.
+- Production app deployed at https://grant-roan.vercel.app.
 
 ## Screens
 
 - `/` landing
 - `/signin` sign in and public registration
-- `/app` home with project switcher, budget, recent purchases, and read-only agent wallet
+- `/app` home with project switcher, on-chain wallet balance, project budget, recent purchases, and wallet strip
+- `/app/onboarding/wallet`, `/activate`, `/trustline`, `/fund` first-run wallet setup
+- `/app/wallet` address, QR, live balance, refresh, fund, transaction history, custody disclosure
 - `/app/new` brief editor with authoritative chips and a generated sentence
 - `/app/catalog` three fixture tracks with coverage strips
 - `/app/purchase/[id]` review, approval, pending, refused, and settled license states
 - `/app/purchases` durable ledger
-- `/app/profile` account, wallet, projects, and share-link revocation
+- `/app/profile` account, wallet row, projects, and share-link revocation
 - `/proof/[token]` public, redacted, revocable proof
 
 ## Public endpoints
@@ -60,6 +62,9 @@ Backend-first music licensing agent. This checkout is connected to the existing
 - `POST` and `DELETE /api/purchases/[purchaseId]/share` (session, ownership, and same-origin
   required)
 - `GET /proof/[token]` (public, redacted, revocable proof view)
+- `GET` and `POST /api/wallet` (session required)
+- `POST /api/wallet/activate`, `/trustline`, `/faucet`, `/refresh`
+- `GET /api/wallet/transactions`
 - `GET /api/x402/license` (purchase-scoped x402 seller route)
 - `GET /api/x402/spike` (testnet protocol spike)
 
@@ -82,11 +87,21 @@ Auth values:
 BETTER_AUTH_SECRET
 BETTER_AUTH_URL
 APP_ORIGIN
-DEMO_ALLOWLIST_EMAILS
 ```
 
-`DEMO_ALLOWLIST_EMAILS` is a comma-separated list. An empty list fails closed. Sign-up is
-rejected for emails outside the list, and every authenticated request rechecks the list.
+Wallet and faucet values:
+
+```text
+WALLET_ENCRYPTION_KEY
+FAUCET_TREASURY_SECRET
+FAUCET_GRANT_BASE_UNITS
+FAUCET_DAILY_CAP_BASE_UNITS
+WALLET_MIN_XLM
+```
+
+`WALLET_ENCRYPTION_KEY` is a 32-byte base64 key. It encrypts each wallet secret with a
+per-row IV using AES-256-GCM. `FAUCET_TREASURY_SECRET` signs faucet grants. Both are
+Production-only secrets and must never be committed or logged.
 
 Private storage values:
 
@@ -106,14 +121,13 @@ X402_SELLER_PUBLIC
 X402_FACILITATOR_URL
 X402_ATTEMPT_SECRET
 X402_SELLER_BASE_URL
-X402_BUYER_SECRET   (Production only)
 PAYMENTS_ENABLED    (exactly "true" to enable pay)
 ```
 
 `X402_ATTEMPT_SECRET` must match between the pay route and the seller route.
-`X402_BUYER_SECRET` and `PAYMENTS_ENABLED=true` are set in Vercel Production only, never
-Preview or Development. The pay route returns `503 PAYMENTS_DISABLED` unless the flag is
-exactly `true`.
+`PAYMENTS_ENABLED=true` is set in Vercel Production only. The pay route returns
+`503 PAYMENTS_DISABLED` unless the flag is exactly `true`. The pay route signs with the
+owner's encrypted wallet, never a shared buyer secret.
 
 ## Database workflow
 
@@ -127,8 +141,9 @@ npm run db:seed:testnet
 ```
 
 Never run `drizzle-kit push`. Migration `0000` contains the licensing tables. Migration
-`0001` contains the Better Auth tables. Both migrations are applied to the main and test
-branches.
+`0001` contains the Better Auth tables. `0002` adds rate limits. `0003` adds the track audio
+hash. `0004` adds per-user wallets and faucet grants. All migrations are applied to the main
+and test branches.
 
 ## Verification
 
@@ -141,11 +156,13 @@ npm run build
 npm run r2:check
 ```
 
-`npm test` runs 66 tests in 9 files. The production UI was verified with Playwright:
+`npm test` runs 67 tests in 10 files. The production UI was verified with Playwright:
 landing, sign-in, home, brief, catalog, review, refused state, settled license with a
-private R2 download, purchases, profile, proof, signed-out redirect, and mobile bottom nav. The persistence and auth suites run when
-`DATABASE_URL_TEST` is present and skip otherwise. Do not point integration tests at the
-main branch.
+private R2 download, purchases, profile, proof, signed-out redirect, and mobile bottom nav.
+A fresh production account also completed the four onboarding steps, received a 5 USDC
+faucet grant, and bought a 1 USDC license from its own wallet. The persistence and auth
+suites run when `DATABASE_URL_TEST` is present and skip otherwise. Do not point integration
+tests at the main branch.
 
 Production smoke checks passed for health, email/password auth, sessions, project creation,
 owner-scoped reads, unauthenticated `401`, and cross-origin `403`.
@@ -157,6 +174,7 @@ owner-scoped reads, unauthenticated `401`, and cross-origin `403`.
 - [Vercel x402 seller and approved payment path](agent-state/payment-evidence.md)
 - [Production payment](agent-state/production-payment-evidence.md)
 - [PDF, audio, and share/proof delivery](agent-state/delivery-evidence.md)
+- [Per-user funding and purchase proof](agent-state/funding-evidence.md)
 
 The payment evidence includes:
 
@@ -168,15 +186,24 @@ The payment evidence includes:
 - PDF artifact: `art_3f03bc8a237f0dd4c812726c`
 - Audio artifact: `art_b1deeb1327e003781fb7135b`
 - Share proof read: 200, then 404 after revocation
+- New faucet-funded account: `GAPYFLWNKSGSQIOH2P6SRIIZ32GYVXIYRUQZ4G4OT7JMDSK2A5U5TMHD`
+- Faucet transaction: `5a6672727f59d685cd97f4feb1a953e11142d50dc32ed11b9347117c4ec3f03f`
+- Faucet-funded purchase: `90be474e0a4c1b0faa5fba821f4e21a37396b9cbdb5c788f21a99f3f497f7968`
+- Faucet-funded license: `GRANT-2026-9A30B34453`
 
 ## Safety boundaries
 
-- Registration is public. The demo allowlist gates spending only. Non-allowlisted owners can
-  create projects, quote, review coverage, and keep a refusal record. Their pay attempt returns
-  `403 DEMO_ACCOUNT_REQUIRED`, rendered as an explanatory panel.
-- Payments are enabled in Production behind the allowlist, the 6 USDC buyer ceiling, the
-  `PAYMENTS_ENABLED` flag, and durable per-owner rate limits.
-- The buyer secret is Production-only. Preview and Development must not have it.
+- Registration is public. There is no spending allowlist. Spending is bounded by the user's
+  on-chain balance, the faucet caps, and the existing project budget, approval, reservation,
+  rate-limit, and settlement checks.
+- Every user has their own Stellar testnet wallet. The secret is encrypted at rest with
+  AES-256-GCM and a per-row IV. It is never returned, logged, or committed.
+- Balance is always read from chain and cached for at most 30 seconds. A project budget is a
+  spending cap, not the wallet balance.
+- The faucet sends one 5 USDC grant per wallet under a hard daily treasury cap. If the
+  treasury is empty, the UI shows the wallet address and manual funding instructions.
+- Payments are enabled in Production behind the `PAYMENTS_ENABLED` flag, the user's wallet
+  balance, and durable per-owner rate limits.
 - The seller route settles payment through the facilitator. The buyer orchestrator verifies
   Horizon success, payer, network, and buyer/seller USDC deltas before finalizing.
 - Reconciliation never signs again and never creates a new attempt.
@@ -186,8 +213,8 @@ The payment evidence includes:
   ownership.
 - The demo payment is testnet-only. It does not prove mainnet custody, copyright coverage, or
   production financial safety.
-- The UI is intentionally deferred until the founder supplies a design reference after the
-  backend work is complete.
+- The UI follows DESIGN.md and the five supplied visual references. The paid-ad add-on,
+  broader hardening, and real authorized music remain.
 
 ## Deployment
 

@@ -18,8 +18,9 @@ import {
 } from "../../../../../lib/db/repositories";
 import { jsonSafe } from "../../../../../lib/db/serialize";
 import { errorResponse, jsonResponse } from "../../../../../lib/http";
-import { isDemoAllowlisted } from "../../../../../lib/auth/allowlist";
 import { createAttemptToken } from "../../../../../lib/payments/attempt-token";
+import { decryptOwnerSecret, requireFundedWallet } from "../../../../../lib/wallet/service";
+import { usdcBaseUnits } from "../../../../../lib/wallet/stellar";
 import { paymentsEnabled } from "../../../../../lib/payments/flags";
 import { getHorizonTransaction, getUsdcBalance, verifyTransferDelta } from "../../../../../lib/payments/verify-settlement";
 
@@ -54,13 +55,6 @@ export async function POST(request: Request, context: { params: Promise<{ purcha
     if (!paymentsEnabled()) {
       throw new RepositoryError("PAYMENTS_DISABLED", "Payments are disabled.", 503);
     }
-    if (!isDemoAllowlisted(auth.user.email)) {
-      throw new RepositoryError(
-        "DEMO_ACCOUNT_REQUIRED",
-        "This account can review coverage but cannot spend testnet funds. Sign in with a demo account to pay.",
-        403,
-      );
-    }
     const { purchaseId } = await context.params;
     const db = getDatabase();
     await consumeRateLimit(db, { ownerId: auth.ownerId, action: "pay" });
@@ -87,14 +81,16 @@ export async function POST(request: Request, context: { params: Promise<{ purcha
       throw new RepositoryError("PAYEE_NOT_CONFIGURED", "The purchase has no seller payee.", 422);
     }
 
-    const buyerSecret = process.env.X402_BUYER_SECRET ?? process.env.G0_BUYER_SECRET;
-    if (!buyerSecret) {
+    const walletState = await requireFundedWallet(db, auth.ownerId);
+    if (usdcBaseUnits(walletState.balance) < current.purchase.priceBaseUnits) {
       throw new RepositoryError(
-        "PAYMENT_EXECUTION_NOT_CONFIGURED",
-        "Payment execution is disabled on this deployment. The testnet buyer signer is not configured.",
-        503,
+        "INSUFFICIENT_BALANCE",
+        "The wallet balance does not cover this purchase.",
+        422,
+        { balance: walletState.balance, priceBaseUnits: current.purchase.priceBaseUnits.toString() },
       );
     }
+    const buyerSecret = decryptOwnerSecret(walletState.wallet);
 
     const reserve = await claimAttemptAndReserve(db, { ownerId: auth.ownerId, purchaseId });
     if (reserve.outcome !== "reserved") {

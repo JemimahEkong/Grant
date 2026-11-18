@@ -1,0 +1,56 @@
+{
+  "status": "confirmed",
+  "checkedAt": "2026-11-17T23:56:20.470Z",
+  "network": "stellar:testnet",
+  "email": "prod-fund-1794959670912@grant.local",
+  "walletAddress": "GAPYFLWNKSGSQIOH2P6SRIIZ32GYVXIYRUQZ4G4OT7JMDSK2A5U5TMHD",
+  "faucet": {
+    "amountBaseUnits": "50000000",
+    "transactionHash": "5a6672727f59d685cd97f4feb1a953e11142d50dc32ed11b9347117c4ec3f03f",
+    "status": "confirmed",
+    "createdAt": "2026-11-17T23:55:01.250Z"
+  },
+  "purchase": {
+    "projectId": "prj_1a975f9f3c4d4728b41a3887acdbc981",
+    "purchaseId": "pur_beeaa55ec33e46019d5a9ceebc246dad",
+    "licenseId": "lic_560132a582a542e68a489921c4b5b07e",
+    "licenseNumber": "GRANT-2026-9A30B34453",
+    "transactionHash": "90be474e0a4c1b0faa5fba821f4e21a37396b9cbdb5c788f21a99f3f497f7968",
+    "settlementReference": "stellar:testnet:90be474e0a4c1b0faa5fba821f4e21a37396b9cbdb5c788f21a99f3f497f7968:0",
+    "ledger": "5787225",
+    "amountBaseUnits": "10000000",
+    "status": "ready"
+  },
+  "balances": {
+    "buyerAfterPurchase": "4.0000000",
+    "treasuryAfterPurchase": "11.0000000"
+  },
+  "ui": {
+    "licenseVisible": true,
+    "pdfVisible": true,
+    "audioVisible": true
+  },
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 ()"
+  ],
+  "note": "Fresh production account funded by the faucet and paid from its own encrypted per-user Stellar wallet.",
+  "delivery": {
+    "pdf": {
+      "id": "art_f2b515f114c318d54a750795",
+      "bytes": 2433,
+      "sha256": "2b3dee8dea610be4c644c961a0037489d2a20de3061c4d4cc7f2a1f0663d7982",
+      "ready": true
+    },
+    "audio": {
+      "id": "art_1115a1b0f3774a4883534e90231121cd",
+      "bytes": 176444,
+      "sha256": "b1deeb1327e003781fb7135b879b9da7301e6a66e667c12b25b3cfbf5fc4d7bd",
+      "ready": true
+    },
+    "proof": {
+      "created": true,
+      "tokenRecorded": false
+    }
+  },
+  "deliveryCheckedAt": "2026-11-17T23:59:28.643Z"
+}
