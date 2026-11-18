@@ -180,7 +180,7 @@ npm run build
 npm run r2:check
 ```
 
-`npm test` runs 69 tests in 11 files. The production UI was verified with Playwright:
+`npm test` runs 72 tests in 12 files. The production UI was verified with Playwright:
 landing, sign-in, home, brief, catalog, review, refused state, settled license with a
 private R2 download, purchases, profile, proof, signed-out redirect, and mobile bottom nav.
 A fresh production account also completed the four onboarding steps, received a faucet
@@ -188,9 +188,11 @@ grant, and bought a 1 USDC license from its own wallet. The current faucet defau
 USDC per wallet under a 40.00 USDC daily cap. A capacity proof funded three fresh accounts
 in a row. A production add-on proof bought the Morning Edit base license and the paid-ad
 add-on from the same fresh account. The add-on page and the base page showed the combined
-coverage and the add-on's own receipt with no console errors. The persistence and auth
-suites run when `DATABASE_URL_TEST` is present and skip otherwise. Do not point integration
-tests at the main branch.
+coverage and the add-on's own receipt with no console errors. A seller-separated proof then
+moved 2.00 USDC from the treasury to a buyer, and the buyer paid 2.00 USDC to the dedicated
+seller across a base and an add-on purchase. The demo reset completed twice in a row. The
+persistence and auth suites run when `DATABASE_URL_TEST` is present and skip otherwise. Do
+not point integration tests at the main branch.
 
 Production smoke checks passed for health, email/password auth, sessions, project creation,
 owner-scoped reads, unauthenticated `401`, and cross-origin `403`.
@@ -206,8 +208,21 @@ owner-scoped reads, unauthenticated `401`, and cross-origin `403`.
 - [Faucet capacity proof](agent-state/faucet-capacity-evidence.md)
 - [CC0 audio provenance](agent-state/cc0-audio-evidence.md)
 - [Paid-ad add-on transaction](agent-state/addon-evidence.md)
+- [Seller separation and seller-separated purchase](agent-state/seller-separation-evidence.md)
+- [Repeatable demo reset](agent-state/demo-reset-evidence.md)
 
-The payment evidence includes:
+The current seller-separated proof uses three distinct addresses. Treasury:
+`GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB`. Seller:
+`GB53WOPIUPZTTTGPNDACTMZ3DJZ62HNRJP53ARI6EVSSBEWMLMF5SKBD`. The earlier add-on proof used
+the treasury as payee and is historical.
+
+- Treasury to buyer faucet: `d25abb7d7b3940c891cab201854856a67006233465be978598bb4ece3fb0eb80`
+- Buyer to seller base: `5faefa5615dfb6305c7513780bf8fff48ac1d391ea9187d92c58a3bf83149a25`
+- Buyer to seller add-on: `550d615b40c94670a9f835fa4e94dd77d12add896581c86e4eac76b570197c38`
+- Seller-separated base license: `GRANT-2026-73AB3285E6`
+- Seller-separated add-on license: `GRANT-2026-21C938B847`
+
+Earlier payment evidence:
 
 - Vercel seller route settlement: `b1e67dfcb0c4e8940609ec101d3b6755dd2dd50fa4c6d4f359cb119b7c1698bf`
 - Local approved purchase settlement: `03619c78787f6c56dc1f94338907cdbcb6d560a2059e64564a1bf0f387fccfcf`
@@ -262,7 +277,7 @@ The payment evidence includes:
 ## Deployment
 
 The linked Vercel project is `kaelah-s-projects/grant` with the Next.js preset. Production is
-https://grant-roan.vercel.app. Final deployment: `dpl_8RgrQETJ3by8V6EJLNvRUYeGEgPN`. The
+https://grant-roan.vercel.app. Final deployment: `dpl_D6oZuqiRLPZF1TBnkzoHZvL2tpPF`. The
 latest code deployment includes the Next.js x402 seller routes, the authenticated purchase
 routes, and the add-on routes. Vercel environment variables are sensitive.
 R2 credentials are configured for Production. OAuth is deferred.

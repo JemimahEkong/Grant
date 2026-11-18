@@ -4,10 +4,11 @@
 - Registration is public. No spending allowlist. Spending is bounded by the user's on-chain balance, faucet caps, project budget, approval, reservation, rate limits, and settlement checks.
 - Every user gets a Stellar testnet wallet. AES-256-GCM with WALLET_ENCRYPTION_KEY and a per-row IV. Never log, return, or commit a wallet secret.
 - Pay signs with the owner's decrypted wallet. X402_BUYER_SECRET and the shared buyer signer are retired.
-- WALLET_ENCRYPTION_KEY and FAUCET_TREASURY_SECRET are Production-only. The treasury is the seller payee account.
+- WALLET_ENCRYPTION_KEY and FAUCET_TREASURY_SECRET are Production-only. The treasury is the faucet funder only. The seller is a dedicated account. Never let an active offer pay the treasury.
+- Seller account: `GB53WOPIUPZTTTGPNDACTMZ3DJZ62HNRJP53ARI6EVSSBEWMLMF5SKBD`. Treasury: `GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB`. Seller activation tx `4b12e00886204f7a33676c1def7b5666f1adf25d6e3da2586c22e7c51d43f0c0`, trustline tx `79af83dec9c93b5e056431d62180be1846e4b1851905ab290ed52caaa125d147`. Seller secret is local-only and not deployed.
 - Balance is read from chain and cached at most 30 seconds. Project budget is a spending cap, not the balance.
 - Onboarding is a four-step gate: wallet, activate, trustline, fund. App routes redirect until complete.
-- Faucet defaults: 2.00 USDC per wallet, 40.00 USDC daily cap. One grant per wallet. Treasury empty shows the address and manual funding instructions. Treasury was 91.00 after top-up, 85.00 after funding three fresh accounts, 87.00 after the add-on proof.
+- Faucet defaults: 2.00 USDC per wallet, 40.00 USDC daily cap. One grant per wallet. Treasury empty shows the address and manual funding instructions. Treasury was 87.00 before seller separation, 79.00 after the seller proof and two reset runs.
 - Purchase-count cap defaults to 2 per project. It is enforced in the reservation transaction. Refusal code `PURCHASE_COUNT_CAP_EXCEEDED`. Reserved, payment_pending, settled, issuing, and ready consume slots. Refused and expired do not.
 - Add-ons: parent must be an owned, settled/ready base purchase with an active license. The add-on offer must reference the parent offer and seller. The server builds the delta: paid-ad use on the base platforms, base territory, original term, no new reposting, future campaigns, or client terms. The add-on has its own receipt and license with `parent_license_id`. The base license is unchanged. Combined coverage is computed from the license family.
 - CC0 audio is in `demo/audio/`. Provenance is in `demo/audio/PROVENANCE.md`. Seller identities and offer terms are fixtures. Do not label the audio as verified client work.
@@ -16,14 +17,17 @@
 - DEMO_PROOF_PATH holds the demo proof link. Do not print the raw share token.
 - Migration 0004 owns wallets and faucet grants. Migration 0005 owns `purchase_count_cap`. Do not add a balance column.
 - R2 bucket grant-private. Short-lived presigned GET URLs only after entitlement checks. No public object URLs.
-- Seller route derives price, asset, and payee from the immutable purchase and a short-lived HMAC attempt token. X402_ATTEMPT_SECRET must match.
+- Seller route derives price, asset, and payee from the immutable purchase and a short-lived HMAC attempt token. X402_ATTEMPT_SECRET must match. Approval and the seller route fail closed if any active offer pays the treasury.
 - Reconciliation never signs again or creates a new attempt.
 - Share tokens are 32 random bytes, stored only as SHA-256 hashes. Raw tokens are not committed or printed.
-- Production add-on proof: base tx `e666e5c6f922b4773ef0187c9ff2d87db4ae4f6c86618adbf3d33f22a56dfa26`, license `GRANT-2026-3F9A10D1B6`; add-on tx `a1b4bc87d1bde5d013bf60626ed9bb8f341a2ab99a9b625dc1cd502e521cb484`, license `GRANT-2026-BC32E70611`, parent license `lic_f5394ec546134fd9a862d8acd8e0f45e`. Combined organic plus paid ads on Instagram and TikTok, 2.00 USDC, 2 of 2 purchase slots.
-- Production URL: https://grant-roan.vercel.app. Final deployment: `dpl_8RgrQETJ3by8V6EJLNvRUYeGEgPN`.
-- G0 scripts are local-only. The seller binds 127.0.0.1. G0 secrets are not deployed.
+- Seller-separated proof: three distinct addresses. Faucet tx `d25abb7d7b3940c891cab201854856a67006233465be978598bb4ece3fb0eb80` moves 2.00 USDC treasury to buyer. Base tx `5faefa5615dfb6305c7513780bf8fff48ac1d391ea9187d92c58a3bf83149a25`, license `GRANT-2026-73AB3285E6`. Add-on tx `550d615b40c94670a9f835fa4e94dd77d12add896581c86e4eac76b570197c38`, license `GRANT-2026-21C938B847`. Buyer 0.00, seller 2.00, treasury 79.00.
+- The earlier add-on proof used the treasury as payee. It is historical. Do not use it as the current seller model.
+- Demo reset: `npm run demo:reset` creates a new account, funded wallet, and one clean project. It never deletes evidence. The script polls the wallet after the faucet so project creation does not race the balance cache. Two consecutive runs: `prj_c7cb6fad32844f8ea178922af56a2565` used for the seller proof, and clean project `prj_e1f8cf242c2349ada0e251025bfe4c6e` with wallet `GBAOVXPGANWX6FONTYLV5T6ANC7P2HNKBBGP4Q273TP7N2UJFQYHT64N`.
+- Health phase is `testnet-product-demo`. The health response keys are stable.
+- Production URL: https://grant-roan.vercel.app. Final deployment: `dpl_D6oZuqiRLPZF1TBnkzoHZvL2tpPF`.
+- G0 scripts are local-only. The G0 seller binds 127.0.0.1. G0 secrets are not deployed.
 - Catalog matching and fixture offers do not verify music ownership or seller authority. A testnet settlement proves the payment protocol only.
 - API gaps: no artifact byte sizes/content types, no license number in project purchase rows, BPM/seller display names join the demo catalog, wallet history labels limited by Horizon.
 - Remaining product gaps: commercial authorized music, refunds/disputes, mainnet, multi-tenant seller onboarding.
-- Final evidence: `agent-state/addon-evidence.md`, `agent-state/faucet-capacity-evidence.md`, `agent-state/cc0-audio-evidence.md`.
+- Final evidence: `agent-state/seller-separation-evidence.md`, `agent-state/demo-reset-evidence.md`, `agent-state/addon-evidence.md`, `agent-state/faucet-capacity-evidence.md`, `agent-state/cc0-audio-evidence.md`.
 - Follow AGENTS.md writing, checkpoint, state, and database rules. Keep replies concise.

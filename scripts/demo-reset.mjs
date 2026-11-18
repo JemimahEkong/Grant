@@ -69,6 +69,16 @@ async function main() {
     throw new Error(`Faucet failed with ${faucet.status}: ${JSON.stringify(faucet.body).slice(0, 300)}`);
   }
 
+  let fundedView = null;
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    fundedView = await jsonRequest("/api/wallet?refresh=1", cookie);
+    if (fundedView.status === 200 && Number(fundedView.body.balance) >= 2) break;
+    await new Promise(resolve => setTimeout(resolve, 1500));
+  }
+  if (!fundedView || fundedView.status !== 200 || Number(fundedView.body.balance) < 2) {
+    throw new Error(`Faucet funding was not visible to the app: ${JSON.stringify(fundedView?.body ?? {}).slice(0, 300)}`);
+  }
+
   const project = await jsonRequest("/api/projects", cookie, {
     clientPrivateName: "Demo Reset Client",
     publicDisplayLabel: "Demo Reset Project",

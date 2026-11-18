@@ -1,5 +1,7 @@
 # Paid-ad add-on evidence
 
+Historical note: this proof was recorded before seller separation. The payee in this record was the faucet treasury. The current seller-separated proof is in `agent-state/seller-separation-evidence.md`.
+
 Status: confirmed on production at https://grant-roan.vercel.app.
 
 ## Base purchase

@@ -1,0 +1,81 @@
+{
+  "status": "confirmed",
+  "checkedAt": "2026-11-18T22:15:48.230Z",
+  "health": {
+    "status": 200,
+    "phase": "testnet-product-demo"
+  },
+  "addresses": {
+    "treasury": "GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB",
+    "buyer": "GBBBO4IQTOCVMAUWP52SJAYOYVWQN776MIW2EJVSREKUPQAIOGJUECQD",
+    "seller": "GB53WOPIUPZTTTGPNDACTMZ3DJZ62HNRJP53ARI6EVSSBEWMLMF5SKBD",
+    "allDistinct": true
+  },
+  "sellerSetup": {
+    "activationTransaction": "4b12e00886204f7a33676c1def7b5666f1adf25d6e3da2586c22e7c51d43f0c0",
+    "trustlineTransaction": "79af83dec9c93b5e056431d62180be1846e4b1851905ab290ed52caaa125d147",
+    "sellerXlmBalance": "2.9999900"
+  },
+  "faucet": {
+    "transaction": "d25abb7d7b3940c891cab201854856a67006233465be978598bb4ece3fb0eb80",
+    "from": "GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB",
+    "to": "GBBBO4IQTOCVMAUWP52SJAYOYVWQN776MIW2EJVSREKUPQAIOGJUECQD",
+    "amount": "2.0000000",
+    "asset": "USDC:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5"
+  },
+  "base": {
+    "purchaseId": "pur_e2608dd3375043268ce67a39dd9b1d9e",
+    "transaction": "5faefa5615dfb6305c7513780bf8fff48ac1d391ea9187d92c58a3bf83149a25",
+    "ledger": "5803294",
+    "amountBaseUnits": "10000000",
+    "license": "GRANT-2026-73AB3285E6",
+    "payee": "GB53WOPIUPZTTTGPNDACTMZ3DJZ62HNRJP53ARI6EVSSBEWMLMF5SKBD",
+    "status": "settled"
+  },
+  "addon": {
+    "purchaseId": "pur_ebcaa45b8aa04cf2b1d24e807c106eac",
+    "transaction": "550d615b40c94670a9f835fa4e94dd77d12add896581c86e4eac76b570197c38",
+    "ledger": "5803298",
+    "amountBaseUnits": "10000000",
+    "license": "GRANT-2026-21C938B847",
+    "parentLicenseId": "lic_e2d8b7a91666478faf46962f21229839",
+    "payee": "GB53WOPIUPZTTTGPNDACTMZ3DJZ62HNRJP53ARI6EVSSBEWMLMF5SKBD",
+    "status": "ready"
+  },
+  "combinedCoverage": {
+    "organicPlatforms": [
+      "instagram",
+      "tiktok"
+    ],
+    "paidAdPlatforms": [
+      "instagram",
+      "tiktok"
+    ],
+    "totalBaseUnits": "20000000",
+    "licenses": [
+      "GRANT-2026-73AB3285E6",
+      "GRANT-2026-21C938B847"
+    ]
+  },
+  "balances": {
+    "buyerBefore": "2.0000000",
+    "buyerAfter": "0.0000000",
+    "sellerAfter": "2.0000000",
+    "treasuryAfter": "79.0000000"
+  },
+  "project": {
+    "id": "prj_c7cb6fad32844f8ea178922af56a2565",
+    "purchasesUsed": 2,
+    "purchaseCountCap": 2,
+    "confirmedSpendBaseUnits": "20000000"
+  },
+  "assertions": {
+    "distinctAddresses": true,
+    "faucetTreasuryToBuyer": true,
+    "baseBuyerToSeller": true,
+    "addonBuyerToSeller": true,
+    "sellerReceivedTwoUsdc": true,
+    "buyerSpentTwoUsdc": true,
+    "treasuryNotPayee": true
+  }
+}
