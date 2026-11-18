@@ -3,6 +3,7 @@ import { withX402 } from "@x402/next";
 import { ExactStellarScheme } from "@x402/stellar/exact/server";
 import { NextRequest, NextResponse } from "next/server";
 import { getDatabase } from "../../../../lib/db/client";
+import { assertActiveOffersDoNotPayTreasury, assertPayeeIsNotTreasury } from "../../../../lib/payments/payee-guard";
 import { loadSellerPurchase } from "../../../../lib/payments/seller-purchase";
 
 export const runtime = "nodejs";
@@ -23,12 +24,21 @@ function tokenFromContext(context: TokenContext) {
   return token;
 }
 
+async function loadPurchaseWithGuard(token: string) {
+  const db = getDatabase();
+  await assertActiveOffersDoNotPayTreasury(db);
+  const result = await loadSellerPurchase(db, token);
+  if (!result.purchase.payeeAddress) throw new Error("Missing seller payee.");
+  assertPayeeIsNotTreasury(result.purchase.payeeAddress);
+  return result;
+}
+
 async function handler(request: NextRequest): Promise<NextResponse> {
   const token = new URL(request.url).searchParams.get("token");
   if (!token) {
     return NextResponse.json({ code: "ATTEMPT_TOKEN_REQUIRED", message: "Missing attempt token." }, { status: 403 });
   }
-  const { purchase } = await loadSellerPurchase(getDatabase(), token);
+  const { purchase } = await loadPurchaseWithGuard(token);
   return NextResponse.json({
     grantX402: "settled",
     mode: "approved-purchase-seller",
@@ -51,11 +61,11 @@ export const GET = withX402(
       scheme: "exact",
       network,
       price: async context => {
-        const { purchase } = await loadSellerPurchase(getDatabase(), tokenFromContext(context));
+        const { purchase } = await loadPurchaseWithGuard(tokenFromContext(context));
         return { asset: purchase.assetContractId, amount: purchase.priceBaseUnits.toString() };
       },
       payTo: async context => {
-        const { purchase } = await loadSellerPurchase(getDatabase(), tokenFromContext(context));
+        const { purchase } = await loadPurchaseWithGuard(tokenFromContext(context));
         if (!purchase.payeeAddress) throw new Error("Missing seller payee.");
         return purchase.payeeAddress;
       },

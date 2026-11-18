@@ -7,7 +7,7 @@ export function GET() {
   return jsonResponse({
     product: "Grant",
     status: "ok",
-    phase: "persistence-foundation",
+    phase: "testnet-product-demo",
     databaseConfigured: Boolean(process.env.DATABASE_URL),
     purchasesEnabled: paymentsEnabled(),
   });

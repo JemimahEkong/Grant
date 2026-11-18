@@ -103,6 +103,8 @@
 - Do not bypass approval, reservations, settlement verification, or reconciliation when changing payment code.
 - Approvals fail closed when a seller payee is missing or is not a valid Stellar public key.
 - G0 buyer/seller scripts are local-only. Keep the seller bound to localhost. The faucet treasury secret is a separate Production-only operational secret.
+- The product seller payee must be a dedicated account, never the faucet treasury. Approval and the seller route fail closed if any active offer pays the treasury. Use `npm run seller:create` and `npm run db:seed:testnet` when rotating the seller. The seller secret is local-only and is not deployed.
+- `npm run demo:reset` creates a new clean demo account, wallet, and project. It must not delete settled purchase evidence or other projects.
 - Migration 0004 owns per-user wallets and faucet grants. Migration 0005 owns purchase_count_cap. Do not add a balance column.
 - The per-project purchase-count cap is enforced in the same transaction as budget reservation. Refused and expired entries do not consume a slot.
 - Paid-ad add-ons require an owned, settled base purchase, the same seller, a parent offer match, and a server-derived delta. Never accept the delta, parent, or price from the client. The add-on gets its own receipt and license and keeps the base term.

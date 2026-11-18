@@ -19,6 +19,8 @@
     "g0:buyer": "node --env-file-if-exists=.env.local scripts/g0-buyer.mjs",
     "x402:vercel:buyer": "node --env-file-if-exists=.env.local scripts/x402-vercel-buyer.mjs",
     "r2:check": "node --env-file-if-exists=.env.local scripts/check-r2.mjs",
+    "seller:create": "node --env-file-if-exists=.env.local scripts/create-seller-account.mjs",
+    "demo:reset": "node --env-file-if-exists=.env.local scripts/demo-reset.mjs",
     "db:generate": "node --env-file-if-exists=.env.local ./node_modules/drizzle-kit/bin.cjs generate",
     "db:migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs",
     "db:migrate:test": "node --env-file-if-exists=.env.local scripts/migrate.mjs --test",

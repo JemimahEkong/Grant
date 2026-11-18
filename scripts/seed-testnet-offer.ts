@@ -1,12 +1,17 @@
+import { eq } from "drizzle-orm";
 import { demoOffers } from "../demo/catalog";
 import { createDatabase, resolveDatabaseUrl } from "../lib/db/client";
 import { offers } from "../lib/db/schema";
+import { assertActiveOffersDoNotPayTreasury, assertPayeeIsNotTreasury } from "../lib/payments/payee-guard";
+import { isStellarPublicKey } from "../lib/payments/stellar-address";
 
 const database = createDatabase(resolveDatabaseUrl(process.env, "DATABASE_URL"));
 
 async function main() {
-  const payee = process.env.X402_SELLER_PUBLIC;
+  const payee = process.env.X402_SELLER_PUBLIC?.trim();
   if (!payee) throw new Error("X402_SELLER_PUBLIC is not configured.");
+  if (!isStellarPublicKey(payee)) throw new Error("X402_SELLER_PUBLIC is not a valid Stellar public key.");
+  assertPayeeIsNotTreasury(payee);
 
   let baseCount = 0;
   let addonCount = 0;
@@ -69,7 +74,15 @@ async function main() {
     else baseCount += 1;
   }
 
+  const updated = await database.db
+    .update(offers)
+    .set({ payeeAddress: payee })
+    .where(eq(offers.active, true))
+    .returning({ id: offers.id });
+  await assertActiveOffersDoNotPayTreasury(database.db);
+
   console.log(`Testnet demo offers ready: ${baseCount} base offers and ${addonCount} add-on offers.`);
+  console.log(`Repointed ${updated.length} active offers to the dedicated seller.`);
 }
 
 main()

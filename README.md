@@ -16,6 +16,8 @@ Backend-first music licensing agent. This checkout is connected to the existing
   transaction. A paid-ad add-on attaches to an owned, settled base purchase, keeps the
   original term, gets its own receipt, and shows combined coverage.
 - Three real CC0 demo tracks with provenance replace the synthetic placeholder audio.
+- A dedicated seller account is separate from the faucet treasury. The approval path and
+  seller route fail closed if any active offer pays the treasury.
 - Durable Neon persistence with Drizzle migrations for licensing records and auth records.
 - Cloudflare R2 private storage using the S3 SDK. Downloads are short-lived presigned GET
   URLs issued only after an entitlement check. No public object URLs.
@@ -83,6 +85,19 @@ npm ci
 npm run dev
 ```
 
+Operator setup and demo helpers:
+
+```sh
+npm run seller:create    # create or reuse the dedicated seller keypair, fund XLM, add trustline
+npm run db:seed:testnet  # repoint every active offer at the seller
+npm run demo:reset       # create a clean demo account and project
+```
+
+`npm run demo:reset` targets `https://grant-roan.vercel.app` by default. Set
+`DEMO_RESET_BASE_URL` to use another origin. It creates a new account, funds the wallet with
+2.00 testnet USDC, creates one project, and prints the email, wallet address, balance, and
+project ID. It never deletes settled purchases or evidence.
+
 Copy `.env.example` to `.env.local` and fill in the values you actually hold. `DATABASE_URL`
 points at the Grant main branch. `DATABASE_URL_TEST` points at the separate Neon `test`
 branch. Never commit either value.
@@ -124,13 +139,16 @@ Payment values:
 
 ```text
 X402_SELLER_PUBLIC
+X402_SELLER_SECRET    (local operator only, never deployed)
 X402_FACILITATOR_URL
 X402_ATTEMPT_SECRET
 X402_SELLER_BASE_URL
 PAYMENTS_ENABLED    (exactly "true" to enable pay)
 ```
 
-`X402_ATTEMPT_SECRET` must match between the pay route and the seller route.
+`X402_SELLER_PUBLIC` is the dedicated seller payee. `X402_SELLER_SECRET` stays in
+`.env.local` for operator setup and is not read by the app. The seller must never equal the
+faucet treasury. `X402_ATTEMPT_SECRET` must match between the pay route and the seller route.
 `PAYMENTS_ENABLED=true` is set in Vercel Production only. The pay route returns
 `503 PAYMENTS_DISABLED` unless the flag is exactly `true`. The pay route signs with the
 owner's encrypted wallet, never a shared buyer secret.
@@ -225,6 +243,8 @@ The payment evidence includes:
   balance, and durable per-owner rate limits.
 - The seller route settles payment through the facilitator. The buyer orchestrator verifies
   Horizon success, payer, network, and buyer/seller USDC deltas before finalizing.
+- The seller payee is a dedicated account, separate from the faucet treasury. Approval and
+  the seller route fail closed if any active offer pays the treasury.
 - Reconciliation never signs again and never creates a new attempt.
 - Private audio and PDFs are served only through short-lived presigned GET URLs after session,
   ownership, purchase-state, license, and artifact checks.

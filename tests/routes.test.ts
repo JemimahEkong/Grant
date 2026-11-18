@@ -10,10 +10,24 @@ function request(value: unknown) {
 }
 
 describe("backend routes", () => {
-  it("reports a healthy foundation without claiming payment is enabled", async () => {
+  it("reports the current testnet product phase with a stable response", async () => {
     const response = health();
     expect(response.headers.get("cache-control")).toBe("no-store");
-    expect(await response.json()).toMatchObject({ status: "ok", purchasesEnabled: expect.any(Boolean) });
+    const body = await response.json();
+    expect(body).toMatchObject({
+      product: "Grant",
+      status: "ok",
+      phase: "testnet-product-demo",
+      databaseConfigured: expect.any(Boolean),
+      purchasesEnabled: expect.any(Boolean),
+    });
+    expect(Object.keys(body).sort()).toEqual([
+      "databaseConfigured",
+      "phase",
+      "product",
+      "purchasesEnabled",
+      "status",
+    ]);
   });
   it("labels catalog terms as fixtures with CC0 audio and no authority evidence", async () => {
     expect(await catalog().json()).toMatchObject({ mode: "fixture", audioAvailable: true, purchasesEnabled: expect.any(Boolean), offers: expect.any(Array) });

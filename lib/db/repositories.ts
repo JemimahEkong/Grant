@@ -1,5 +1,6 @@
 import { and, desc, eq, inArray, isNull, ne, sql } from "drizzle-orm";
 import { z } from "zod";
+import { assertPayeeIsNotTreasury } from "../payments/payee-guard";
 import { isStellarPublicKey } from "../payments/stellar-address";
 import { briefSchema, type Brief } from "../licensing/schema";
 import { matchOffer } from "../licensing/match";
@@ -818,6 +819,7 @@ export async function approvePurchase(
       if (!isStellarPublicKey(purchase.payeeAddress)) {
         throw new RepositoryError("PAYEE_INVALID", "The seller payee is not a valid Stellar public key.", 422);
       }
+      assertPayeeIsNotTreasury(purchase.payeeAddress);
 
       const fingerprint = purchaseFingerprint(purchase);
       const [existingApproval] = await tx
