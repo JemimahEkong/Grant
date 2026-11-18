@@ -1,6 +1,5 @@
 import { PDFDocument } from "pdf-lib";
 import { describe, expect, it } from "vitest";
-import { buildDemoWav } from "../lib/documents/demo-audio";
 import { buildLicensePdf, formatUsdc } from "../lib/documents/license-pdf";
 import type { Brief } from "../lib/licensing/schema";
 
@@ -28,6 +27,7 @@ describe("license PDF", () => {
       publicDisplayLabel: "Demo Client",
       trackTitle: "Morning Edit",
       sellerId: "seller-demo-morning",
+      audioProvenance: "CC0 1.0 demo audio: Acoustic Guitar and Keys - Plains Soundtrack by tyballer92, Freesound 449812.",
       startsAt: new Date("2026-11-17T00:00:00Z"),
       endsAt: new Date("2027-02-15T00:00:00Z"),
       purchaseId: "pur_test",
@@ -42,15 +42,5 @@ describe("license PDF", () => {
     expect(bytes.byteLength).toBeGreaterThan(800);
     const loaded = await PDFDocument.load(bytes);
     expect(loaded.getPageCount()).toBe(1);
-  });
-});
-
-describe("demo audio placeholder", () => {
-  it("builds a valid mono PCM WAV with RIFF and data headers", () => {
-    const wav = buildDemoWav({ seconds: 1, frequency: 440, sampleRate: 1000 });
-    expect(wav.subarray(0, 4).toString("ascii")).toBe("RIFF");
-    expect(wav.subarray(8, 12).toString("ascii")).toBe("WAVE");
-    expect(wav.subarray(36, 40).toString("ascii")).toBe("data");
-    expect(wav.byteLength).toBe(44 + 1000 * 2);
   });
 });

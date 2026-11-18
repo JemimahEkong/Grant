@@ -12,6 +12,7 @@ import {
   getProjectForOwner,
   getPurchaseForOwner,
   markSigningStarted,
+  quoteAddonPurchase,
   quotePurchase,
   releaseUnsignedReservation,
 } from "../lib/db/repositories";
@@ -40,6 +41,7 @@ const dbDescribe = testDatabaseUrl ? describe : describe.skip;
 const ownerId = `test-owner-${randomUUID()}`;
 const testPayee = "GCPZ7PXUUNJ3DIOYB7DQMPAYDLQNMKW6ULGT4BE2JBO6E22HTACNTVPX";
 const testOffer = { id: "morning-edit-test-payee", version: 1, trackId: "morning-edit" };
+const testAddonOffer = { id: "morning-edit-test-addon", version: 1, trackId: "morning-edit" };
 const oneUsdc = "10000000";
 
 const baseBrief: Brief = {
@@ -186,7 +188,41 @@ dbDescribe("Neon persistence and licensing workflow", () => {
         target: [offers.id, offers.version],
         set: { payeeAddress: testPayee, active: true },
       });
-    expect(demoOffers).toHaveLength(3);
+    await db
+      .insert(offers)
+      .values({
+        id: testAddonOffer.id,
+        version: testAddonOffer.version,
+        trackId: testAddonOffer.trackId,
+        sellerId: "seller-demo-morning",
+        kind: "addon",
+        parentOfferId: testOffer.id,
+        parentOfferVersion: testOffer.version,
+        authorityComposition: true,
+        authorityMaster: true,
+        platformsOrganic: [],
+        platformsPaidAd: ["instagram", "facebook", "tiktok", "youtube"],
+        territoryWorldwide: true,
+        territoryCountries: [],
+        maximumTermDays: 90,
+        maximumClipSeconds: 60,
+        clientDelivery: true,
+        reposting: false,
+        futureCampaigns: false,
+        amountBaseUnits: BigInt(oneUsdc),
+        network: stellarTestnetUsdc.network,
+        assetContractId: stellarTestnetUsdc.assetContractId,
+        assetDecimals: stellarTestnetUsdc.assetDecimals,
+        payeeAddress: testPayee,
+        active: true,
+        activeFrom: new Date("2020-01-01T00:00:00Z"),
+        expiresAt: null,
+      })
+      .onConflictDoUpdate({
+        target: [offers.id, offers.version],
+        set: { payeeAddress: testPayee, active: true, parentOfferId: testOffer.id, parentOfferVersion: testOffer.version },
+      });
+    expect(demoOffers).toHaveLength(4);
   }, 30_000);
 
   afterAll(async () => {
@@ -506,5 +542,108 @@ dbDescribe("Neon persistence and licensing workflow", () => {
     await expect(getPurchaseForOwner(db, { ownerId: "another-owner", purchaseId: reserved.purchase.id })).rejects.toMatchObject({
       code: "NOT_FOUND",
     });
+  });
+
+  it("quotes and settles a paid-ad add-on with its own receipt and combined coverage", async () => {
+    const unsettledProject = await newProject();
+    const unsettledQuote = await quoteFor(unsettledProject);
+    const unsettledPurchase = assertPurchase(unsettledQuote.purchase);
+    await expect(
+      quoteAddonPurchase(db, {
+        ownerId,
+        parentPurchaseId: unsettledPurchase.id,
+        offerId: testAddonOffer.id,
+        offerVersion: testAddonOffer.version,
+        idempotencyKey: randomId("key"),
+      }),
+    ).rejects.toMatchObject({ code: "ADDON_NOT_AVAILABLE" });
+
+    const project = await newProject();
+    const baseReservation = await reserve(project);
+    const baseSignature = await sign(baseReservation.attempt);
+    const baseVerifiedAt = new Date();
+    const baseTransactionHash = sha256Hex({ base: baseReservation.purchase.id, nonce: randomId("tx") });
+    const baseSettlement = await finalizeSettlement(db, {
+      ownerId,
+      purchaseId: baseReservation.purchase.id,
+      attemptId: baseReservation.attempt.id,
+      network: stellarTestnetUsdc.network,
+      assetContractId: stellarTestnetUsdc.assetContractId,
+      payeeAddress: testPayee,
+      amountBaseUnits: oneUsdc,
+      transactionHash: baseTransactionHash,
+      settlementReference: `stellar:testnet:${baseTransactionHash}:0`,
+      authorizationDigest: baseSignature.authorizationDigest,
+      ledger: 123456n,
+      verificationSource: "test_addon_base",
+      verifiedAt: baseVerifiedAt,
+    });
+    expect(baseSettlement.license.kind).toBe("base");
+
+    const addonQuote = await quoteAddonPurchase(db, {
+      ownerId,
+      parentPurchaseId: baseSettlement.purchase.id,
+      offerId: testAddonOffer.id,
+      offerVersion: testAddonOffer.version,
+      idempotencyKey: randomId("key"),
+    });
+    expect(addonQuote.outcome).toBe("quoted");
+    const addonPurchase = assertPurchase(addonQuote.purchase);
+    expect(addonPurchase.kind).toBe("addon");
+    expect(addonPurchase.parentPurchaseId).toBe(baseSettlement.purchase.id);
+    expect(addonPurchase.priceBaseUnits).toBe(10_000_000n);
+    expect(addonPurchase.coverageSnapshot.request).toMatchObject({
+      intendedUse: "paid_ad",
+      platforms: baseBrief.platforms,
+      termDays: baseBrief.termDays,
+      clientDelivery: baseBrief.clientDelivery,
+      reposting: false,
+      futureCampaigns: false,
+    });
+
+    const addonApproval = await approvePurchase(db, {
+      ownerId,
+      purchaseId: addonPurchase.id,
+      approvingHuman: "human_addon",
+    });
+    if (addonApproval.outcome !== "approved") throw new Error(`Expected add-on approval, received ${addonApproval.outcome}.`);
+    const addonReservation = await claimAttemptAndReserve(db, { ownerId, purchaseId: addonPurchase.id });
+    if (addonReservation.outcome !== "reserved") {
+      throw new Error(`Expected add-on reservation, received ${addonReservation.outcome}.`);
+    }
+    const addonSignature = await sign(addonReservation.attempt);
+    const addonTransactionHash = sha256Hex({ addon: addonPurchase.id, nonce: randomId("tx") });
+    const addonSettlement = await finalizeSettlement(db, {
+      ownerId,
+      purchaseId: addonPurchase.id,
+      attemptId: addonReservation.attempt.id,
+      network: stellarTestnetUsdc.network,
+      assetContractId: stellarTestnetUsdc.assetContractId,
+      payeeAddress: testPayee,
+      amountBaseUnits: oneUsdc,
+      transactionHash: addonTransactionHash,
+      settlementReference: `stellar:testnet:${addonTransactionHash}:0`,
+      authorizationDigest: addonSignature.authorizationDigest,
+      ledger: 123457n,
+      verificationSource: "test_addon_settlement",
+      verifiedAt: new Date(baseVerifiedAt.getTime() + 60_000),
+    });
+    expect(addonSettlement.license.kind).toBe("addon");
+    expect(addonSettlement.license.parentLicenseId).toBe(baseSettlement.license.id);
+    expect(addonSettlement.license.endsAt.getTime()).toBe(baseSettlement.license.endsAt.getTime());
+    expect(addonSettlement.receipt.amountBaseUnits).toBe(10_000_000n);
+    expect(addonSettlement.receipt.transactionHash).not.toBe(baseSettlement.receipt.transactionHash);
+
+    const baseView = await getPurchaseForOwner(db, { ownerId, purchaseId: baseSettlement.purchase.id });
+    expect(baseView.combinedCoverage?.baseLicense?.licenseId).toBe(baseSettlement.license.id);
+    expect(baseView.combinedCoverage?.addonLicenses).toHaveLength(1);
+    expect(baseView.combinedCoverage?.addonLicenses[0]?.licenseId).toBe(addonSettlement.license.id);
+    expect(baseView.combinedCoverage?.organicPlatforms).toEqual(baseBrief.platforms);
+    expect(baseView.combinedCoverage?.paidAdPlatforms).toEqual(baseBrief.platforms);
+    expect(baseView.combinedCoverage?.totalBaseUnits).toBe("20000000");
+
+    const addonView = await getPurchaseForOwner(db, { ownerId, purchaseId: addonPurchase.id });
+    expect(addonView.combinedCoverage?.baseLicense?.licenseId).toBe(baseSettlement.license.id);
+    expect(addonView.combinedCoverage?.addonLicenses[0]?.licenseId).toBe(addonSettlement.license.id);
   });
 });

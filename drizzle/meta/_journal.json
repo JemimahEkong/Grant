@@ -36,6 +36,13 @@
       "when": 1794957987456,
       "tag": "0004_condemned_bullseye",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795035078372,
+      "tag": "0005_tricky_mister_sinister",
+      "breakpoints": true
     }
   ]
 }

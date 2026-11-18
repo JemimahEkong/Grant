@@ -54,6 +54,8 @@ export type Me = {
 export type BudgetSummary = {
   budgetBaseUnits: string;
   purchaseCapBaseUnits: string;
+  purchaseCountCap: number;
+  purchasesUsed: number;
   confirmedSpendBaseUnits: string;
   activeReservationsBaseUnits: string;
   adjustmentsBaseUnits: string;
@@ -70,6 +72,7 @@ export type Project = {
   briefHash: string;
   budgetBaseUnits: string;
   purchaseCapBaseUnits: string;
+  purchaseCountCap: number;
   createdAt: string;
   updatedAt: string;
 };
@@ -258,6 +261,61 @@ export type Track = {
   createdAt: string;
 };
 
+export type CoverageLicenseSummary = {
+  licenseId: string;
+  licenseNumber: string;
+  purchaseId: string;
+  kind: OfferKind;
+  startsAt: string;
+  endsAt: string;
+  amountBaseUnits: string;
+  transactionHash: string | null;
+  organicPlatforms: Platform[];
+  paidAdPlatforms: Platform[];
+};
+
+export type CombinedCoverage = {
+  baseLicense: CoverageLicenseSummary | null;
+  addonLicenses: CoverageLicenseSummary[];
+  organicPlatforms: Platform[];
+  paidAdPlatforms: Platform[];
+  territory: Brief["territory"] | null;
+  startsAt: string | null;
+  endsAt: string | null;
+  termDays: number | null;
+  clipDurationSeconds: number | null;
+  clientDelivery: boolean;
+  reposting: boolean;
+  futureCampaigns: boolean;
+  totalBaseUnits: string;
+};
+
+export type AddonOfferView = {
+  offerId: string;
+  offerVersion: number;
+  title: string;
+  amountBaseUnits: string;
+  platforms: Platform[];
+  termDays: number;
+  endsAt: string;
+  territory: Brief["territory"];
+  clipDurationSeconds: number;
+  clientDelivery: boolean;
+  available: boolean;
+  reasons: Array<{ code: string; message: string }>;
+};
+
+export type AddonAvailability = {
+  eligible: boolean;
+  reason: string | null;
+  parentPurchaseId: string;
+  parentLicense: CoverageLicenseSummary | null;
+  baseRequest: Brief | null;
+  addons: AddonOfferView[];
+  existing: CoverageLicenseSummary[];
+  combinedCoverage: CombinedCoverage | null;
+};
+
 export type PurchaseView = {
   purchase: Purchase;
   project: Project | null;
@@ -269,6 +327,7 @@ export type PurchaseView = {
   license: License | null;
   artifacts: Artifact[];
   refusal: Refusal | null;
+  combinedCoverage: CombinedCoverage | null;
 };
 
 export type CatalogItem = {
@@ -281,6 +340,8 @@ export type CatalogItem = {
   sellerName: string;
   durationSeconds: number;
   bpm: number | null;
+  sourceLabel: string | null;
+  provenanceReference: string | null;
   amountBaseUnits: string;
   platformsByUse: PlatformsByUse;
   territory: Brief["territory"];

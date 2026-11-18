@@ -75,7 +75,6 @@ export default function HomePage() {
   const spent = budget
     ? (BigInt(budget.confirmedSpendBaseUnits) + BigInt(budget.activeReservationsBaseUnits)).toString()
     : "0";
-  const settledCount = view?.purchases.filter(purchase => ["settled", "issuing", "ready"].includes(purchase.status)).length ?? 0;
   const recent = view?.purchases.slice(0, 3) ?? [];
 
   return (
@@ -98,9 +97,9 @@ export default function HomePage() {
               ))}
             </select>
             <div className="muted" style={{ marginTop: 3, fontSize: 9.5 }}>
-              {projectLoading
+              {projectLoading || !budget
                 ? "Loading purchases…"
-                : `${settledCount} settled ${settledCount === 1 ? "purchase" : "purchases"} · ${formatUsdc(selectedProject.purchaseCapBaseUnits)} USDC per-purchase cap`}
+                : `${budget.purchasesUsed} of ${budget.purchaseCountCap} purchases used · ${formatUsdc(selectedProject.purchaseCapBaseUnits)} USDC per-purchase cap`}
             </div>
           </div>
           <span className="chev" aria-hidden="true">›</span>

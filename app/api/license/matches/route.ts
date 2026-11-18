@@ -12,6 +12,6 @@ export async function POST(request: Request) {
     mode: "fixture",
     purchasesEnabled: false,
     disclosure: demoDisclosure,
-    results: matchCatalog(parsed.data, demoOffers),
+    results: matchCatalog(parsed.data, demoOffers.filter(offer => offer.kind === "base")),
   });
 }

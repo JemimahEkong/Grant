@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 
 export function GET() {
   const payeeConfigured = Boolean(process.env.X402_SELLER_PUBLIC);
-  const items = demoOffers.map(offer => {
+  const items = demoOffers.filter(offer => offer.kind === "base").map(offer => {
     const track = demoTracks.find(candidate => candidate.id === offer.trackId);
     return {
       offerId: payeeConfigured ? `${offer.trackId}-testnet-base` : offer.id,
@@ -18,6 +18,8 @@ export function GET() {
       sellerName: track?.sellerName ?? offer.sellerId,
       durationSeconds: track?.durationSeconds ?? 0,
       bpm: track?.bpm ?? null,
+      sourceLabel: track?.sourceLabel ?? null,
+      provenanceReference: track?.provenanceReference ?? null,
       amountBaseUnits: offer.amountBaseUnits,
       platformsByUse: offer.platformsByUse,
       territory: offer.territory,
@@ -32,7 +34,7 @@ export function GET() {
   return jsonResponse({
     mode: "fixture",
     purchasesEnabled: paymentsEnabled(),
-    audioAvailable: false,
+    audioAvailable: true,
     disclosure: demoDisclosure,
     offers: demoOffers,
     tracks: demoTracks,

@@ -134,7 +134,7 @@ export async function getPublicProof(db: GrantDatabase, token: string): Promise<
   return {
     product: "Grant",
     demoDisclosure:
-      "Demo license record on Stellar testnet. Authority evidence has not been independently verified. This proof does not transfer copyright and is not legal advice.",
+      "Demo license record on Stellar testnet. Audio is a CC0 demo recording with recorded provenance. Seller identity and authority evidence are fixtures and have not been independently verified. This proof does not transfer copyright and is not legal advice.",
     projectLabel: project.publicDisplayLabel,
     trackId: track.id,
     track: {

@@ -15,8 +15,8 @@ describe("backend routes", () => {
     expect(response.headers.get("cache-control")).toBe("no-store");
     expect(await response.json()).toMatchObject({ status: "ok", purchasesEnabled: expect.any(Boolean) });
   });
-  it("labels catalog terms as fixtures without audio or authority evidence", async () => {
-    expect(await catalog().json()).toMatchObject({ mode: "fixture", audioAvailable: false, purchasesEnabled: expect.any(Boolean), offers: expect.any(Array) });
+  it("labels catalog terms as fixtures with CC0 audio and no authority evidence", async () => {
+    expect(await catalog().json()).toMatchObject({ mode: "fixture", audioAvailable: true, purchasesEnabled: expect.any(Boolean), offers: expect.any(Array) });
   });
   it("returns paid-ad compatibility and specific refusal reasons", async () => {
     const response = await matches(request(body));

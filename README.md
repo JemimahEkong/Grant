@@ -12,6 +12,10 @@ Backend-first music licensing agent. This checkout is connected to the existing
 - Per-user Stellar testnet wallets with AES-256-GCM encrypted secrets, a gated four-step onboarding flow, a real testnet faucet, and on-chain balances. Registration is public and there is no spending allowlist.
 - Authenticated projects, quotes, approvals, payment orchestration, purchase status, and
   bounded reconciliation.
+- A per-project purchase-count cap, default 2, is enforced in the budget reservation
+  transaction. A paid-ad add-on attaches to an owned, settled base purchase, keeps the
+  original term, gets its own receipt, and shows combined coverage.
+- Three real CC0 demo tracks with provenance replace the synthetic placeholder audio.
 - Durable Neon persistence with Drizzle migrations for licensing records and auth records.
 - Cloudflare R2 private storage using the S3 SDK. Downloads are short-lived presigned GET
   URLs issued only after an entitlement check. No public object URLs.
@@ -35,7 +39,7 @@ Backend-first music licensing agent. This checkout is connected to the existing
 - `/app/onboarding/wallet`, `/activate`, `/trustline`, `/fund` first-run wallet setup
 - `/app/wallet` address, QR, live balance, refresh, fund, transaction history, custody disclosure
 - `/app/new` brief editor with authoritative chips and a generated sentence
-- `/app/catalog` three fixture tracks with coverage strips
+- `/app/catalog` three demo tracks with CC0 audio and coverage strips
 - `/app/purchase/[id]` review, approval, pending, refused, and settled license states
 - `/app/purchases` durable ledger
 - `/app/profile` account, wallet row, projects, and share-link revocation
@@ -54,6 +58,8 @@ Backend-first music licensing agent. This checkout is connected to the existing
 - `POST /api/purchases/[purchaseId]/approve` (session, ownership, and same-origin required)
 - `POST /api/purchases/[purchaseId]/pay` (session, ownership, and same-origin required)
 - `GET /api/purchases/[purchaseId]` (session and ownership required)
+- `GET` and `POST /api/purchases/[purchaseId]/addons` (session and ownership required,
+  same-origin on POST)
 - `POST /api/purchases/[purchaseId]/reconcile` (session, ownership, and same-origin required)
 - `POST /api/purchases/[purchaseId]/delivery/retry` (session, ownership, and same-origin
   required)
@@ -142,8 +148,8 @@ npm run db:seed:testnet
 
 Never run `drizzle-kit push`. Migration `0000` contains the licensing tables. Migration
 `0001` contains the Better Auth tables. `0002` adds rate limits. `0003` adds the track audio
-hash. `0004` adds per-user wallets and faucet grants. All migrations are applied to the main
-and test branches.
+hash. `0004` adds per-user wallets and faucet grants. `0005` adds the per-project purchase
+count cap. All migrations are applied to the main and test branches.
 
 ## Verification
 
@@ -156,13 +162,14 @@ npm run build
 npm run r2:check
 ```
 
-`npm test` runs 67 tests in 10 files. The production UI was verified with Playwright:
+`npm test` runs 69 tests in 11 files. The production UI was verified with Playwright:
 landing, sign-in, home, brief, catalog, review, refused state, settled license with a
 private R2 download, purchases, profile, proof, signed-out redirect, and mobile bottom nav.
-A fresh production account also completed the four onboarding steps, received a 5 USDC
-faucet grant, and bought a 1 USDC license from its own wallet. The persistence and auth
-suites run when `DATABASE_URL_TEST` is present and skip otherwise. Do not point integration
-tests at the main branch.
+A fresh production account also completed the four onboarding steps, received a faucet
+grant, and bought a 1 USDC license from its own wallet. The current faucet default is 2.00
+USDC per wallet under a 40.00 USDC daily cap. A capacity proof funded three fresh accounts
+in a row. The persistence and auth suites run when `DATABASE_URL_TEST` is present and skip
+otherwise. Do not point integration tests at the main branch.
 
 Production smoke checks passed for health, email/password auth, sessions, project creation,
 owner-scoped reads, unauthenticated `401`, and cross-origin `403`.
@@ -175,6 +182,8 @@ owner-scoped reads, unauthenticated `401`, and cross-origin `403`.
 - [Production payment](agent-state/production-payment-evidence.md)
 - [PDF, audio, and share/proof delivery](agent-state/delivery-evidence.md)
 - [Per-user funding and purchase proof](agent-state/funding-evidence.md)
+- [Faucet capacity proof](agent-state/faucet-capacity-evidence.md)
+- [CC0 audio provenance](agent-state/cc0-audio-evidence.md)
 
 The payment evidence includes:
 
@@ -200,8 +209,9 @@ The payment evidence includes:
   AES-256-GCM and a per-row IV. It is never returned, logged, or committed.
 - Balance is always read from chain and cached for at most 30 seconds. A project budget is a
   spending cap, not the wallet balance.
-- The faucet sends one 5 USDC grant per wallet under a hard daily treasury cap. If the
-  treasury is empty, the UI shows the wallet address and manual funding instructions.
+- The faucet sends one 2.00 USDC grant per wallet under a hard 40.00 USDC daily treasury
+  cap. If the treasury is empty, the UI shows the wallet address and manual funding
+  instructions.
 - Payments are enabled in Production behind the `PAYMENTS_ENABLED` flag, the user's wallet
   balance, and durable per-owner rate limits.
 - The seller route settles payment through the facilitator. The buyer orchestrator verifies
@@ -209,12 +219,16 @@ The payment evidence includes:
 - Reconciliation never signs again and never creates a new attempt.
 - Private audio and PDFs are served only through short-lived presigned GET URLs after session,
   ownership, purchase-state, license, and artifact checks.
-- Catalog fixtures are metadata only. A match does not grant a license or verify music
-  ownership.
+- Catalog audio is CC0 with recorded provenance. Seller identities and offer terms are
+  fixtures. A match does not grant a license or verify music ownership.
+- A paid-ad add-on must attach to an owned, settled base purchase. The server derives the
+  paid-ad delta from the base request and the offered add-on. The add-on has its own
+  receipt and license, and the base terms stay unchanged.
 - The demo payment is testnet-only. It does not prove mainnet custody, copyright coverage, or
   production financial safety.
-- The UI follows DESIGN.md and the five supplied visual references. The paid-ad add-on,
-  broader hardening, and real authorized music remain.
+- The UI follows DESIGN.md and the five supplied visual references. Broader hardening,
+  refunds and disputes, mainnet, multi-tenant seller onboarding, and commercial authorized
+  music remain.
 
 ## Deployment
 

@@ -43,8 +43,9 @@ async function main() {
   const object = await fetch(downloadBody.url);
   if (!object.ok) throw new Error(`Presigned audio download failed with ${object.status}.`);
   const bytes = Buffer.from(await object.arrayBuffer());
-  if (bytes.subarray(0, 4).toString("ascii") !== "RIFF" || bytes.subarray(8, 12).toString("ascii") !== "WAVE") {
-    throw new Error("Downloaded object is not a WAV file.");
+  const isMp3 = bytes.subarray(0, 3).toString("ascii") === "ID3" || (bytes[0] === 0xFF && (bytes[1] & 0xE0) === 0xE0);
+  if (!isMp3) {
+    throw new Error("Downloaded object is not an MP3 file.");
   }
   const sha256 = createHash("sha256").update(bytes).digest("hex");
 
@@ -65,7 +66,7 @@ async function main() {
     deliveryStatus: delivery.status,
     unauthenticatedStatus: anonymous.status,
     signedUrlPublished: false,
-    note: "The WAV is a synthetic placeholder prepared for private storage and delivery verification. It is not a licensed music track.",
+    note: "CC0 demo audio from Freesound. Seller identities and offer terms are fixtures. This is not a licensed client track.",
   };
   fs.writeFileSync(evidencePath, JSON.stringify(evidence, null, 2) + "\n");
   console.log("Audio delivery confirmed.");

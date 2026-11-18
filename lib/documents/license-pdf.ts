@@ -6,6 +6,7 @@ export type LicensePdfInput = {
   publicDisplayLabel: string;
   trackTitle: string;
   sellerId: string;
+  audioProvenance: string | null;
   startsAt: Date;
   endsAt: Date;
   purchaseId: string;
@@ -79,6 +80,8 @@ export async function buildLicensePdf(input: LicensePdfInput): Promise<Uint8Arra
   wrapped(input.publicDisplayLabel);
   text("Track", { size: 11, bold: true });
   wrapped(`${input.trackTitle} (seller: ${input.sellerId})`);
+  text("Audio provenance", { size: 11, bold: true });
+  wrapped(input.audioProvenance ?? "not recorded", 9, 12);
   text("Term", { size: 11, bold: true });
   wrapped(`${formatDate(input.startsAt)} to ${formatDate(input.endsAt)}`);
   cursor -= 4;
@@ -105,7 +108,7 @@ export async function buildLicensePdf(input: LicensePdfInput): Promise<Uint8Arra
 
   text("Demo disclosure", { size: 11, bold: true, color: rgb(0.55, 0.2, 0.1) });
   wrapped(
-    "This is a demo license record generated from fixture terms. Catalog authority evidence has not been independently verified. This document is not legal advice, a copyright verification, or proof of music ownership. Testnet settlement proves the payment protocol only.",
+    "This is a demo license record generated from fixture terms. The audio is a CC0 demo recording with recorded provenance. Seller authority has not been independently verified. This document is not legal advice, a copyright verification, or proof of music ownership. Testnet settlement proves the payment protocol only.",
     9,
     12,
   );

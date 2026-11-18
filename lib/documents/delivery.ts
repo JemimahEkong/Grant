@@ -44,6 +44,7 @@ export async function generateLicensePdfArtifact(
     publicDisplayLabel: project.publicDisplayLabel,
     trackTitle: track.title,
     sellerId: view.license.coverageSnapshot.offer.sellerId,
+    audioProvenance: track.provenanceReference,
     startsAt: view.license.startsAt,
     endsAt: view.license.endsAt,
     purchaseId: view.purchase.id,

@@ -212,6 +212,7 @@ export const projects = pgTable(
     briefHash: text("brief_hash").notNull(),
     budgetBaseUnits: money("budget_base_units").notNull(),
     purchaseCapBaseUnits: money("purchase_cap_base_units").notNull(),
+    purchaseCountCap: integer("purchase_count_cap").notNull().default(2),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -222,6 +223,7 @@ export const projects = pgTable(
     check("projects_brief_hash_sha256", sql`length(${table.briefHash}) = 64`),
     check("projects_budget_nonnegative", sql`${table.budgetBaseUnits} >= 0`),
     check("projects_cap_nonnegative", sql`${table.purchaseCapBaseUnits} >= 0`),
+    check("projects_count_cap_nonnegative", sql`${table.purchaseCountCap} >= 0`),
   ],
 );
 

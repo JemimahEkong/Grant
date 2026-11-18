@@ -1,31 +1,48 @@
 import { createHash } from "node:crypto";
-import { eq } from "drizzle-orm";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { and, eq, inArray } from "drizzle-orm";
+import { demoTracks } from "../demo/catalog";
 import { createDatabase, resolveDatabaseUrl } from "../lib/db/client";
-import { buildDemoWav } from "../lib/documents/demo-audio";
-import { tracks } from "../lib/db/schema";
+import { artifacts, licenses, tracks } from "../lib/db/schema";
 import { putPrivateObject } from "../lib/storage/r2";
 
 const database = createDatabase(resolveDatabaseUrl(process.env, "DATABASE_URL"));
 
 async function main() {
-  const wav = buildDemoWav({ seconds: 2, frequency: 440 });
-  const contentHash = createHash("sha256").update(wav).digest("hex");
-  const objectKey = "audio/morning-edit/demo-tone.wav";
-  await putPrivateObject({ key: objectKey, body: wav, contentType: "audio/wav" });
-  const [track] = await database.db
-    .update(tracks)
-    .set({
-      audioObjectKey: objectKey,
-      audioContentHash: contentHash,
-      provenanceReference:
-        "Synthetic placeholder tone for private storage and delivery verification. Not a licensed music track. No composition or master evidence supplied.",
-    })
-    .where(eq(tracks.id, "morning-edit"))
-    .returning();
-  if (!track) throw new Error("The morning-edit track was not found.");
-  console.log(`Demo audio prepared: ${objectKey}`);
-  console.log(`Bytes: ${wav.byteLength}`);
-  console.log(`SHA-256: ${contentHash}`);
+  for (const track of demoTracks) {
+    const filePath = path.join(process.cwd(), "demo", "audio", `${track.id}.mp3`);
+    const bytes = await readFile(filePath);
+    const contentHash = createHash("sha256").update(bytes).digest("hex");
+    const objectKey = `audio/${track.id}/${track.id}.mp3`;
+
+    await putPrivateObject({ key: objectKey, body: bytes, contentType: "audio/mpeg" });
+    const [updated] = await database.db
+      .update(tracks)
+      .set({
+        audioObjectKey: objectKey,
+        audioContentHash: contentHash,
+        durationSeconds: track.durationSeconds,
+        provenanceReference: track.provenanceReference,
+      })
+      .where(eq(tracks.id, track.id))
+      .returning();
+    if (!updated) throw new Error(`The ${track.id} track was not found.`);
+
+    const licenseRows = await database.db
+      .select({ id: licenses.id })
+      .from(licenses)
+      .where(eq(licenses.trackId, track.id));
+    if (licenseRows.length > 0) {
+      await database.db
+        .update(artifacts)
+        .set({ objectKey, contentHash, state: "ready", errorCode: null, updatedAt: new Date() })
+        .where(and(eq(artifacts.kind, "audio"), inArray(artifacts.licenseId, licenseRows.map(row => row.id))));
+    }
+
+    console.log(`${track.id}: ${objectKey}`);
+    console.log(`  bytes ${bytes.byteLength} | sha256 ${contentHash} | repointed artifacts ${licenseRows.length}`);
+  }
 }
 
 main()

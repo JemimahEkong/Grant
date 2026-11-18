@@ -45,8 +45,8 @@ export default async function LandingPage() {
   const heroSegments = proof ? buildProofStrip(proof.license.coverage) : heroStrip;
   const heroTitle = proof?.track.title ?? "Quiet Cut";
   const heroSeller = proof
-    ? `${proof.track.sellerName}${heroTrack ? ` · ${formatDuration(heroTrack.durationSeconds)} · ${heroTrack.bpm} BPM` : ""}`
-    : "Northline Audio · 0:42 · 120 BPM";
+    ? `${proof.track.sellerName}${heroTrack ? ` · ${formatDuration(heroTrack.durationSeconds)} · ${heroTrack.bpm ? `${heroTrack.bpm} BPM` : "beatless"}` : ""}`
+    : "Northline Audio · 0:48 · beatless";
   const heroPrice = proof ? formatUsdc(proof.payment.amountBaseUnits) : "1.00";
   const heroLicense = proof?.license.number ?? "GRANT-2026-74E7341FC8";
   return (
@@ -238,7 +238,7 @@ export default async function LandingPage() {
         </section>
 
         <footer className="landing-footer">
-          <span>Demo build · fixture catalog · testnet USDC only</span>
+          <span>Demo build · CC0 demo audio · testnet USDC only</span>
           <span>Shows license terms. Not legal advice.</span>
         </footer>
       </div>

@@ -8,18 +8,23 @@ async function main() {
   const payee = process.env.X402_SELLER_PUBLIC;
   if (!payee) throw new Error("X402_SELLER_PUBLIC is not configured.");
 
-  let count = 0;
+  let baseCount = 0;
+  let addonCount = 0;
   for (const offer of demoOffers) {
+    const isAddon = offer.kind === "addon";
+    const id = isAddon ? `${offer.trackId}-testnet-addon` : `${offer.trackId}-testnet-base`;
+    const parentOfferId = isAddon ? `${offer.trackId}-testnet-base` : null;
+    const parentOfferVersion = isAddon ? 1 : null;
     await database.db
       .insert(offers)
       .values({
-        id: `${offer.trackId}-testnet-base`,
+        id,
         version: 1,
         trackId: offer.trackId,
         sellerId: offer.sellerId,
-        kind: "base",
-        parentOfferId: null,
-        parentOfferVersion: null,
+        kind: offer.kind,
+        parentOfferId,
+        parentOfferVersion,
         authorityComposition: offer.authority.composition,
         authorityMaster: offer.authority.master,
         platformsOrganic: offer.platformsByUse.organic ?? [],
@@ -43,6 +48,9 @@ async function main() {
       .onConflictDoUpdate({
         target: [offers.id, offers.version],
         set: {
+          kind: offer.kind,
+          parentOfferId,
+          parentOfferVersion,
           payeeAddress: payee,
           amountBaseUnits: BigInt(offer.amountBaseUnits),
           active: true,
@@ -57,10 +65,11 @@ async function main() {
           futureCampaigns: offer.futureCampaigns,
         },
       });
-    count += 1;
+    if (isAddon) addonCount += 1;
+    else baseCount += 1;
   }
 
-  console.log(`Testnet demo offers ready: ${count} base offers.`);
+  console.log(`Testnet demo offers ready: ${baseCount} base offers and ${addonCount} add-on offers.`);
 }
 
 main()

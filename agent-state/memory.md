@@ -1,32 +1,27 @@
 # Durable memory
 
-- The product name is Grant. Team size is two.
-- GRANT/ is the project root. Planning documents, AGENTS.md, and agent-state/ live there.
-- T3 Code project registration points at that folder. Registration does not move or merge chat threads.
-- The founder chose Next.js/TypeScript, Neon PostgreSQL, Better Auth, Cloudflare R2, the existing JemimahEkong/Grant repository, and personal Vercel/Neon workspaces. Do not replace the repository or modify unrelated projects.
-- Email/password auth is the current scope. OAuth is skipped/deferred. Registration is public.
-- There is no spending allowlist. Spending is bounded by the user's on-chain balance, faucet caps, project budget, approval, reservation, rate limits, and settlement checks.
-- Every user gets a Stellar testnet wallet. The secret is encrypted with AES-256-GCM using WALLET_ENCRYPTION_KEY and a per-row IV. Never log, return, or commit a wallet secret.
-- The pay route signs with the owner's encrypted wallet. X402_BUYER_SECRET and the old shared buyer signer are retired and removed from Vercel Production.
-- WALLET_ENCRYPTION_KEY and FAUCET_TREASURY_SECRET are Production-only secrets. The faucet treasury is the seller payee account.
-- Balance is always read from chain and cached at most 30 seconds. A project budget is a spending cap over that balance, never the balance itself.
-- Onboarding is a four-step gate: generate wallet, activate with minimum XLM, add USDC trustline, fund, then Home. /app and the other app routes redirect into the first incomplete step.
-- The faucet sends one 5 testnet USDC grant per wallet under a hard 15 USDC daily treasury cap. If the treasury is empty, show the user's address and manual funding instructions.
-- Production funding proof: wallet GAPYFLWNKSGSQIOH2P6SRIIZ32GYVXIYRUQZ4G4OT7JMDSK2A5U5TMHD. Faucet tx 5a6672727f59d685cd97f4feb1a953e11142d50dc32ed11b9347117c4ec3f03f. Purchase tx 90be474e0a4c1b0faa5fba821f4e21a37396b9cbdb5c788f21a99f3f497f7968, ledger 5787225, license GRANT-2026-9A30B34453. Buyer 4.0000000 USDC, treasury 11.0000000 USDC.
-- The UI follows DESIGN.md and the five supplied references: dark tokens, Geist Sans/Mono, inline SVG, 900px breakpoint, mobile bottom nav and desktop rail, clearance strip, no gradients/glass/shadows/icon libraries/images.
-- Screens: landing, signin, onboarding wallet/activate/trustline/fund, home, brief, catalog, purchase review/refused/pending/license, purchases, wallet, profile, proof.
-- App routes are static client shells that fetch live API data. Landing, proof, and sign-in are dynamic. The landing reads DEMO_PROOF_PATH and renders the linked proof card. The proof view is noindex/no-store and revocable.
-- The demo proof link is stored in DEMO_PROOF_PATH. Do not print the raw token. The landing "See a real license" link resolves it.
-- Missing API fields: no purchase-count cap, no artifact byte sizes, no license number in project purchase rows, BPM/seller display names are joined from the fixture catalog, and wallet history labels are limited by Horizon operation data.
-- The wallet QR is generated as inline SVG with qrcode. It is not an image asset and not an icon library.
-- Purchase states are URL-driven. Pending has exactly one action, Check again. Refused, insufficient balance, cap exceeded, empty, and expired are designed panels, not toasts.
-- Migration 0004 owns wallets and faucet grants. Do not add a balance column.
-- R2 bucket is grant-private. Only short-lived presigned GET URLs after entitlement checks. No public object URLs.
-- The seller route derives price, asset, and payee from the immutable purchase and a short-lived HMAC attempt token. X402_ATTEMPT_SECRET must match.
+- Product: Grant. Project root GRANT/. Next.js/TypeScript, Neon, Better Auth, Cloudflare R2, Stellar testnet, Vercel.
+- Registration is public. No spending allowlist. Spending is bounded by the user's on-chain balance, faucet caps, project budget, approval, reservation, rate limits, and settlement checks.
+- Every user gets a Stellar testnet wallet. AES-256-GCM with WALLET_ENCRYPTION_KEY and a per-row IV. Never log, return, or commit a wallet secret.
+- Pay signs with the owner's decrypted wallet. X402_BUYER_SECRET and the shared buyer signer are retired.
+- WALLET_ENCRYPTION_KEY and FAUCET_TREASURY_SECRET are Production-only. The treasury is the seller payee account.
+- Balance is read from chain and cached at most 30 seconds. Project budget is a spending cap, not the balance.
+- Onboarding is a four-step gate: wallet, activate, trustline, fund. App routes redirect until complete.
+- Faucet defaults: 2.00 USDC per wallet, 40.00 USDC daily cap. One grant per wallet. Treasury empty shows the address and manual funding instructions. Treasury was 91.00 after top-up, 85.00 after funding three fresh accounts.
+- Purchase-count cap defaults to 2 per project. It is enforced in the reservation transaction. Refusal code `PURCHASE_COUNT_CAP_EXCEEDED`. Reserved, payment_pending, settled, issuing, and ready consume slots. Refused and expired do not.
+- Add-ons: parent must be an owned, settled/ready base purchase with an active license. The add-on offer must reference the parent offer and seller. The server builds the delta: paid-ad use on the base platforms, base territory, original term, no new reposting, future campaigns, or client terms. The add-on has its own receipt and license with `parent_license_id`. The base license is unchanged. Combined coverage is computed from the license family.
+- CC0 audio is in `demo/audio/`. Provenance is in `demo/audio/PROVENANCE.md`. Seller identities and offer terms are fixtures. Do not label the audio as verified client work.
+- The UI follows DESIGN.md: dark tokens, Geist Sans/Mono, inline SVG, 900px breakpoint, mobile bottom nav, desktop rail, clearance strip, no gradients/glass/shadows/icon libraries/images.
+- App routes are static client shells that fetch live APIs. Landing, proof, and sign-in are dynamic. Proof is noindex/no-store and revocable.
+- DEMO_PROOF_PATH holds the demo proof link. Do not print the raw share token.
+- Migration 0004 owns wallets and faucet grants. Migration 0005 owns `purchase_count_cap`. Do not add a balance column.
+- R2 bucket grant-private. Short-lived presigned GET URLs only after entitlement checks. No public object URLs.
+- Seller route derives price, asset, and payee from the immutable purchase and a short-lived HMAC attempt token. X402_ATTEMPT_SECRET must match.
 - Reconciliation never signs again or creates a new attempt.
-- Share tokens are 32 random bytes, stored only as SHA-256 hashes. Raw tokens are not committed or printed. Proof views exclude private data.
-- Production Vercel URL: https://grant-roan.vercel.app. Latest funding deployment dpl_8WtFnpH99mGu6GkrPR6gEtCGs3ew.
-- G0 scripts are local-only. The seller binds 127.0.0.1. The G0 buyer and seller secrets are not deployed.
-- Fixture catalog matching does not grant a license, verify music ownership, or prove seller authority.
-- Paid-ad add-ons, broader hardening, and real authorized music remain.
+- Share tokens are 32 random bytes, stored only as SHA-256 hashes. Raw tokens are not committed or printed.
+- Production URL: https://grant-roan.vercel.app.
+- G0 scripts are local-only. The seller binds 127.0.0.1. G0 secrets are not deployed.
+- Catalog matching and fixture offers do not verify music ownership or seller authority. A testnet settlement proves the payment protocol only.
+- API gaps: no artifact byte sizes/content types, no license number in project purchase rows, BPM/seller display names join the demo catalog, wallet history labels limited by Horizon.
+- Remaining product gaps: commercial authorized music, refunds/disputes, mainnet, multi-tenant seller onboarding.
 - Follow AGENTS.md writing, checkpoint, state, and database rules. Keep replies concise.

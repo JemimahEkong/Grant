@@ -1,0 +1,2 @@
+ALTER TABLE "projects" ADD COLUMN "purchase_count_cap" integer DEFAULT 2 NOT NULL;--> statement-breakpoint
+ALTER TABLE "projects" ADD CONSTRAINT "projects_count_cap_nonnegative" CHECK ("projects"."purchase_count_cap" >= 0);

@@ -4,6 +4,7 @@ import {
   request,
   type WalletView,
   type WalletTransaction,
+  type AddonAvailability,
   type ApprovalOutcome,
   type Artifact,
   type CatalogResponse,
@@ -76,6 +77,30 @@ export async function createQuote(
     response.status,
     body?.code ?? `HTTP_${response.status}`,
     body?.message ?? "Could not create the quote.",
+  );
+}
+
+export async function getPurchaseAddons(purchaseId: string): Promise<AddonAvailability> {
+  return request(`/api/purchases/${purchaseId}/addons`);
+}
+
+export async function createAddonQuote(
+  purchaseId: string,
+  input: { offerId: string; offerVersion: number; idempotencyKey: string },
+): Promise<QuoteOutcome> {
+  const response = await fetch(`/api/purchases/${purchaseId}/addons`, {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  const data = (await parseBody(response)) as QuoteOutcome | { code?: string; message?: string } | null;
+  if (response.ok || response.status === 422) return data as QuoteOutcome;
+  const body = data as { code?: string; message?: string } | null;
+  throw new ApiFailure(
+    response.status,
+    body?.code ?? `HTTP_${response.status}`,
+    body?.message ?? "Could not create the add-on quote.",
   );
 }
 

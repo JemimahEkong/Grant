@@ -45,11 +45,11 @@ export type FaucetOutcome =
   | { outcome: "failed"; grantId: string };
 
 export function faucetAmountBaseUnits(): bigint {
-  return BigInt(process.env.FAUCET_GRANT_BASE_UNITS ?? "50000000");
+  return BigInt(process.env.FAUCET_GRANT_BASE_UNITS ?? "20000000");
 }
 
 export function faucetDailyCapBaseUnits(): bigint {
-  return BigInt(process.env.FAUCET_DAILY_CAP_BASE_UNITS ?? "150000000");
+  return BigInt(process.env.FAUCET_DAILY_CAP_BASE_UNITS ?? "400000000");
 }
 
 const custodyDisclosure =

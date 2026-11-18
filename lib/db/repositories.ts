@@ -1,7 +1,7 @@
-import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, ne, sql } from "drizzle-orm";
 import { z } from "zod";
 import { isStellarPublicKey } from "../payments/stellar-address";
-import { briefSchema } from "../licensing/schema";
+import { briefSchema, type Brief } from "../licensing/schema";
 import { matchOffer } from "../licensing/match";
 import type { CoverageSnapshot, StoredOfferSnapshot } from "../licensing/types";
 import { demoLimits, parseAmountBaseUnits, parsePositiveAmountBaseUnits } from "../policy/budget";
@@ -134,6 +134,8 @@ export type FinalizeSettlementOutcome = {
 export type ProjectBudgetSummary = {
   budgetBaseUnits: string;
   purchaseCapBaseUnits: string;
+  purchaseCountCap: number;
+  purchasesUsed: number;
   confirmedSpendBaseUnits: string;
   activeReservationsBaseUnits: string;
   adjustmentsBaseUnits: string;
@@ -148,6 +150,61 @@ export type ProjectView = {
   budget: ProjectBudgetSummary;
 };
 
+export type CoverageLicenseSummary = {
+  licenseId: string;
+  licenseNumber: string;
+  purchaseId: string;
+  kind: "base" | "addon";
+  startsAt: Date;
+  endsAt: Date;
+  amountBaseUnits: string;
+  transactionHash: string | null;
+  organicPlatforms: Brief["platforms"];
+  paidAdPlatforms: Brief["platforms"];
+};
+
+export type CombinedCoverage = {
+  baseLicense: CoverageLicenseSummary | null;
+  addonLicenses: CoverageLicenseSummary[];
+  organicPlatforms: Brief["platforms"];
+  paidAdPlatforms: Brief["platforms"];
+  territory: Brief["territory"] | null;
+  startsAt: Date | null;
+  endsAt: Date | null;
+  termDays: number | null;
+  clipDurationSeconds: number | null;
+  clientDelivery: boolean;
+  reposting: boolean;
+  futureCampaigns: boolean;
+  totalBaseUnits: string;
+};
+
+export type AddonOfferView = {
+  offerId: string;
+  offerVersion: number;
+  title: string;
+  amountBaseUnits: string;
+  platforms: Brief["platforms"];
+  termDays: number;
+  endsAt: Date;
+  territory: Brief["territory"];
+  clipDurationSeconds: number;
+  clientDelivery: boolean;
+  available: boolean;
+  reasons: PersistedReason[];
+};
+
+export type AddonAvailability = {
+  eligible: boolean;
+  reason: string | null;
+  parentPurchaseId: string;
+  parentLicense: CoverageLicenseSummary | null;
+  baseRequest: Brief | null;
+  addons: AddonOfferView[];
+  existing: CoverageLicenseSummary[];
+  combinedCoverage: CombinedCoverage | null;
+};
+
 export type PurchaseView = {
   purchase: PurchaseRow;
   project: ProjectRow | null;
@@ -159,6 +216,7 @@ export type PurchaseView = {
   license: LicenseRow | null;
   artifacts: ArtifactRow[];
   refusal: RefusalRow | null;
+  combinedCoverage: CombinedCoverage | null;
 };
 
 function isSettledStatus(status: PurchaseRow["status"]): boolean {
@@ -244,11 +302,14 @@ function budgetSummary(
   confirmedSpend: bigint,
   activeReservations: bigint,
   adjustments: bigint,
+  purchasesUsed: number,
 ): ProjectBudgetSummary {
   const available = project.budgetBaseUnits - adjustments - confirmedSpend - activeReservations;
   return {
     budgetBaseUnits: project.budgetBaseUnits.toString(),
     purchaseCapBaseUnits: project.purchaseCapBaseUnits.toString(),
+    purchaseCountCap: project.purchaseCountCap,
+    purchasesUsed,
     confirmedSpendBaseUnits: confirmedSpend.toString(),
     activeReservationsBaseUnits: activeReservations.toString(),
     adjustmentsBaseUnits: adjustments.toString(),
@@ -334,6 +395,7 @@ export async function createProject(
     brief: unknown;
     budgetBaseUnits?: string;
     purchaseCapBaseUnits?: string;
+    purchaseCountCap?: number;
     id?: string;
   },
 ): Promise<ProjectRow> {
@@ -343,6 +405,7 @@ export async function createProject(
   const brief = briefSchema.parse(input.brief);
   const budgetBaseUnits = parseAmountBaseUnits(input.budgetBaseUnits ?? demoLimits.projectBudget);
   const purchaseCapBaseUnits = parseAmountBaseUnits(input.purchaseCapBaseUnits ?? demoLimits.perPurchaseCap);
+  const purchaseCountCap = z.number().int().min(0).parse(input.purchaseCountCap ?? 2);
 
   const [project] = await db
     .insert(projects)
@@ -356,6 +419,7 @@ export async function createProject(
       briefHash: sha256Hex(brief),
       budgetBaseUnits,
       purchaseCapBaseUnits,
+      purchaseCountCap,
     })
     .returning();
   return project;
@@ -380,22 +444,38 @@ export async function getProjectForOwner(
     .limit(1);
   if (!project) throw notFound();
 
-  const [projectPurchases, projectRefusals, projectAdjustments, confirmedSpend, activeReservations, adjustments] =
-    await Promise.all([
-      db.select().from(purchases).where(eq(purchases.projectId, project.id)).orderBy(desc(purchases.createdAt)),
-      db.select().from(refusals).where(eq(refusals.projectId, project.id)).orderBy(desc(refusals.createdAt)),
-      db.select().from(budgetAdjustments).where(eq(budgetAdjustments.projectId, project.id)).orderBy(desc(budgetAdjustments.createdAt)),
-      settledSpend(db, project.id),
-      activeReservationTotal(db, project.id),
-      adjustmentTotal(db, project.id),
-    ]);
+  const [
+    projectPurchases,
+    projectRefusals,
+    projectAdjustments,
+    confirmedSpend,
+    activeReservations,
+    adjustments,
+    usedPurchases,
+  ] = await Promise.all([
+    db.select().from(purchases).where(eq(purchases.projectId, project.id)).orderBy(desc(purchases.createdAt)),
+    db.select().from(refusals).where(eq(refusals.projectId, project.id)).orderBy(desc(refusals.createdAt)),
+    db.select().from(budgetAdjustments).where(eq(budgetAdjustments.projectId, project.id)).orderBy(desc(budgetAdjustments.createdAt)),
+    settledSpend(db, project.id),
+    activeReservationTotal(db, project.id),
+    adjustmentTotal(db, project.id),
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(purchases)
+      .where(
+        and(
+          eq(purchases.projectId, project.id),
+          inArray(purchases.status, ["reserved", "payment_pending", "settled", "issuing", "ready"]),
+        ),
+      ),
+  ]);
 
   return {
     project,
     purchases: projectPurchases,
     refusals: projectRefusals,
     adjustments: projectAdjustments,
-    budget: budgetSummary(project, confirmedSpend, activeReservations, adjustments),
+    budget: budgetSummary(project, confirmedSpend, activeReservations, adjustments, Number(usedPurchases[0]?.count ?? 0)),
   };
 }
 
@@ -443,10 +523,6 @@ export async function quotePurchase(db: GrantDatabase, input: QuotePurchaseInput
   if (input.kind === "base" && parentPurchaseId !== null) {
     throw new RepositoryError("REQUEST_MISMATCH", "A base purchase cannot reference a parent purchase.", 400);
   }
-  if (input.kind === "addon") {
-    throw new RepositoryError("ADDON_NOT_IMPLEMENTED", "Paid-ad add-ons are not enabled in this milestone.", 422);
-  }
-
   const requestHash = sha256Hex({
     ownerId: input.ownerId,
     projectId: input.projectId,
@@ -493,7 +569,7 @@ export async function quotePurchase(db: GrantDatabase, input: QuotePurchaseInput
       if (project.briefVersion !== briefVersion) {
         throw new RepositoryError("BRIEF_VERSION_MISMATCH", "The confirmed project brief version does not match this request.", 409);
       }
-      if (project.briefHash !== briefHash) {
+      if (input.kind === "base" && project.briefHash !== briefHash) {
         throw new RepositoryError("BRIEF_MISMATCH", "The request does not match the confirmed project brief.", 409);
       }
 
@@ -526,6 +602,74 @@ export async function quotePurchase(db: GrantDatabase, input: QuotePurchaseInput
       if (!offer) throw notFound("The requested offer was not found.");
       if (offer.trackId !== input.trackId || offer.kind !== input.kind) {
         throw new RepositoryError("REQUEST_MISMATCH", "The offer does not match the requested track and kind.", 400);
+      }
+
+      if (input.kind === "addon") {
+        if (!parentPurchaseId) {
+          throw new RepositoryError("PARENT_PURCHASE_REQUIRED", "An add-on requires a parent purchase.", 400);
+        }
+        const [parent] = await tx
+          .select()
+          .from(purchases)
+          .where(and(eq(purchases.id, parentPurchaseId), eq(purchases.ownerId, input.ownerId)))
+          .limit(1);
+        if (!parent) throw notFound("The parent purchase was not found.");
+        if (parent.kind !== "base" || parent.projectId !== input.projectId || parent.trackId !== input.trackId) {
+          throw new RepositoryError("PARENT_PURCHASE_MISMATCH", "The add-on does not match its parent purchase.", 409);
+        }
+        if (!isSettledStatus(parent.status)) {
+          throw new RepositoryError("PARENT_NOT_SETTLED", "The parent purchase must be settled before an add-on can be quoted.", 409);
+        }
+        const [parentLicense] = await tx.select().from(licenses).where(eq(licenses.purchaseId, parent.id)).limit(1);
+        if (!parentLicense) throw new RepositoryError("PARENT_LICENSE_MISSING", "The parent license was not found.", 409);
+        if (parentLicense.projectId !== input.projectId || parentLicense.trackId !== input.trackId) {
+          throw new RepositoryError("PARENT_LICENSE_MISMATCH", "The parent license belongs to another project or track.", 409);
+        }
+        if (parentLicense.endsAt <= now) throw new RepositoryError("PARENT_LICENSE_EXPIRED", "The parent license has expired.", 409);
+        const parentRequest = parentLicense.coverageSnapshot.request;
+        if (parentRequest.intendedUse === "paid_ad") {
+          throw new RepositoryError("ADDON_NOT_APPLICABLE", "The parent license already covers paid ads.", 409);
+        }
+        if (brief.intendedUse !== "paid_ad") {
+          throw new RepositoryError("ADDON_USE_MISMATCH", "An add-on must add paid-ad use.", 422);
+        }
+        if (offer.parentOfferId !== parent.offerId || offer.parentOfferVersion !== parent.offerVersion) {
+          throw new RepositoryError("ADDON_PARENT_OFFER_MISMATCH", "The add-on offer is not attached to the parent offer.", 409);
+        }
+        if (offer.trackId !== parent.trackId || offer.sellerId !== parent.offerSnapshot.sellerId) {
+          throw new RepositoryError("ADDON_SELLER_MISMATCH", "The add-on must come from the same track and seller.", 409);
+        }
+        if (brief.termDays > parentRequest.termDays) {
+          throw new RepositoryError("ADDON_TERM_EXCEEDS_PARENT", "The add-on term cannot exceed the parent license term.", 422);
+        }
+        if (!parentRequest.territory.worldwide) {
+          if (brief.territory.worldwide || brief.territory.countries.some(country => !parentRequest.territory.countries.includes(country))) {
+            throw new RepositoryError("ADDON_TERRITORY_EXCEEDS_PARENT", "The add-on territory cannot exceed the parent license territory.", 422);
+          }
+        }
+        if (brief.clipDurationSeconds > parentRequest.clipDurationSeconds) {
+          throw new RepositoryError("ADDON_CLIP_EXCEEDS_PARENT", "The add-on clip length cannot exceed the parent license.", 422);
+        }
+        if (brief.clientDelivery && !parentRequest.clientDelivery) {
+          throw new RepositoryError("ADDON_CLIENT_USE_EXCEEDS_PARENT", "The add-on cannot add client delivery.", 422);
+        }
+        if (brief.reposting || brief.futureCampaigns) {
+          throw new RepositoryError("ADDON_SCOPE_EXCEEDS_PARENT", "An add-on cannot add reposting or future campaigns.", 422);
+        }
+        if (brief.platforms.some(platform => !parentRequest.platforms.includes(platform))) {
+          throw new RepositoryError("ADDON_PLATFORM_EXCEEDS_PARENT", "The add-on platforms must stay within the parent campaign.", 422);
+        }
+        const existingAddons = await tx.select().from(licenses).where(eq(licenses.parentLicenseId, parentLicense.id));
+        const covered = new Set(
+          existingAddons.flatMap(addon =>
+            addon.coverageSnapshot.request.intendedUse === "paid_ad" ? addon.coverageSnapshot.request.platforms : [],
+          ),
+        );
+        for (const platform of brief.platforms) {
+          if (covered.has(platform)) {
+            throw new RepositoryError("ADDON_ALREADY_COVERED", `Paid ads on ${platform} are already covered by the parent license family.`, 422);
+          }
+        }
       }
 
       const snapshot = storedOfferSnapshot(offer);
@@ -823,6 +967,29 @@ export async function claimAttemptAndReserve(
       const adjustments = await adjustmentTotal(tx, project.id);
       const available = project.budgetBaseUnits - adjustments - confirmedSpend - activeReservations;
       const availableBaseUnits = (available > 0n ? available : 0n).toString();
+
+      const [usedRow] = await tx
+        .select({ count: sql<number>`count(*)::int` })
+        .from(purchases)
+        .where(
+          and(
+            eq(purchases.projectId, project.id),
+            ne(purchases.id, purchase.id),
+            inArray(purchases.status, ["reserved", "payment_pending", "settled", "issuing", "ready"]),
+          ),
+        );
+      const purchasesUsed = Number(usedRow?.count ?? 0);
+      if (purchasesUsed >= project.purchaseCountCap) {
+        const reason = `This project has reached its purchase limit (${project.purchaseCountCap}).`;
+        const refused = await refusePurchase(tx, purchase, "PURCHASE_COUNT_CAP_EXCEEDED", reason, now);
+        return {
+          outcome: "refused",
+          purchase: refused.purchase,
+          refusal: refused.refusal,
+          reasons: [{ code: "PURCHASE_COUNT_CAP_EXCEEDED", message: reason }],
+          availableBaseUnits,
+        };
+      }
 
       if (purchase.priceBaseUnits > project.purchaseCapBaseUnits) {
         const reason = "The quoted price exceeds this project's purchase cap.";
@@ -1402,6 +1569,244 @@ export async function recordAttemptSubmission(
   });
 }
 
+function coveragePlatforms(request: Brief, use: "organic" | "paid_ad"): Brief["platforms"] {
+  return request.intendedUse === use ? request.platforms : [];
+}
+
+function unionPlatforms(...lists: Brief["platforms"][]): Brief["platforms"] {
+  return [...new Set(lists.flat())];
+}
+
+async function buildCombinedCoverage(
+  db: GrantDatabase,
+  input: { ownerId: string; licenseId: string },
+): Promise<CombinedCoverage | null> {
+  const [baseLicense] = await db.select().from(licenses).where(eq(licenses.id, input.licenseId)).limit(1);
+  if (!baseLicense || baseLicense.kind !== "base") return null;
+  const [basePurchase] = await db
+    .select({ id: purchases.id })
+    .from(purchases)
+    .where(and(eq(purchases.id, baseLicense.purchaseId), eq(purchases.ownerId, input.ownerId)))
+    .limit(1);
+  if (!basePurchase) return null;
+
+  const addonRows = await db
+    .select()
+    .from(licenses)
+    .where(and(eq(licenses.parentLicenseId, baseLicense.id), eq(licenses.kind, "addon")))
+    .orderBy(licenses.createdAt);
+  const allLicenses = [baseLicense, ...addonRows];
+  const receiptRows = await db
+    .select()
+    .from(receipts)
+    .where(inArray(receipts.licenseId, allLicenses.map(row => row.id)));
+  const receiptByLicense = new Map(receiptRows.map(row => [row.licenseId, row]));
+
+  function summary(license: LicenseRow): CoverageLicenseSummary {
+    const request = license.coverageSnapshot.request;
+    const receipt = receiptByLicense.get(license.id);
+    return {
+      licenseId: license.id,
+      licenseNumber: license.licenseNumber,
+      purchaseId: license.purchaseId,
+      kind: license.kind,
+      startsAt: license.startsAt,
+      endsAt: license.endsAt,
+      amountBaseUnits: receipt?.amountBaseUnits.toString() ?? "0",
+      transactionHash: receipt?.transactionHash ?? null,
+      organicPlatforms: coveragePlatforms(request, "organic"),
+      paidAdPlatforms: coveragePlatforms(request, "paid_ad"),
+    };
+  }
+
+  const baseSummary = summary(baseLicense);
+  const addonSummaries = addonRows.map(summary);
+  const baseRequest = baseLicense.coverageSnapshot.request;
+  const total = [baseSummary, ...addonSummaries].reduce((sum, item) => sum + BigInt(item.amountBaseUnits), 0n);
+  return {
+    baseLicense: baseSummary,
+    addonLicenses: addonSummaries,
+    organicPlatforms: baseSummary.organicPlatforms,
+    paidAdPlatforms: unionPlatforms(baseSummary.paidAdPlatforms, ...addonSummaries.map(item => item.paidAdPlatforms)),
+    territory: baseRequest.territory,
+    startsAt: baseLicense.startsAt,
+    endsAt: baseLicense.endsAt,
+    termDays: baseRequest.termDays,
+    clipDurationSeconds: baseRequest.clipDurationSeconds,
+    clientDelivery: baseRequest.clientDelivery,
+    reposting: baseRequest.reposting,
+    futureCampaigns: baseRequest.futureCampaigns,
+    totalBaseUnits: total.toString(),
+  };
+}
+
+export async function getAddonAvailability(
+  db: GrantDatabase,
+  input: { ownerId: string; purchaseId: string; now?: Date },
+): Promise<AddonAvailability> {
+  const now = input.now ?? new Date();
+  const [purchase] = await db
+    .select()
+    .from(purchases)
+    .where(and(eq(purchases.id, input.purchaseId), eq(purchases.ownerId, input.ownerId)))
+    .limit(1);
+  if (!purchase) throw notFound();
+
+  const unavailable: AddonAvailability = {
+    eligible: false,
+    reason: null,
+    parentPurchaseId: purchase.id,
+    parentLicense: null,
+    baseRequest: null,
+    addons: [],
+    existing: [],
+    combinedCoverage: null,
+  };
+  if (purchase.kind !== "base") return { ...unavailable, reason: "Add-ons attach to a base purchase." };
+  if (!isSettledStatus(purchase.status)) return { ...unavailable, reason: "The base purchase is not settled yet." };
+
+  const [license] = await db.select().from(licenses).where(eq(licenses.purchaseId, purchase.id)).limit(1);
+  if (!license) return { ...unavailable, reason: "The base license is not ready yet." };
+  if (license.endsAt <= now) return { ...unavailable, reason: "The base license has expired." };
+
+  const combinedCoverage = await buildCombinedCoverage(db, { ownerId: input.ownerId, licenseId: license.id });
+  if (!combinedCoverage) return { ...unavailable, reason: "The base license is unavailable." };
+
+  const baseRequest = license.coverageSnapshot.request;
+  const existing = combinedCoverage.addonLicenses;
+  const withFamily: AddonAvailability = {
+    ...unavailable,
+    parentLicense: combinedCoverage.baseLicense,
+    baseRequest,
+    existing,
+    combinedCoverage,
+  };
+  if (baseRequest.intendedUse === "paid_ad") {
+    return { ...withFamily, reason: "This base license already covers paid ads." };
+  }
+
+  const covered = new Set(existing.flatMap(item => item.paidAdPlatforms));
+  const uncovered = baseRequest.platforms.filter(platform => !covered.has(platform));
+  if (uncovered.length === 0) {
+    return { ...withFamily, reason: "Paid ads are already covered on every base platform." };
+  }
+
+  const offerRows = await db
+    .select()
+    .from(offers)
+    .where(
+      and(
+        eq(offers.kind, "addon"),
+        eq(offers.trackId, purchase.trackId),
+        eq(offers.parentOfferId, purchase.offerId),
+        eq(offers.parentOfferVersion, purchase.offerVersion),
+        eq(offers.sellerId, purchase.offerSnapshot.sellerId),
+      ),
+    )
+    .orderBy(offers.id);
+
+  const deltaRequest: Brief = {
+    intendedUse: "paid_ad",
+    platforms: uncovered,
+    territory: baseRequest.territory,
+    termDays: baseRequest.termDays,
+    clipDurationSeconds: baseRequest.clipDurationSeconds,
+    clientDelivery: baseRequest.clientDelivery,
+    reposting: false,
+    futureCampaigns: false,
+  };
+  const addons: AddonOfferView[] = [];
+  for (const offer of offerRows) {
+    if (!offer.active || offer.activeFrom > now || (offer.expiresAt !== null && offer.expiresAt <= now)) continue;
+    const coverage = matchOffer(deltaRequest, storedOfferSnapshot(offer));
+    addons.push({
+      offerId: offer.id,
+      offerVersion: offer.version,
+      title: "Paid ads",
+      amountBaseUnits: offer.amountBaseUnits.toString(),
+      platforms: uncovered,
+      termDays: baseRequest.termDays,
+      endsAt: license.endsAt,
+      territory: baseRequest.territory,
+      clipDurationSeconds: baseRequest.clipDurationSeconds,
+      clientDelivery: baseRequest.clientDelivery,
+      available: coverage.compatible,
+      reasons: coverage.reasons,
+    });
+  }
+
+  const available = addons.some(addon => addon.available);
+  return {
+    ...withFamily,
+    eligible: available,
+    reason: available ? null : "No paid-ad add-on covers the remaining base platforms.",
+    addons,
+  };
+}
+
+export async function quoteAddonPurchase(
+  db: GrantDatabase,
+  input: {
+    ownerId: string;
+    parentPurchaseId: string;
+    offerId: string;
+    offerVersion: number;
+    idempotencyKey: string;
+    now?: Date;
+  },
+): Promise<QuoteOutcome> {
+  const now = input.now ?? new Date();
+  const availability = await getAddonAvailability(db, {
+    ownerId: input.ownerId,
+    purchaseId: input.parentPurchaseId,
+    now,
+  });
+  if (!availability.eligible) {
+    throw new RepositoryError("ADDON_NOT_AVAILABLE", availability.reason ?? "The add-on is not available.", 409);
+  }
+  const addon = availability.addons.find(
+    item => item.offerId === input.offerId && item.offerVersion === input.offerVersion && item.available,
+  );
+  if (!addon) {
+    throw new RepositoryError("ADDON_NOT_OFFERED", "This add-on is not currently offered for the base purchase.", 422);
+  }
+  const [parent] = await db
+    .select()
+    .from(purchases)
+    .where(and(eq(purchases.id, input.parentPurchaseId), eq(purchases.ownerId, input.ownerId)))
+    .limit(1);
+  if (!parent) throw notFound("The parent purchase was not found.");
+  const [project] = await db
+    .select({ briefVersion: projects.briefVersion })
+    .from(projects)
+    .where(and(eq(projects.id, parent.projectId), eq(projects.ownerId, input.ownerId)))
+    .limit(1);
+  if (!project) throw notFound("The parent project was not found.");
+
+  return quotePurchase(db, {
+    ownerId: input.ownerId,
+    projectId: parent.projectId,
+    trackId: parent.trackId,
+    offerId: addon.offerId,
+    offerVersion: addon.offerVersion,
+    kind: "addon",
+    parentPurchaseId: parent.id,
+    briefVersion: project.briefVersion,
+    request: {
+      intendedUse: "paid_ad",
+      platforms: addon.platforms,
+      territory: addon.territory,
+      termDays: addon.termDays,
+      clipDurationSeconds: addon.clipDurationSeconds,
+      clientDelivery: addon.clientDelivery,
+      reposting: false,
+      futureCampaigns: false,
+    },
+    idempotencyKey: input.idempotencyKey,
+    now,
+  });
+}
+
 export async function getPurchaseForOwner(
   db: GrantDatabase,
   input: { ownerId: string; purchaseId: string },
@@ -1428,6 +1833,12 @@ export async function getPurchaseForOwner(
   const artifactRows = license
     ? await db.select().from(artifacts).where(eq(artifacts.licenseId, license.id)).orderBy(desc(artifacts.generationVersion))
     : [];
+  const combinedCoverage = license
+    ? await buildCombinedCoverage(db, {
+        ownerId: input.ownerId,
+        licenseId: license.kind === "addon" && license.parentLicenseId ? license.parentLicenseId : license.id,
+      })
+    : null;
 
   return {
     purchase,
@@ -1440,6 +1851,7 @@ export async function getPurchaseForOwner(
     license,
     artifacts: artifactRows,
     refusal: refusalRows[0] ?? null,
+    combinedCoverage,
   };
 }
 

@@ -86,7 +86,7 @@
 - Use Cloudflare R2 with a private bucket. Issue short-lived presigned GET URLs only after session, ownership, purchase-state, license, and artifact checks.
 - Never use public object URLs or public bucket access for licensed audio or generated PDFs.
 - Use the Node runtime for Better Auth, wallet, faucet, and R2 routes.
-- The faucet sends one 5 USDC grant per wallet under a hard daily treasury cap. Keep FAUCET_TREASURY_SECRET and WALLET_ENCRYPTION_KEY in Production only. When the treasury is empty, show the user address and manual funding instructions.
+- The faucet sends one 2.00 USDC grant per wallet under a hard 40.00 USDC daily treasury cap. Keep FAUCET_TREASURY_SECRET and WALLET_ENCRYPTION_KEY in Production only. When the treasury is empty, show the user address and manual funding instructions. Keep the treasury above the daily cap and verify capacity with fresh accounts before changing the defaults.
 - The pay route must return 503 unless PAYMENTS_ENABLED is exactly "true". Keep durable per-owner rate limits on quote, approve, pay, reconcile, delivery, share, wallet, and faucet.
 - The seller route must derive price, asset, and payee from the immutable purchase, never from client-supplied values. Bind it with a short-lived server-signed attempt token.
 - Reconciliation must never create a new attempt or signature. It may only verify and finalize the existing attempt.
@@ -94,15 +94,17 @@
 
 ## GRANT PROJECT WORKFLOW
 
-- Build the backend first. Start the interface as soon as the founder sends a design reference. Do not wait for paid-ad add-ons, hardening, or share-link polish.
+- Build the backend first. Start the interface as soon as the founder sends a design reference. Do not wait for hardening or share-link polish.
 - Use the existing collaboration repository at https://github.com/JemimahEkong/Grant. Do not create a replacement GitHub repository.
 - Use the founder's personal Vercel and Neon workspaces for Grant resources. Do not modify unrelated projects.
 - Keep payments behind the PAYMENTS_ENABLED flag, user wallet balance, server-side approval, persistent budget reservations, verified settlement, and reconciliation.
-- Fixture catalog matching is a demonstration of term checks. It does not grant a license or verify music ownership.
+- Fixture catalog matching is a demonstration of term checks. It does not grant a license or verify music ownership. Demo audio is CC0 with provenance in demo/audio/PROVENANCE.md. Seller identities and offer terms remain fixtures.
 - Do not expose owner-scoped persistence routes until session authentication is selected and enforced.
 - Do not bypass approval, reservations, settlement verification, or reconciliation when changing payment code.
 - Approvals fail closed when a seller payee is missing or is not a valid Stellar public key.
 - G0 buyer/seller scripts are local-only. Keep the seller bound to localhost. The faucet treasury secret is a separate Production-only operational secret.
-- Migration 0004 owns per-user wallets and faucet grants. Do not add a balance column.
+- Migration 0004 owns per-user wallets and faucet grants. Migration 0005 owns purchase_count_cap. Do not add a balance column.
+- The per-project purchase-count cap is enforced in the same transaction as budget reservation. Refused and expired entries do not consume a slot.
+- Paid-ad add-ons require an owned, settled base purchase, the same seller, a parent offer match, and a server-derived delta. Never accept the delta, parent, or price from the client. The add-on gets its own receipt and license and keeps the base term.
 - A real testnet settlement proves the protocol only. It does not prove a product purchase, license, or music ownership.
 - The approved payment evidence is in agent-state/payment-evidence.md. The Vercel seller route and the local buyer orchestration were both exercised with real testnet settlements.

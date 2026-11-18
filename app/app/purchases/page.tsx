@@ -92,6 +92,9 @@ export default function PurchasesPage() {
               <div className="v" style={{ color: "var(--text)" }}>{formatUsdc(view.budget.availableBaseUnits)}</div>
             </div>
           </div>
+          <p className="fine-note" style={{ marginTop: 8 }}>
+            Purchases used: {view.budget.purchasesUsed} of {view.budget.purchaseCountCap}. Refused and expired entries do not consume a slot.
+          </p>
 
           <div className="filters" role="group" aria-label="Filter purchases">
             {[

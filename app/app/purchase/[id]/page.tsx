@@ -1,31 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ClearanceStrip, Legend, PageHeader, Spinner, StatusChip } from "../../../../components/ui";
 import {
   approvePurchase,
+  createAddonQuote,
   createShare,
   deliverPurchase,
   getCatalog,
   getDownloadUrl,
   getProject,
   getPurchase,
+  getPurchaseAddons,
   getWallet,
   payPurchase,
   reconcilePurchase,
 } from "../../../../lib/ui/actions";
-import type { ApiFailure, CatalogResponse, ProjectView, PurchaseView, WalletView } from "../../../../lib/ui/api";
+import type { AddonAvailability, AddonOfferView, ApiFailure, CatalogResponse, ProjectView, PurchaseView, WalletView } from "../../../../lib/ui/api";
 import { effectivePurchaseStatus, formatDate, formatDuration, formatUsdc, formatUsdcDecimal, shortHash, subtractBaseUnits, usdcAmountToBaseUnits } from "../../../../lib/ui/format";
-import { buildExclusions, buildReviewStrip } from "../../../../lib/ui/strip";
+import { buildExclusions, buildReviewStrip, platformsLabel } from "../../../../lib/ui/strip";
 
 type PanelState = "none" | "disabled" | "pending" | "refused" | "expired";
 
 export default function PurchasePage() {
   const params = useParams<{ id: string }>();
+  const router = useRouter();
   const purchaseId = params.id;
   const [view, setView] = useState<PurchaseView | null>(null);
+  const [addonAvailability, setAddonAvailability] = useState<AddonAvailability | null>(null);
+  const [addonBusy, setAddonBusy] = useState<string | null>(null);
   const [projectView, setProjectView] = useState<ProjectView | null>(null);
   const [catalog, setCatalog] = useState<CatalogResponse | null>(null);
   const [wallet, setWallet] = useState<WalletView | null>(null);
@@ -42,8 +47,9 @@ export default function PurchasePage() {
   const deliveryAttempted = useRef(false);
 
   const refresh = useCallback(async () => {
-    const next = await getPurchase(purchaseId);
+    const [next, addonNext] = await Promise.all([getPurchase(purchaseId), getPurchaseAddons(purchaseId)]);
     setView(next);
+    setAddonAvailability(addonNext);
     if (next.purchase.projectId) {
       setProjectView(await getProject(next.purchase.projectId));
     }
@@ -52,12 +58,13 @@ export default function PurchasePage() {
 
   useEffect(() => {
     let active = true;
-    Promise.all([getPurchase(purchaseId), getCatalog(), getWallet()])
-      .then(async ([next, catalogResponse, walletView]) => {
+    Promise.all([getPurchase(purchaseId), getCatalog(), getWallet(), getPurchaseAddons(purchaseId)])
+      .then(async ([next, catalogResponse, walletView, addonResponse]) => {
         if (!active) return;
         setView(next);
         setCatalog(catalogResponse);
         setWallet(walletView);
+        setAddonAvailability(addonResponse);
         if (next.purchase.projectId) {
           const project = await getProject(next.purchase.projectId);
           if (active) setProjectView(project);
@@ -117,7 +124,7 @@ export default function PurchasePage() {
   const exclusions = buildExclusions(request, offer);
   const title = view.track?.title ?? trackItem?.title ?? purchase.trackId;
   const seller = trackItem?.sellerName ?? offer.sellerId;
-  const meta = `${seller}${trackItem ? ` · ${formatDuration(trackItem.durationSeconds)} · ${trackItem.bpm ?? "—"} BPM` : ""}`;
+  const meta = `${seller}${trackItem ? ` · ${formatDuration(trackItem.durationSeconds)} · ${trackItem.bpm ? `${trackItem.bpm} BPM` : "beatless"}` : ""}`;
   const status = effectivePurchaseStatus(purchase);
   const isSettled = ["settled", "issuing", "ready"].includes(status);
   const isPending = ["reserved", "payment_pending"].includes(status);
@@ -130,6 +137,7 @@ export default function PurchasePage() {
   const license = view.license;
   const walletReady = wallet?.step === "complete";
   const canPay = Boolean(walletReady && wallet && usdcAmountToBaseUnits(wallet.balance) >= BigInt(purchase.priceBaseUnits));
+  const purchaseLimitReached = Boolean(budget && budget.purchasesUsed >= budget.purchaseCountCap);
   const pdfReady = view.artifacts.some(artifact => artifact.kind === "license_pdf" && artifact.state === "ready");
   const audioReady = view.artifacts.some(artifact => artifact.kind === "audio" && artifact.state === "ready");
 
@@ -166,7 +174,13 @@ export default function PurchasePage() {
         await refresh();
         return;
       }
-      if (apiFailure.code === "PROJECT_BUDGET_EXCEEDED" || apiFailure.code === "PURCHASE_CAP_EXCEEDED") {
+      const policyCodes = (apiFailure.body as { reasons?: Array<{ code?: string }> } | undefined)?.reasons?.map(reason => reason.code) ?? [];
+      if (
+        apiFailure.code === "PROJECT_BUDGET_EXCEEDED" ||
+        apiFailure.code === "PURCHASE_CAP_EXCEEDED" ||
+        apiFailure.code === "PURCHASE_COUNT_CAP_EXCEEDED" ||
+        policyCodes.includes("PURCHASE_COUNT_CAP_EXCEEDED")
+      ) {
         setPanel("refused");
         await refresh();
         return;
@@ -281,6 +295,27 @@ export default function PurchasePage() {
     }
   }
 
+  async function reviewAddon(addon: AddonOfferView) {
+    setAddonBusy(addon.offerId);
+    setActionError(null);
+    try {
+      const outcome = await createAddonQuote(purchaseId, {
+        offerId: addon.offerId,
+        offerVersion: addon.offerVersion,
+        idempotencyKey: crypto.randomUUID(),
+      });
+      if (outcome.purchase) {
+        router.push(`/app/purchase/${outcome.purchase.id}`);
+      } else {
+        setActionError(outcome.reasons?.[0]?.message ?? "The add-on quote was refused.");
+      }
+    } catch (failure) {
+      setActionError((failure as Error).message);
+    } finally {
+      setAddonBusy(null);
+    }
+  }
+
   return (
     <>
       <Link href="/app/catalog" className="back-link">
@@ -290,6 +325,9 @@ export default function PurchasePage() {
         <div>
           <h1 className="review-title">{title}</h1>
           <div className="review-by">{meta}</div>
+          {view.track?.provenanceReference ? (
+            <div className="fine-note" style={{ marginTop: 4 }}>{view.track.provenanceReference}</div>
+          ) : null}
         </div>
         <StatusChip status={status} />
       </div>
@@ -384,6 +422,19 @@ export default function PurchasePage() {
                 </div>
               ) : null}
 
+              {purchaseLimitReached ? (
+                <div className="explain-panel" role="status">
+                  <div className="h">Purchase limit reached</div>
+                  <p>
+                    This project has used {budget?.purchasesUsed} of {budget?.purchaseCountCap} purchases. Refused and
+                    expired entries do not consume a slot.
+                  </p>
+                  <Link href="/app/purchases" className="btn btn-secondary" style={{ marginTop: 10 }}>
+                    View ledger
+                  </Link>
+                </div>
+              ) : null}
+
               {panel === "disabled" ? (
                 <div className="explain-panel" role="status">
                   <div className="h">Payments are paused</div>
@@ -414,7 +465,7 @@ export default function PurchasePage() {
                 </div>
               ) : null}
 
-              {status === "quoted" && panel === "none" && canPay ? (
+              {status === "quoted" && panel === "none" && canPay && !purchaseLimitReached ? (
                 <>
                   <p className="fine-note">
                     You approve these exact terms. Nothing is charged, signed, or reserved until you approve.
@@ -463,6 +514,48 @@ export default function PurchasePage() {
             </div>
           ) : null}
 
+          {view.combinedCoverage?.baseLicense && (purchase.kind === "addon" || view.combinedCoverage.addonLicenses.length > 0) ? (
+            <div className="exclusions" style={{ marginTop: 16 }}>
+              <div className="h">Combined coverage</div>
+              <div className="kv-list" style={{ marginTop: 0 }}>
+                <div className="kv">
+                  <span className="k">Organic</span>
+                  <span className="v">{platformsLabel(view.combinedCoverage.organicPlatforms)}</span>
+                </div>
+                <div className="kv">
+                  <span className="k">Paid ads</span>
+                  <span className="v">{platformsLabel(view.combinedCoverage.paidAdPlatforms)}</span>
+                </div>
+                <div className="kv">
+                  <span className="k">Term</span>
+                  <span className="v">
+                    {formatDate(view.combinedCoverage.startsAt)} to {formatDate(view.combinedCoverage.endsAt)}
+                  </span>
+                </div>
+                <div className="kv">
+                  <span className="k">Total paid</span>
+                  <span className="v">{formatUsdc(view.combinedCoverage.totalBaseUnits)} USDC</span>
+                </div>
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <div className="micro">Licenses in this family</div>
+                {[view.combinedCoverage.baseLicense, ...view.combinedCoverage.addonLicenses].map(item => (
+                  <div className="fine-note" key={item.licenseId} style={{ marginTop: 5 }}>
+                    {item.kind === "base" ? "Base" : "Add-on"} {item.licenseNumber} · {formatUsdc(item.amountBaseUnits)} USDC · tx {shortHash(item.transactionHash)}
+                  </div>
+                ))}
+              </div>
+              <p className="fine-note">
+                The add-on has its own receipt. The base license keeps its original term, territory, and client terms.
+              </p>
+              {purchase.kind === "addon" && purchase.parentPurchaseId ? (
+                <Link href={`/app/purchase/${purchase.parentPurchaseId}`} className="review-link" style={{ display: "inline-block", marginTop: 6 }}>
+                  View base license →
+                </Link>
+              ) : null}
+            </div>
+          ) : null}
+
           <div className="download-list">
             <button className="download-row" type="button" onClick={() => void download("pdf")} disabled={!pdfReady || downloadBusy === "pdf"}>
               <div>
@@ -473,7 +566,7 @@ export default function PurchasePage() {
             </button>
             <button className="download-row" type="button" onClick={() => void download("audio")} disabled={!audioReady || downloadBusy === "audio"}>
               <div>
-                <div className="t">Audio · WAV</div>
+                <div className="t">Audio · MP3</div>
                 <div className="k">{audioReady ? "Cleared for this use · private R2" : "Preparing the audio"}</div>
               </div>
               <span className="download-arrow" aria-hidden="true">{downloadBusy === "audio" ? "…" : "↓"}</span>
@@ -512,6 +605,53 @@ export default function PurchasePage() {
               <span className="v">{formatUsdc(receipt?.amountBaseUnits ?? purchase.priceBaseUnits)} USDC</span>
             </div>
           </div>
+
+          {purchase.kind === "base" && isSettled && addonAvailability?.eligible && !purchaseLimitReached ? (
+            <div className="explain-panel" style={{ marginTop: 16 }}>
+              <div className="h">Add paid ads</div>
+              {addonAvailability.addons.filter(addon => addon.available).map(addon => (
+                <div key={addon.offerId} style={{ marginTop: 8 }}>
+                  <p>
+                    Adds paid-ad use on {platformsLabel(addon.platforms)}. The add-on ends with the base license on{" "}
+                    {formatDate(addon.endsAt)}. Base term, territory, and client terms stay unchanged.
+                  </p>
+                  <div className="kv-list">
+                    <div className="kv">
+                      <span className="k">Adds</span>
+                      <span className="v">Paid ads · {platformsLabel(addon.platforms)}</span>
+                    </div>
+                    <div className="kv">
+                      <span className="k">Ends</span>
+                      <span className="v">{formatDate(addon.endsAt)}</span>
+                    </div>
+                    <div className="kv">
+                      <span className="k">Original terms</span>
+                      <span className="v">Unchanged</span>
+                    </div>
+                    <div className="kv">
+                      <span className="k">Price</span>
+                      <span className="v">{formatUsdc(addon.amountBaseUnits)} USDC</span>
+                    </div>
+                  </div>
+                  <button
+                    className="btn btn-primary"
+                    style={{ marginTop: 10 }}
+                    type="button"
+                    onClick={() => void reviewAddon(addon)}
+                    disabled={addonBusy !== null}
+                  >
+                    {addonBusy === addon.offerId ? "Creating add-on quote…" : `Review add-on · ${formatUsdc(addon.amountBaseUnits)}`}
+                  </button>
+                </div>
+              ))}
+              {addonAvailability.addons.some(addon => !addon.available) ? (
+                <p className="fine-note">
+                  Some offers are unavailable for this base license.{" "}
+                  {addonAvailability.addons.flatMap(addon => addon.reasons.map(reason => reason.message)).join(" ")}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
 
           <div className="exclusions" style={{ marginTop: 14 }}>
             <div className="h">Proof link</div>

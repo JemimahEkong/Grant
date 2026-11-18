@@ -71,7 +71,7 @@ export default function CatalogPage() {
   if (!selectedProject) {
     return (
       <>
-        <PageHeader title="Catalog" lede="Three fixture tracks. Coverage varies per track. That is the point." />
+        <PageHeader title="Catalog" lede="Three demo tracks with CC0 audio. Coverage varies per track. That is the point." />
         <EmptyState
           title="Create a brief first"
           description="The catalog checks every track against your confirmed brief. A project gives the quote something real to compare."
@@ -87,7 +87,7 @@ export default function CatalogPage() {
 
   return (
     <>
-      <PageHeader title="Catalog" lede="Three fixture tracks. Coverage varies per track. Review the edges before you approve." />
+      <PageHeader title="Catalog" lede="Three demo tracks with CC0 audio. Coverage varies per track. Review the edges before you approve." />
       <div className="filters" role="group" aria-label="Filter tracks">
         {[
           { value: "all", label: "All" },
@@ -121,7 +121,7 @@ export default function CatalogPage() {
           <div className="skeleton" />
         </div>
       ) : items.length === 0 ? (
-        <EmptyState title="No tracks match this filter" description="Clear the filter. The fixture catalog has three tracks with different coverage." />
+        <EmptyState title="No tracks match this filter" description="Clear the filter. The demo catalog has three tracks with different coverage." />
       ) : (
         items.map(item => (
           <article className="track-card" key={item.trackId}>
@@ -129,8 +129,9 @@ export default function CatalogPage() {
               <div>
                 <div className="nm">{item.title}</div>
                 <div className="track-meta">
-                  {item.sellerName} · {formatDuration(item.durationSeconds)} · {item.bpm ?? "—"} BPM
+                  {item.sellerName} · {formatDuration(item.durationSeconds)} · {item.bpm ? `${item.bpm} BPM` : "beatless"}
                 </div>
+                {item.sourceLabel ? <div className="track-meta" style={{ marginTop: 3 }}>{item.sourceLabel}</div> : null}
               </div>
               <div className="pr">{formatUsdc(item.amountBaseUnits)}</div>
             </div>

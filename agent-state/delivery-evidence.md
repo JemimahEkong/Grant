@@ -16,13 +16,13 @@ Status: PDF, audio, and share/proof delivery verified on the production purchase
 ## Audio
 
 - Artifact: `art_b1deeb1327e003781fb7135b`
-- Object: `audio/morning-edit/demo-tone.wav`
-- Bytes: 176444
-- SHA-256: `b1deeb1327e003781fb7135b879b9da7301e6a66e667c12b25b3cfbf5fc4d7bd`
+- Object: `audio/morning-edit/morning-edit.mp3`
+- Bytes: 1,257,912
+- SHA-256: `c484f9e73bf7fa9f91e7bc13a42c3f531b3c665c4892f10ad039bbaa0a8969dd`
 - Purchase status after audio: `ready`
 - Owner download: 200 with matching hash
 - Unauthenticated download: 401
-- The WAV is a synthetic placeholder for private delivery verification. It is not a licensed music track.
+- The track is CC0 demo audio from Freesound (tyballer92, 449812). The seller identity and offer terms are fixtures. The earlier synthetic WAV was superseded and is no longer referenced by a download artifact.
 
 ## Share and proof
 
