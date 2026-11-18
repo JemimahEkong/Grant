@@ -22,7 +22,7 @@
 - UI: DESIGN.md is the visual source of truth. Tokens, Geist Sans/Mono, inline SVG, clearance strip, 900px breakpoint, reduced motion, visible focus. No gradients, glass, icon library, or images. Wallet QR is an inline SVG with light scan contrast.
 - Production UI verification: Playwright passed landing, sign-in, four onboarding steps, faucet funding, home, brief, catalog, review, refused, settled license with private R2 PDF and audio downloads, purchases, wallet with QR and history, profile, proof, signed-out redirect, and mobile bottom nav. No console errors.
 - Tests: 67 tests in 10 files passed. Typecheck, lint, build, db:check, db:check:test, r2:check passed.
-- Git: main tracks origin/main at https://github.com/JemimahEkong/Grant.git. Previous UI checkpoint e212ead was pushed. Latest funding deployment dpl_G7fySBf6yAfW2mo6LeiwGurvNrkt. Funding/UI changes are uncommitted at the time of this state write.
+- Git: main tracks origin/main at https://github.com/JemimahEkong/Grant.git. Funding/UI checkpoint 3507028 was pushed to origin/main. Latest production deployment dpl_8WtFnpH99mGu6GkrPR6gEtCGs3ew.
 - Missing: paid-ad add-on, broader hardening, real authorized music, production refunds/disputes, mainnet, multi-tenant seller onboarding. API gaps: no purchase-count cap, no artifact byte sizes, no license number in project purchase rows, BPM/seller display names are joined from the fixture catalog, and wallet history labels are limited by Horizon operation data.
 - UI: built from all five supplied references. Future UI work should keep DESIGN.md as the source of truth.
 - Project instructions are in AGENTS.md. Session recovery lives in agent-state/.

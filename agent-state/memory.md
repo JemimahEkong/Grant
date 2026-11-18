@@ -25,7 +25,7 @@
 - The seller route derives price, asset, and payee from the immutable purchase and a short-lived HMAC attempt token. X402_ATTEMPT_SECRET must match.
 - Reconciliation never signs again or creates a new attempt.
 - Share tokens are 32 random bytes, stored only as SHA-256 hashes. Raw tokens are not committed or printed. Proof views exclude private data.
-- Production Vercel URL: https://grant-roan.vercel.app. Latest funding deployment dpl_G7fySBf6yAfW2mo6LeiwGurvNrkt.
+- Production Vercel URL: https://grant-roan.vercel.app. Latest funding deployment dpl_8WtFnpH99mGu6GkrPR6gEtCGs3ew.
 - G0 scripts are local-only. The seller binds 127.0.0.1. The G0 buyer and seller secrets are not deployed.
 - Fixture catalog matching does not grant a license, verify music ownership, or prove seller authority.
 - Paid-ad add-ons, broader hardening, and real authorized music remain.
