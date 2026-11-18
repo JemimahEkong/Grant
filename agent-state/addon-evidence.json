@@ -1,0 +1,153 @@
+{
+  "status": "confirmed",
+  "checkedAt": "2026-11-18T21:44:32.634Z",
+  "baseUrl": "https://grant-roan.vercel.app",
+  "route": "https://grant-roan.vercel.app/app/purchase/pur_b2951301f1be45ad9d688cb9da1aea53",
+  "account": {
+    "email": "faucet-cap-1795036045272-1@grant.local",
+    "walletAddress": "GBEHOFYXJFYZ3NH3UK475HT3KFW2AEK7J5G3QEHGBV67DD5GEZ4SXM5K"
+  },
+  "projectId": "prj_b1b63fac2ef14188b20d52c54707a73b",
+  "base": {
+    "purchaseId": "pur_ff0cd26ec27d44a1b2b7d6a400d06958",
+    "licenseId": "lic_f5394ec546134fd9a862d8acd8e0f45e",
+    "licenseNumber": "GRANT-2026-3F9A10D1B6",
+    "transactionHash": "e666e5c6f922b4773ef0187c9ff2d87db4ae4f6c86618adbf3d33f22a56dfa26",
+    "settlementReference": "stellar:testnet:e666e5c6f922b4773ef0187c9ff2d87db4ae4f6c86618adbf3d33f22a56dfa26:0",
+    "ledger": "5802910",
+    "amountBaseUnits": "10000000",
+    "status": "ready",
+    "startsAt": "2026-11-18T21:43:10.000Z",
+    "endsAt": "2027-02-16T21:43:10.000Z",
+    "request": {
+      "termDays": 90,
+      "platforms": [
+        "instagram",
+        "tiktok"
+      ],
+      "reposting": false,
+      "territory": {
+        "countries": [],
+        "worldwide": true
+      },
+      "intendedUse": "organic",
+      "clientDelivery": true,
+      "futureCampaigns": false,
+      "clipDurationSeconds": 30
+    }
+  },
+  "offeredDelta": {
+    "intendedUse": "paid_ad",
+    "platforms": [
+      "instagram",
+      "tiktok"
+    ],
+    "termDays": 90,
+    "endsAt": "2027-02-16T21:43:10.000Z",
+    "amountBaseUnits": "10000000",
+    "offerId": "morning-edit-testnet-addon",
+    "offerVersion": 1
+  },
+  "addon": {
+    "purchaseId": "pur_b2951301f1be45ad9d688cb9da1aea53",
+    "licenseId": "lic_96fa1376f8714ec4a47750dbfc7698de",
+    "licenseNumber": "GRANT-2026-BC32E70611",
+    "parentPurchaseId": "pur_ff0cd26ec27d44a1b2b7d6a400d06958",
+    "parentLicenseId": "lic_f5394ec546134fd9a862d8acd8e0f45e",
+    "transactionHash": "a1b4bc87d1bde5d013bf60626ed9bb8f341a2ab99a9b625dc1cd502e521cb484",
+    "settlementReference": "stellar:testnet:a1b4bc87d1bde5d013bf60626ed9bb8f341a2ab99a9b625dc1cd502e521cb484:0",
+    "ledger": "5802914",
+    "amountBaseUnits": "10000000",
+    "status": "ready",
+    "startsAt": "2026-11-18T21:43:30.000Z",
+    "endsAt": "2027-02-16T21:43:10.000Z",
+    "request": {
+      "termDays": 90,
+      "platforms": [
+        "instagram",
+        "tiktok"
+      ],
+      "reposting": false,
+      "territory": {
+        "countries": [],
+        "worldwide": true
+      },
+      "intendedUse": "paid_ad",
+      "clientDelivery": true,
+      "futureCampaigns": false,
+      "clipDurationSeconds": 30
+    }
+  },
+  "combinedCoverage": {
+    "organicPlatforms": [
+      "instagram",
+      "tiktok"
+    ],
+    "paidAdPlatforms": [
+      "instagram",
+      "tiktok"
+    ],
+    "termDays": 90,
+    "startsAt": "2026-11-18T21:43:10.000Z",
+    "endsAt": "2027-02-16T21:43:10.000Z",
+    "totalBaseUnits": "20000000",
+    "licenseNumbers": [
+      "GRANT-2026-3F9A10D1B6",
+      "GRANT-2026-BC32E70611"
+    ]
+  },
+  "projectBudget": {
+    "confirmedSpendBaseUnits": "20000000",
+    "purchasesUsed": 2,
+    "purchaseCountCap": 2,
+    "availableBaseUnits": "30000000"
+  },
+  "wallet": {
+    "address": "GBEHOFYXJFYZ3NH3UK475HT3KFW2AEK7J5G3QEHGBV67DD5GEZ4SXM5K",
+    "before": "2.0000000",
+    "after": "0.0000000"
+  },
+  "treasury": {
+    "payeeAddress": "GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB",
+    "balanceAfter": "87.0000000"
+  },
+  "artifacts": {
+    "base": [
+      {
+        "kind": "license_pdf",
+        "state": "ready",
+        "objectKey": "licenses/lic_f5394ec546134fd9a862d8acd8e0f45e/license-1.pdf",
+        "contentHash": "f7dc63f000bc44edd5f5016e6c296f85b045831c7ee20b4e2aed7a572ae58b8f"
+      },
+      {
+        "kind": "audio",
+        "state": "ready",
+        "objectKey": "audio/morning-edit/morning-edit.mp3",
+        "contentHash": "c484f9e73bf7fa9f91e7bc13a42c3f531b3c665c4892f10ad039bbaa0a8969dd"
+      }
+    ],
+    "addon": [
+      {
+        "kind": "license_pdf",
+        "state": "ready",
+        "objectKey": "licenses/lic_96fa1376f8714ec4a47750dbfc7698de/license-1.pdf",
+        "contentHash": "2c4de93ffb76ad1638de7521d29ca663e76de5b4c52fbc5c1f50c3533e5b1a11"
+      },
+      {
+        "kind": "audio",
+        "state": "ready",
+        "objectKey": "audio/morning-edit/morning-edit.mp3",
+        "contentHash": "c484f9e73bf7fa9f91e7bc13a42c3f531b3c665c4892f10ad039bbaa0a8969dd"
+      }
+    ]
+  },
+  "assertions": {
+    "addonHasOwnTransaction": true,
+    "addonHasOwnReceipt": true,
+    "addonHasOwnLicense": true,
+    "parentLicenseBound": true,
+    "baseTermPreserved": true,
+    "combinedCoverageShown": true,
+    "purchaseCountAtCap": true
+  }
+}

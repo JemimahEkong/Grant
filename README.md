@@ -168,8 +168,11 @@ private R2 download, purchases, profile, proof, signed-out redirect, and mobile 
 A fresh production account also completed the four onboarding steps, received a faucet
 grant, and bought a 1 USDC license from its own wallet. The current faucet default is 2.00
 USDC per wallet under a 40.00 USDC daily cap. A capacity proof funded three fresh accounts
-in a row. The persistence and auth suites run when `DATABASE_URL_TEST` is present and skip
-otherwise. Do not point integration tests at the main branch.
+in a row. A production add-on proof bought the Morning Edit base license and the paid-ad
+add-on from the same fresh account. The add-on page and the base page showed the combined
+coverage and the add-on's own receipt with no console errors. The persistence and auth
+suites run when `DATABASE_URL_TEST` is present and skip otherwise. Do not point integration
+tests at the main branch.
 
 Production smoke checks passed for health, email/password auth, sessions, project creation,
 owner-scoped reads, unauthenticated `401`, and cross-origin `403`.
@@ -184,6 +187,7 @@ owner-scoped reads, unauthenticated `401`, and cross-origin `403`.
 - [Per-user funding and purchase proof](agent-state/funding-evidence.md)
 - [Faucet capacity proof](agent-state/faucet-capacity-evidence.md)
 - [CC0 audio provenance](agent-state/cc0-audio-evidence.md)
+- [Paid-ad add-on transaction](agent-state/addon-evidence.md)
 
 The payment evidence includes:
 
@@ -199,6 +203,11 @@ The payment evidence includes:
 - Faucet transaction: `5a6672727f59d685cd97f4feb1a953e11142d50dc32ed11b9347117c4ec3f03f`
 - Faucet-funded purchase: `90be474e0a4c1b0faa5fba821f4e21a37396b9cbdb5c788f21a99f3f497f7968`
 - Faucet-funded license: `GRANT-2026-9A30B34453`
+- Add-on base settlement: `e666e5c6f922b4773ef0187c9ff2d87db4ae4f6c86618adbf3d33f22a56dfa26`
+- Add-on base license: `GRANT-2026-3F9A10D1B6`
+- Add-on settlement: `a1b4bc87d1bde5d013bf60626ed9bb8f341a2ab99a9b625dc1cd502e521cb484`
+- Add-on license: `GRANT-2026-BC32E70611`
+- Combined coverage: organic and paid ads on Instagram and TikTok, 2.00 testnet USDC total
 
 ## Safety boundaries
 
@@ -233,8 +242,9 @@ The payment evidence includes:
 ## Deployment
 
 The linked Vercel project is `kaelah-s-projects/grant` with the Next.js preset. Production is
-https://grant-roan.vercel.app. The latest code deployment includes the Next.js x402 seller
-routes and the authenticated purchase routes. Vercel environment variables are sensitive.
+https://grant-roan.vercel.app. Final deployment: `dpl_8RgrQETJ3by8V6EJLNvRUYeGEgPN`. The
+latest code deployment includes the Next.js x402 seller routes, the authenticated purchase
+routes, and the add-on routes. Vercel environment variables are sensitive.
 R2 credentials are configured for Production. OAuth is deferred.
 
 ## Product documents

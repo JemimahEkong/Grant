@@ -541,7 +541,7 @@ export default function PurchasePage() {
                 <div className="micro">Licenses in this family</div>
                 {[view.combinedCoverage.baseLicense, ...view.combinedCoverage.addonLicenses].map(item => (
                   <div className="fine-note" key={item.licenseId} style={{ marginTop: 5 }}>
-                    {item.kind === "base" ? "Base" : "Add-on"} {item.licenseNumber} · {formatUsdc(item.amountBaseUnits)} USDC · tx {shortHash(item.transactionHash)}
+                    {`${item.kind === "base" ? "Base" : "Add-on"} ${item.licenseNumber} · ${formatUsdc(item.amountBaseUnits)} USDC · tx ${shortHash(item.transactionHash)}`}
                   </div>
                 ))}
               </div>

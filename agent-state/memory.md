@@ -7,7 +7,7 @@
 - WALLET_ENCRYPTION_KEY and FAUCET_TREASURY_SECRET are Production-only. The treasury is the seller payee account.
 - Balance is read from chain and cached at most 30 seconds. Project budget is a spending cap, not the balance.
 - Onboarding is a four-step gate: wallet, activate, trustline, fund. App routes redirect until complete.
-- Faucet defaults: 2.00 USDC per wallet, 40.00 USDC daily cap. One grant per wallet. Treasury empty shows the address and manual funding instructions. Treasury was 91.00 after top-up, 85.00 after funding three fresh accounts.
+- Faucet defaults: 2.00 USDC per wallet, 40.00 USDC daily cap. One grant per wallet. Treasury empty shows the address and manual funding instructions. Treasury was 91.00 after top-up, 85.00 after funding three fresh accounts, 87.00 after the add-on proof.
 - Purchase-count cap defaults to 2 per project. It is enforced in the reservation transaction. Refusal code `PURCHASE_COUNT_CAP_EXCEEDED`. Reserved, payment_pending, settled, issuing, and ready consume slots. Refused and expired do not.
 - Add-ons: parent must be an owned, settled/ready base purchase with an active license. The add-on offer must reference the parent offer and seller. The server builds the delta: paid-ad use on the base platforms, base territory, original term, no new reposting, future campaigns, or client terms. The add-on has its own receipt and license with `parent_license_id`. The base license is unchanged. Combined coverage is computed from the license family.
 - CC0 audio is in `demo/audio/`. Provenance is in `demo/audio/PROVENANCE.md`. Seller identities and offer terms are fixtures. Do not label the audio as verified client work.
@@ -19,9 +19,11 @@
 - Seller route derives price, asset, and payee from the immutable purchase and a short-lived HMAC attempt token. X402_ATTEMPT_SECRET must match.
 - Reconciliation never signs again or creates a new attempt.
 - Share tokens are 32 random bytes, stored only as SHA-256 hashes. Raw tokens are not committed or printed.
-- Production URL: https://grant-roan.vercel.app.
+- Production add-on proof: base tx `e666e5c6f922b4773ef0187c9ff2d87db4ae4f6c86618adbf3d33f22a56dfa26`, license `GRANT-2026-3F9A10D1B6`; add-on tx `a1b4bc87d1bde5d013bf60626ed9bb8f341a2ab99a9b625dc1cd502e521cb484`, license `GRANT-2026-BC32E70611`, parent license `lic_f5394ec546134fd9a862d8acd8e0f45e`. Combined organic plus paid ads on Instagram and TikTok, 2.00 USDC, 2 of 2 purchase slots.
+- Production URL: https://grant-roan.vercel.app. Final deployment: `dpl_8RgrQETJ3by8V6EJLNvRUYeGEgPN`.
 - G0 scripts are local-only. The seller binds 127.0.0.1. G0 secrets are not deployed.
 - Catalog matching and fixture offers do not verify music ownership or seller authority. A testnet settlement proves the payment protocol only.
 - API gaps: no artifact byte sizes/content types, no license number in project purchase rows, BPM/seller display names join the demo catalog, wallet history labels limited by Horizon.
 - Remaining product gaps: commercial authorized music, refunds/disputes, mainnet, multi-tenant seller onboarding.
+- Final evidence: `agent-state/addon-evidence.md`, `agent-state/faucet-capacity-evidence.md`, `agent-state/cc0-audio-evidence.md`.
 - Follow AGENTS.md writing, checkpoint, state, and database rules. Keep replies concise.
