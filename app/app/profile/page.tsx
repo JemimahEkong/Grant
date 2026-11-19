@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useMe, useProjects } from "../../../components/providers";
-import { EmptyState, PageHeader } from "../../../components/ui";
+import { EmptyState, PageHeader, SecondaryButton, Row } from "../../../components/ui";
 import {
   getWallet,
   getCatalog,
@@ -121,7 +121,7 @@ export default function ProfilePage() {
       <Link href="/app/wallet" className="wallet-card" style={{ display: "block" }}>
         <div className="row-between">
           <div className="k">Wallet · read-only</div>
-          <span className="muted" style={{ fontSize: 9.5 }}>Open wallet ›</span>
+          <span className="muted" style={{ fontSize: 13 }}>Open wallet ›</span>
         </div>
         <div className="ad" title={wallet?.address ?? undefined}>
           {wallet?.address ? shortAddress(wallet.address) : "not configured"}
@@ -134,7 +134,7 @@ export default function ProfilePage() {
 
       <div className="section-label" style={{ marginTop: 20 }}>
         <span className="micro">Projects</span>
-        <Link href="/app/new" className="muted" style={{ fontSize: 9.5 }}>
+        <Link href="/app/new" className="muted" style={{ fontSize: 13 }}>
           New project
         </Link>
       </div>
@@ -167,7 +167,7 @@ export default function ProfilePage() {
 
       <div className="section-label" style={{ marginTop: 20 }}>
         <span className="micro">Share links</span>
-        <span className="muted" style={{ fontSize: 9 }}>
+        <span className="muted" style={{ fontSize: 13 }}>
           {settled.filter(purchase => shareStatuses[purchase.id]).length} live
         </span>
       </div>
@@ -181,7 +181,7 @@ export default function ProfilePage() {
             const track = trackById.get(purchase.trackId);
             const live = shareStatuses[purchase.id];
             return (
-              <div key={purchase.id} className="list-row">
+              <Row key={purchase.id} className="list-row">
                 <span>
                   {track?.title ?? purchase.trackId}
                   <span className="m" style={{ display: "block", marginTop: 2 }}>
@@ -192,28 +192,28 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     className="btn btn-secondary"
-                    style={{ minHeight: 30, padding: "5px 10px", fontSize: 9.5 }}
+                    style={{ minHeight: 30, padding: "5px 10px", fontSize: 13 }}
                     disabled={busyId === purchase.id}
                     onClick={() => void revoke(purchase.id)}
                   >
                     {busyId === purchase.id ? "Revoking…" : "Revoke"}
                   </button>
                 ) : (
-                  <Link href={`/app/purchase/${purchase.id}`} className="muted" style={{ fontSize: 9.5 }}>
+                  <Link href={`/app/purchase/${purchase.id}`} className="muted" style={{ fontSize: 13 }}>
                     Open license
                   </Link>
                 )}
-              </div>
+              </Row>
             );
           })}
         </div>
       )}
 
       <div style={{ marginTop: 22 }}>
-        <button className="btn btn-secondary btn-wide" type="button" onClick={() => void logOut()} disabled={signingOut}>
+        <SecondaryButton className="btn-wide" type="button" onClick={() => void logOut()} disabled={signingOut}>
           <span>{signingOut ? "Signing out…" : "Sign out"}</span>
           <span aria-hidden="true">→</span>
-        </button>
+        </SecondaryButton>
       </div>
       <p className="fine-note">
         {selectedProject ? `Showing share links for ${selectedProject.publicDisplayLabel}.` : "Select a project to see its share links."}

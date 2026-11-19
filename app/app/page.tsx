@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useProjects } from "../../components/providers";
-import { EmptyState, StatusChip, WaveThumb } from "../../components/ui";
+import { EmptyState, StatusChip, WaveThumb, GroupedList } from "../../components/ui";
 import { getCatalog, getProject, getWallet } from "../../lib/ui/actions";
 import type { CatalogResponse, ProjectView, WalletView } from "../../lib/ui/api";
 import { budgetPercent, effectivePurchaseStatus, formatUsdc, formatUsdcDecimal, shortAddress } from "../../lib/ui/format";
@@ -79,6 +79,8 @@ export default function HomePage() {
 
   return (
     <>
+      <h1 className="page-title">Home</h1>
+      <nav className="quick-actions" aria-label="Quick actions"><Link href="/app/new">New brief</Link><Link href="/app/catalog">Tracks</Link><Link href="/app/wallet">Wallet</Link><Link href="/app/purchases">Purchases</Link></nav>
       {projectsLoading ? (
         <div className="skeleton" style={{ height: 62 }} />
       ) : projects.length > 0 && selectedProject ? (
@@ -96,7 +98,7 @@ export default function HomePage() {
                 </option>
               ))}
             </select>
-            <div className="muted" style={{ marginTop: 3, fontSize: 9.5 }}>
+            <div className="muted" style={{ marginTop: 3, fontSize: 13 }}>
               {projectLoading || !budget
                 ? "Loading purchases…"
                 : `${budget.purchasesUsed} of ${budget.purchaseCountCap} purchases used · ${formatUsdc(selectedProject.purchaseCapBaseUnits)} USDC per-purchase cap`}
@@ -108,8 +110,8 @@ export default function HomePage() {
         <div className="project-switcher">
           <div>
             <div className="micro" style={{ marginBottom: 4 }}>Project</div>
-            <div style={{ fontSize: 12.5, fontWeight: 560 }}>No project yet</div>
-            <div className="muted" style={{ marginTop: 3, fontSize: 9.5 }}>Create a brief to start the clearance flow.</div>
+            <div style={{ fontSize: 13, fontWeight: 560 }}>No project yet</div>
+            <div className="muted" style={{ marginTop: 3, fontSize: 13 }}>Create a brief to start the clearance flow.</div>
           </div>
           <Link href="/app/new" className="review-link">Create →</Link>
         </div>
@@ -118,7 +120,7 @@ export default function HomePage() {
       <section className="budget-hero" aria-labelledby="wallet-heading">
         <div className="row-between">
           <div className="micro" id="wallet-heading">Wallet balance</div>
-          <Link href="/app/wallet" className="muted" style={{ fontSize: 9.5 }}>Manage wallet ›</Link>
+          <Link href="/app/wallet" className="muted" style={{ fontSize: 13 }}>Manage wallet ›</Link>
         </div>
         <div className="budget-number">
           <span className="big">{formatUsdcDecimal(wallet.balance)}</span>
@@ -145,7 +147,7 @@ export default function HomePage() {
         <section style={{ marginTop: 20 }} aria-labelledby="budget-heading">
           <div className="micro" id="budget-heading">Project budget left</div>
           <div className="budget-number" style={{ marginTop: 4 }}>
-            <span className="mono" style={{ fontSize: 28, fontWeight: 600 }}>{formatUsdc(budget.availableBaseUnits)}</span>
+            <span className="money" style={{ fontSize: 28.0, fontWeight: 600 }}>{formatUsdc(budget.availableBaseUnits)}</span>
             <span className="of">/ {formatUsdc(budget.budgetBaseUnits)} USDC</span>
           </div>
           <div className="budget-bar" aria-hidden="true">
@@ -174,7 +176,7 @@ export default function HomePage() {
       <div className="section-label" style={{ marginTop: 22 }}>
         <span className="micro">Recent</span>
         {selectedProject ? (
-          <Link href="/app/purchases" className="muted" style={{ fontSize: 9.5 }}>All ›</Link>
+          <Link href="/app/purchases" className="muted" style={{ fontSize: 13 }}>All ›</Link>
         ) : null}
       </div>
 
@@ -194,7 +196,7 @@ export default function HomePage() {
           }
         />
       ) : (
-        <div className="recent-list">
+        <GroupedList className="recent-list">
           {recent.map(purchase => {
             const track = trackById.get(purchase.trackId);
             const status = effectivePurchaseStatus(purchase);
@@ -217,7 +219,7 @@ export default function HomePage() {
               </Link>
             );
           })}
-        </div>
+        </GroupedList>
       )}
 
       <div className="status-line">

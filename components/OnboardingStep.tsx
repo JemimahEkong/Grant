@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Spinner } from "./ui";
+import { Spinner, PrimaryButton, Card } from "./ui";
 
 const labels = ["Wallet", "Activate", "Trustline", "Fund"];
 
@@ -27,7 +27,7 @@ export function OnboardingStep({
   hideAction?: boolean;
 }) {
   return (
-    <div className="onboarding-card">
+    <Card className="onboarding-card">
       <div className="onboarding-steps" aria-label="Onboarding progress">
         {labels.map((label, index) => (
           <div key={label} className={`onboarding-step${index < step ? " done" : index === step ? " on" : ""}`}>
@@ -45,11 +45,11 @@ export function OnboardingStep({
         </p>
       ) : null}
       {!hideAction && actionLabel && onAction ? (
-        <button className="btn btn-primary btn-wide" style={{ marginTop: 18 }} type="button" onClick={() => void onAction()} disabled={busy}>
+        <PrimaryButton className="btn-wide" style={{ marginTop: 18 }} type="button" onClick={() => void onAction()} disabled={busy}>
           <span>{busy ? "Working…" : actionLabel}</span>
           {busy ? <Spinner /> : <span aria-hidden="true">→</span>}
-        </button>
+        </PrimaryButton>
       ) : null}
-    </div>
+    </Card>
   );
 }

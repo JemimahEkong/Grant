@@ -16,7 +16,7 @@ export function WalletAddress({ address, compact = false }: { address: string | 
       type: "svg",
       margin: 1,
       width: 150,
-      color: { dark: "#0A0A0B", light: "#F2EFE9" },
+      color: { dark: getComputedStyle(document.documentElement).getPropertyValue("--ink").trim(), light: getComputedStyle(document.documentElement).getPropertyValue("--surface").trim() },
     })
       .then(setQr)
       .catch(() => setQr(""));

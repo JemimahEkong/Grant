@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ClearanceStrip, Legend, PageHeader, Spinner, StatusChip } from "../../../../components/ui";
+import { ClearanceStrip, Legend, PageHeader, Spinner, StatusChip, PrimaryButton, SecondaryButton, Sheet } from "../../../../components/ui";
 import {
   approvePurchase,
   createAddonQuote,
@@ -317,7 +317,7 @@ export default function PurchasePage() {
   }
 
   return (
-    <>
+    <Sheet className="review-sheet">
       <Link href="/app/catalog" className="back-link">
         ← Back to catalog
       </Link>
@@ -459,9 +459,9 @@ export default function PurchasePage() {
                     The attempt may have been submitted. Grant will not sign again or start a second payment. Check the
                     same attempt for a confirmed result.
                   </p>
-                  <button className="btn btn-secondary" style={{ marginTop: 10 }} onClick={() => void checkAgain()} disabled={reconciling}>
+                  <SecondaryButton className="" style={{ marginTop: 10 }} onClick={() => void checkAgain()} disabled={reconciling}>
                     {reconciling ? "Checking…" : "Check again"}
-                  </button>
+                  </SecondaryButton>
                 </div>
               ) : null}
 
@@ -470,20 +470,20 @@ export default function PurchasePage() {
                   <p className="fine-note">
                     You approve these exact terms. Nothing is charged, signed, or reserved until you approve.
                   </p>
-                  <button className="btn btn-primary btn-wide" style={{ marginTop: 14 }} onClick={() => void approveAndPay()} disabled={busy}>
+                  <PrimaryButton className="btn-wide" style={{ marginTop: 14 }} onClick={() => void approveAndPay()} disabled={busy}>
                     <span>{busy ? "Approving and starting payment…" : `Approve & pay ${formatUsdc(purchase.priceBaseUnits)}`}</span>
                     {busy ? <Spinner /> : <span aria-hidden="true">→</span>}
-                  </button>
+                  </PrimaryButton>
                 </>
               ) : null}
 
               {status === "approved" && canPay && panel === "none" ? (
                 <>
                   <p className="fine-note">Approved. The exact terms are bound to this purchase. Payment has not started.</p>
-                  <button className="btn btn-primary btn-wide" style={{ marginTop: 14 }} onClick={() => void payApproved()} disabled={busy}>
+                  <PrimaryButton className="btn-wide" style={{ marginTop: 14 }} onClick={() => void payApproved()} disabled={busy}>
                     <span>{busy ? "Starting payment…" : `Pay ${formatUsdc(purchase.priceBaseUnits)}`}</span>
                     {busy ? <Spinner /> : <span aria-hidden="true">→</span>}
-                  </button>
+                  </PrimaryButton>
                 </>
               ) : null}
 
@@ -581,9 +581,9 @@ export default function PurchasePage() {
                   ? "The license is settled. The files can be generated again without another payment."
                   : "The license is settled. Grant is preparing the private PDF and audio."}
               </p>
-              <button className="btn btn-secondary" style={{ marginTop: 10 }} onClick={() => void prepareDownloads()} disabled={deliveryBusy}>
+              <SecondaryButton className="" style={{ marginTop: 10 }} onClick={() => void prepareDownloads()} disabled={deliveryBusy}>
                 {deliveryBusy ? "Preparing…" : "Prepare downloads"}
-              </button>
+              </SecondaryButton>
             </div>
           ) : null}
 
@@ -594,7 +594,7 @@ export default function PurchasePage() {
             </div>
             <div className="kv">
               <span className="k">Transaction</span>
-              <span className="v">{shortHash(receipt?.transactionHash)}</span>
+              <span className="v chain">{shortHash(receipt?.transactionHash)}</span>
             </div>
             <div className="kv">
               <span className="k">Ledger</span>
@@ -657,11 +657,11 @@ export default function PurchasePage() {
             <div className="h">Proof link</div>
             {shareUrl ? (
               <>
-                <input className="input mono" readOnly value={shareUrl} aria-label="Public proof link" onFocus={event => event.target.select()} />
+                <input className="input" readOnly value={shareUrl} aria-label="Public proof link" onFocus={event => event.target.select()} />
                 <div className="row" style={{ marginTop: 8, gap: 8 }}>
-                  <button className="btn btn-secondary" type="button" onClick={() => void copyProof()}>
+                  <SecondaryButton className="" type="button" onClick={() => void copyProof()}>
                     Copy link
-                  </button>
+                  </SecondaryButton>
                   <span className="fine-note" style={{ margin: 0 }}>Public, revocable, no audio.</span>
                 </div>
               </>
@@ -670,9 +670,9 @@ export default function PurchasePage() {
                 <p className="fine-note" style={{ marginTop: 0 }}>
                   Public and revocable. Shows terms and chain reference only, never your client's name or audio.
                 </p>
-                <button className="btn btn-secondary" type="button" onClick={() => void createProof()} disabled={shareBusy}>
+                <SecondaryButton className="" type="button" onClick={() => void createProof()} disabled={shareBusy}>
                   {shareBusy ? "Creating…" : "Create proof link"}
-                </button>
+                </SecondaryButton>
               </>
             )}
             {actionError ? (
@@ -688,6 +688,6 @@ export default function PurchasePage() {
         <span className="status-dot" />
         <span>Payment state is durable. Pending does not re-sign.</span>
       </div>
-    </>
+    </Sheet>
   );
 }

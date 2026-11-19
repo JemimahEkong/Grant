@@ -1,4 +1,5 @@
 "use client";
+import { PrimaryButton, Card } from "./ui";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -34,7 +35,7 @@ export function SignInForm({ initialMode, nextPath }: { initialMode: "signin" | 
   }
 
   return (
-    <div className="auth-card">
+    <Card className="auth-card">
       <div className="row-between">
         <div className="micro">{mode === "signup" ? "New account" : "Welcome back"}</div>
         <span className="testnet-badge">TESTNET</span>
@@ -83,10 +84,10 @@ export function SignInForm({ initialMode, nextPath }: { initialMode: "signin" | 
             {error}
           </p>
         ) : null}
-        <button className="btn btn-primary btn-wide" type="submit" disabled={busy}>
+        <PrimaryButton className="btn-wide" type="submit" disabled={busy}>
           <span>{busy ? "Working…" : mode === "signup" ? "Create account" : "Sign in"}</span>
           <span aria-hidden="true">→</span>
-        </button>
+        </PrimaryButton>
       </form>
 
       <div className="auth-toggle">
@@ -98,6 +99,6 @@ export function SignInForm({ initialMode, nextPath }: { initialMode: "signin" | 
       <div className="auth-toggle">
         <Link href="/">Back to the landing page</Link>
       </div>
-    </div>
+    </Card>
   );
 }

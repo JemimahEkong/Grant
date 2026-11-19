@@ -37,7 +37,7 @@ export default function GenerateWalletPage() {
   }
 
   if (!wallet) {
-    return <div className="onboarding-card"><div className="row" style={{ color: "var(--muted)", fontSize: 10 }}><Spinner /> <span>Preparing wallet</span></div></div>;
+    return <div className="onboarding-card"><div className="row" style={{ color: "var(--muted)", fontSize: 13 }}><Spinner /> <span>Preparing wallet</span></div></div>;
   }
 
   return (

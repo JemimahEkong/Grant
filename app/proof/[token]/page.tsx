@@ -111,7 +111,7 @@ export default async function ProofPage({ params }: ProofPageProps) {
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginTop: 18 }}>
         <Logo />
-        <Link href="/" className="muted" style={{ fontSize: 10 }}>
+        <Link href="/" className="muted" style={{ fontSize: 13 }}>
           Back to Grant
         </Link>
       </div>

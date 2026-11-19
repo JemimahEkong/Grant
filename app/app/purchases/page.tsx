@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useProjects } from "../../../components/providers";
-import { EmptyState, PageHeader, StatusChip } from "../../../components/ui";
+import { EmptyState, PageHeader, StatusChip, FilterChip } from "../../../components/ui";
 import { getCatalog, getProject } from "../../../lib/ui/actions";
 import type { CatalogResponse, ProjectView } from "../../../lib/ui/api";
 import { effectivePurchaseStatus, formatDate, formatUsdc, statusMeta } from "../../../lib/ui/format";
@@ -84,7 +84,7 @@ export default function PurchasesPage() {
               <div className="k">Spent this project</div>
               <div className="v">
                 {formatUsdc(view.budget.confirmedSpendBaseUnits)}{" "}
-                <span className="dim" style={{ fontSize: 9 }}>/ {formatUsdc(view.budget.budgetBaseUnits)}</span>
+                <span className="dim" style={{ fontSize: 13 }}>/ {formatUsdc(view.budget.budgetBaseUnits)}</span>
               </div>
             </div>
             <div style={{ textAlign: "right" }}>
@@ -103,7 +103,7 @@ export default function PurchasesPage() {
               { value: "pending", label: "Pending" },
               { value: "refused", label: "Refused" },
             ].map(option => (
-              <button
+              <FilterChip
                 key={option.value}
                 type="button"
                 className={`filter${filter === option.value ? " on" : ""}`}
@@ -111,7 +111,7 @@ export default function PurchasesPage() {
                 onClick={() => setFilter(option.value as Filter)}
               >
                 {option.label}
-              </button>
+              </FilterChip>
             ))}
           </div>
 

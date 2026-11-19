@@ -38,7 +38,7 @@ export default function TrustlinePage() {
   }
 
   if (!wallet) {
-    return <div className="onboarding-card"><div className="row" style={{ color: "var(--muted)", fontSize: 10 }}><Spinner /> <span>Checking trustline</span></div></div>;
+    return <div className="onboarding-card"><div className="row" style={{ color: "var(--muted)", fontSize: 13 }}><Spinner /> <span>Checking trustline</span></div></div>;
   }
 
   return (

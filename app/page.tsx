@@ -59,7 +59,7 @@ export default async function LandingPage() {
             <a href="#catalog">Catalog</a>
             <a href="#sample">Sample license</a>
           </div>
-          <Link href="/signin" className="btn btn-secondary" style={{ minHeight: 32, padding: "7px 12px", fontSize: 10.5 }}>
+          <Link href="/signin" className="btn btn-secondary" style={{ minHeight: 32, padding: "7px 12px", fontSize: 13 }}>
             Sign in
           </Link>
         </nav>
@@ -230,7 +230,7 @@ export default async function LandingPage() {
               Start a demo project
             </Link>
             {proofPath ? (
-              <Link href={proofPath} className="muted" style={{ fontSize: 10.5 }}>
+              <Link href={proofPath} className="muted" style={{ fontSize: 13 }}>
                 or open a settled license <ArrowRightIcon className="nav-icon" />
               </Link>
             ) : null}

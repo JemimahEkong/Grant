@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useProjects } from "../../../components/providers";
-import { ClearanceStrip, EmptyState, PageHeader, Spinner } from "../../../components/ui";
+import { ClearanceStrip, EmptyState, PageHeader, Spinner, FilterChip, Card } from "../../../components/ui";
 import { createQuote, getCatalog } from "../../../lib/ui/actions";
 import type { CatalogItem, CatalogResponse } from "../../../lib/ui/api";
 import { formatDuration, formatUsdc } from "../../../lib/ui/format";
@@ -95,7 +95,7 @@ export default function CatalogPage() {
           { value: "paid_ad", label: "Paid ads" },
           { value: "short", label: "≤ 90 days" },
         ].map(option => (
-          <button
+          <FilterChip
             key={option.value}
             type="button"
             className={`filter${filter === option.value ? " on" : ""}`}
@@ -103,14 +103,14 @@ export default function CatalogPage() {
             onClick={() => setFilter(option.value as Filter)}
           >
             {option.label}
-          </button>
+          </FilterChip>
         ))}
       </div>
 
       {error ? (
         <div className="refused-panel" role="alert">
           <div className="h">Quote refused</div>
-          <p style={{ margin: "6px 0 0", fontSize: 10.5, lineHeight: 1.5 }}>{error}</p>
+          <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.5 }}>{error}</p>
         </div>
       ) : null}
 
@@ -124,7 +124,7 @@ export default function CatalogPage() {
         <EmptyState title="No tracks match this filter" description="Clear the filter. The demo catalog has three tracks with different coverage." />
       ) : (
         items.map(item => (
-          <article className="track-card" key={item.trackId}>
+          <Card className="track-card" key={item.trackId}>
             <div className="track-card-head">
               <div>
                 <div className="nm">{item.title}</div>
@@ -144,7 +144,7 @@ export default function CatalogPage() {
                 {busyId === item.trackId ? "Quoting…" : "Review →"}
               </button>
             </div>
-          </article>
+          </Card>
         ))
       )}
       <p className="fine-note">

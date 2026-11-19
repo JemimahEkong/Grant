@@ -1,90 +1,152 @@
 # Grant design system
 
-Version: 1.0. Source of truth for every Grant surface. The visual references are
-`grant-landing.html`, `grant-ui-mock.html`, `grant-ui-mock2.html`, and `grant-ui-mock3.html`.
+Version 2 — iOS-style light UI on a lemon-green brand.
+Supersedes the dark system in v1. If anything in the codebase contradicts this
+document, this document wins.
 
-## Tokens
+Reference screenshots supplied by the founder (four images):
+wallet home (big balance, quick actions, transaction list, floating tab bar),
+invoices list (search, pill filters, status chips, card rows),
+profile sheet (avatar row, promo card, list rows with chevrons),
+landing (lime hero, dark-green cards, pill CTAs).
+
+Adapt them; do not copy their content. Grant sells music clearance, not wallets.
+
+---
+
+## 1. Colour
+
+Light canvas, white cards, one lemon accent, deep green for weight.
+Never place lemon behind body text. Lemon is a fill, never a text colour.
 
 | Token | Value | Use |
 | --- | --- | --- |
-| Base | `#0A0A0B` | Page background |
-| Panel | `#121214` | Cards, rows, inputs |
-| Panel 2 | `#17171A` | Nested surfaces, avatars, media wells |
-| Hairline | `#26262A` | Borders and dividers |
-| Text | `#F2EFE9` | Primary text |
-| Muted | `#8A8A8F` | Secondary text |
-| Dim | `#5C5C62` | Micro labels, disabled text |
-| Accent | `#E9B44C` | Money, needs decision, primary action |
-| Covered | `#6FCF97` | Covered clearance segment, settled state |
-| Refused | `#E5645C` | Refused state, destructive explanations |
+| `--canvas` | `#F4F6F0` | page background |
+| `--surface` | `#FFFFFF` | cards, sheets, tab bar |
+| `--surface-2` | `#FAFBF7` | inputs, inset rows, unselected chips |
+| `--ink` | `#0F1A12` | primary text |
+| `--ink-2` | `#4A544C` | secondary text |
+| `--ink-3` | `#8A938B` | tertiary, captions, placeholders |
+| `--hairline` | `#E3E7DC` | 1px borders and dividers |
+| `--brand` | `#C9F24C` | primary buttons, active tab, key highlights |
+| `--brand-ink` | `#14210F` | text/icons on lemon |
+| `--brand-deep` | `#0D3B22` | dark hero cards, proof header, footer bands |
+| `--brand-soft` | `#EAF8C9` | tinted backgrounds, selected chips |
+| `--success` | `#17A34A` | settled, covered |
+| `--success-soft` | `#E6F6EC` | success chip background |
+| `--warning` | `#C98A00` | pending, needs attention |
+| `--warning-soft` | `#FBF1DA` | warning chip background |
+| `--danger` | `#D1453B` | refused, destructive |
+| `--danger-soft` | `#FBEBE9` | refusal chip background |
 
-Accent is limited to money, needs-decision states, and the primary action. It is not a
-decorative color.
+Contrast rules, non-negotiable: ink on canvas ≥ 12:1; ink-2 on surface ≥ 7:1;
+`--brand-ink` on `--brand` ≥ 9:1; never lemon text on white.
 
-## Type
+## 2. Type
 
-- Geist Sans for all UI text.
-- Geist Mono for every number, price, amount, license ID, transaction hash, address, and
-  balance. Use tabular figures.
-- Micro labels: 9px uppercase, 0.15em tracking, 700 weight, dim color.
-- Headings: tight tracking, 600 to 680 weight. Hero headings may use 0.038em negative
-  tracking.
-- Body copy stays between 10px and 13px in dense panels. Do not use large paragraphs.
+Stack: `-apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-geist-sans),
+system-ui, sans-serif`. It should feel native on iOS first, acceptable elsewhere.
 
-## Layout
+| Role | Size / line | Weight | Tracking |
+| --- | --- | --- | --- |
+| Large title | 34 / 41 | 700 | -0.02em |
+| Title 2 | 22 / 28 | 650 | -0.02em |
+| Headline | 17 / 22 | 600 | -0.01em |
+| Body | 17 / 24 | 400 | 0 |
+| Subhead | 15 / 20 | 400 | 0 |
+| Footnote | 13 / 18 | 400 | 0 |
+| Caption | 12 / 16 | 500 | 0.01em |
+| Micro label | 11 / 14 | 700 | 0.06em, uppercase |
 
-- One breakpoint at 900px.
-- Mobile: bottom navigation with Home, Tracks, center plus action, Purchases, Profile.
-- Desktop: fixed left rail with the same routes and brand.
-- Content max width: 1120px. Dense panels may cap at 760px.
-- Spacing rhythm: 4, 8, 12, 16, 24, 32.
-- No gradients, glass, or drop shadows. The only shadow is a phone shell if one is used in
-  a presentation surface. The product UI uses none.
-- No images or stock photography. Inline SVG only. No icon library.
+Money uses tabular figures in the sans stack (`font-variant-numeric:
+tabular-nums`), not mono. Reserve `ui-monospace` for chain data only: addresses,
+transaction hashes, license IDs, object keys.
 
-## Clearance strip
+## 3. Shape, spacing, elevation
 
-The signature element. One segment per coverage dimension.
+- Card radius 18px; input radius 14px; button and chip radius 999px.
+- Screen gutter 20px. Section gap 24px. Card padding 16–20px.
+- Elevation: cards `0 1px 2px rgba(15,26,18,.05)`. Sheets and the tab bar
+  `0 -1px 0 var(--hairline)` plus `0 8px 24px rgba(15,26,18,.08)`.
+- No gradients, no glassmorphism, no drop shadows on text.
 
-- Covered: green top rule, translucent green fill, covered text.
-- Excluded: hollow surface, amber top rule, dashed bottom edge, dim text.
-- Segments share equal width. Labels are 6.5px to 8px uppercase with tight line height.
-- Appears on the landing hero card, catalog rows, review, license, and proof page.
-- Dimensions: platforms/use, term, territory, client delivery, reposting, future campaigns.
+## 4. Components
 
-## States
+**Buttons.** Primary: lemon fill, brand-ink label, 52px tall, 17 semibold, full
+width in sheets. Secondary: white, 1px hairline, ink label. Tertiary: plain
+lemon-ink text. Pressed state scales to 0.98 over 120ms.
 
-- Settled: green chip.
-- Pending: amber chip, exactly one action, "Check again".
-- Refused: red chip and an explanation panel. Refusals are content, not fallback errors.
-- Over cap and over budget: explanatory panels with the actual limit and the actual price.
-- Empty: designed copy and one next action.
-- Non-allowlisted spending: explanatory amber panel, not a toast.
+**Cards.** White, 18px radius, 1px hairline, 1px shadow. One dark variant:
+`--brand-deep` background, white text, lemon accent — used only for the balance
+hero and the proof header.
 
-Every money surface labels TESTNET.
+**Chips.** Pill, 13px, 32px tall. Selected: `--brand-soft` fill, `--brand-deep`
+text, 1px `--brand` border. Unselected: `--surface-2`, ink-2 text, hairline.
 
-## Interaction
+**List rows.** Minimum 60px, 36px circular soft-tint icon left, 17px title,
+13px tertiary subtitle, chevron right in ink-3. Divider inset 16px from the left.
+Group rows into a card with hairline dividers, iOS style.
 
-- Every control has a visible label.
-- Focus is a 2px accent outline with a 2px offset.
-- Keyboard order follows visual order.
-- Reduced motion disables transitions and animations.
-- Pending never simulates progress and never offers a retry that could sign again.
+**Status chips.** 12px uppercase, soft background, solid text:
+settled → success, pending/expiring → warning, refused/expired → danger.
 
-## Funding and onboarding
+**Tab bar.** Five slots: Home, Tracks, centre action, Purchases, Profile.
+Height 84px including safe area, white at 92% opacity with backdrop blur,
+1px hairline top. Active icon and label `--brand-deep`; inactive `--ink-3`.
+Centre slot is a 56px lemon circle raised 18px above the bar with a 4px white
+ring. Above 900px it becomes a 240px left rail with the same order.
 
-- Every user has a Stellar testnet account. Onboarding is a gated sequence with one action per
-  screen: generate wallet, activate account, add USDC trustline, fund, then Home.
-- Onboarding uses a minimal shell with the Grant mark, TESTNET badge, step progress, and one
-  primary action. No bottom navigation during onboarding.
-- Balance is read from chain and may be cached for at most 30 seconds. A project budget is a
-  spending cap over that balance. It is never the balance itself.
-- The wallet screen shows the address with copy and QR, live balance, Refresh, Fund, transaction
-  history, and a custody disclosure. The QR is an inline SVG with dark modules on a warm light
-  panel for scan contrast.
-- Wallet is reached from the balance on Home and from the Profile wallet row. It is never a sixth
-  navigation slot.
-- Faucet states: available, one grant already used, daily treasury cap reached, and treasury empty.
-  The empty state shows the treasury address and manual funding instructions.
-- Insufficient balance is a designed panel on the review route. It shows the current balance,
-  the price, and a link to Fund. It never shows a pay button that will fail.
+**Sheet.** Bottom sheet for wallet quick actions and filters: 24px top radius,
+grabber 36×5 hairline, canvas backdrop at 40% black.
+
+## 5. The clearance strip
+
+The signature element. It survives the re-theme and becomes the brand's one
+distinctive shape.
+
+- Horizontal band, one segment per coverage dimension, 3px gaps.
+- Covered: `--brand-soft` fill, 2px top rule `--success`, `--brand-deep` label.
+- Excluded: transparent, 2px top rule `--warning`, dashed 1px `--hairline`
+  bottom, `--ink-3` label.
+- Height 52 on review, 44 in the hero card, 16 as a row preview.
+- Labels are 10px uppercase, 0.04em, wrapped to two lines.
+
+## 6. Landing
+
+Same tokens, more air. Canvas light, one lemon band mid-page and one
+`--brand-deep` band for emphasis. Hero headline 44/48 at desktop, 32/37 on
+mobile, tracking -0.03em. Cards white with hairline; the license example card
+is dark green. Pill CTAs. No stock photography, no gradients, no logo walls,
+no pricing table, no testimonials.
+
+## 7. Screen mapping
+
+| Screen | Treatment |
+| --- | --- |
+| Home | Large title, dark-green balance hero card (balance + budget + cap), quick-action row of four 56px circles, recent list in a grouped card, tab bar |
+| Brief | Large title, one sentence in a white input card, chip groups per dimension, sticky lemon CTA above the tab bar |
+| Catalog | Large title, search field, pill filters, three card rows with mini strips and "Review" chevron |
+| Review | Sheet-style screen, track header, big price, clearance strip, exclusions card with warning tint, sticky Approve CTA |
+| Pending | Same as review, header swapped to warning tint, single "Check again" button |
+| License | Dark-green header with license ID, three deliverable rows in a grouped card, chain details as inset rows, share row |
+| Purchases | Large title with summary card, pill filters, grouped rows with status chips |
+| Wallet | Dark-green balance card, QR in a white card, four quick actions, history grouped list |
+| Profile | Avatar row, wallet row, grouped list, sign out in danger |
+| Proof | Public, light canvas, dark-green header band, strip, inset detail rows, thin footer |
+
+## 8. Motion
+
+200ms ease-out for state changes, 120ms for press, 280ms spring for sheets.
+Respect `prefers-reduced-motion`: no transforms, opacity only.
+
+## 9. Rules that survive the re-theme
+
+- One money entry point; only the review screen can call pay.
+- Every state is a URL; refresh never loses a purchase.
+- Refused, pending, expired, insufficient balance, and cap exceeded are designed
+  screens, not error boundaries.
+- Every money surface says TESTNET.
+- Never claim a receipt proves copyright ownership or that this is legal advice.
+- Custody disclosure stays on the wallet screen.
+- Do not change payment, auth, settlement, or rate-limit behaviour while
+  restyling.

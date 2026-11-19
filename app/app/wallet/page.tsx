@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FundWallet } from "../../../components/FundWallet";
-import { EmptyState, PageHeader, TestnetBadge } from "../../../components/ui";
+import { EmptyState, PageHeader, TestnetBadge, GroupedList, SecondaryButton } from "../../../components/ui";
 import { getWallet, getWalletTransactions, refreshWallet } from "../../../lib/ui/actions";
 import type { WalletTransaction, WalletView } from "../../../lib/ui/api";
 import { formatDate, formatUsdcDecimal, shortHash } from "../../../lib/ui/format";
@@ -55,7 +55,7 @@ export default function WalletPage() {
     return (
       <>
         <PageHeader title="Wallet" lede="Your Stellar testnet account." />
-        <EmptyState title="Wallet unavailable" description={error} action={<button className="btn btn-secondary" onClick={() => void refresh()}>Try again</button>} />
+        <EmptyState title="Wallet unavailable" description={error} action={<SecondaryButton className="" onClick={() => void refresh()}>Try again</SecondaryButton>} />
       </>
     );
   }
@@ -81,9 +81,9 @@ export default function WalletPage() {
         <div className="wallet-balance-card">
           <div className="row-between">
             <span className="micro">Live balance</span>
-            <button className="btn btn-secondary" type="button" onClick={() => void refresh()} disabled={busy}>
+            <SecondaryButton className="" type="button" onClick={() => void refresh()} disabled={busy}>
               {busy ? "Refreshing…" : "Refresh"}
-            </button>
+            </SecondaryButton>
           </div>
           <div className="budget-number" style={{ marginTop: 8 }}>
             <span className="big">{formatUsdcDecimal(wallet.balance)}</span>
@@ -100,12 +100,12 @@ export default function WalletPage() {
 
       <div className="section-label" style={{ marginTop: 22 }}>
         <span className="micro">Transaction history</span>
-        <span className="muted" style={{ fontSize: 9 }}>stellar:testnet</span>
+        <span className="muted" style={{ fontSize: 13 }}>stellar:testnet</span>
       </div>
       {transactions.length === 0 ? (
         <EmptyState title="No transactions yet" description="Your activation, trustline, faucet grant, and purchases will appear here." />
       ) : (
-        <div className="tx-list">
+        <GroupedList className="tx-list">
           {transactions.map((tx, index) => (
             <div className="tx-row" key={`${tx.hash}-${tx.type}-${index}`}>
               <div className="tx-main">
@@ -119,7 +119,7 @@ export default function WalletPage() {
               </div>
             </div>
           ))}
-        </div>
+        </GroupedList>
       )}
 
       <div className="explain-panel" style={{ marginTop: 20 }}>

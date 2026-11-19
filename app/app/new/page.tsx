@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useProjects } from "../../../components/providers";
-import { PageHeader, Spinner } from "../../../components/ui";
+import { PageHeader, Spinner, PrimaryButton } from "../../../components/ui";
 import { createProject } from "../../../lib/ui/actions";
 import type { Brief, Platform } from "../../../lib/licensing/schema";
 
@@ -154,7 +154,7 @@ export default function NewBriefPage() {
         <div className="field">
           <div className="row-between">
             <span className="micro">Platforms</span>
-            <span className="muted" style={{ fontSize: 8.5 }}>{platforms.length} of 4</span>
+            <span className="muted" style={{ fontSize: 13 }}>{platforms.length} of 4</span>
           </div>
           <div className="chip-group">
             {platformOptions.map(option => (
@@ -243,10 +243,10 @@ export default function NewBriefPage() {
           </p>
         ) : null}
 
-        <button className="btn btn-primary btn-wide" type="submit" disabled={busy}>
+        <PrimaryButton className="btn-wide" type="submit" disabled={busy}>
           <span>{busy ? "Creating project…" : "Find tracks"}</span>
           {busy ? <Spinner /> : <span aria-hidden="true">→</span>}
-        </button>
+        </PrimaryButton>
         <p className="form-hint">
           Paid ads narrows the catalog. Some tracks won't offer them. You'll see that before you pay.
         </p>

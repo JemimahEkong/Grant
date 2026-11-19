@@ -38,7 +38,7 @@ export default function ActivateWalletPage() {
   }
 
   if (!wallet) {
-    return <div className="onboarding-card"><div className="row" style={{ color: "var(--muted)", fontSize: 10 }}><Spinner /> <span>Checking account</span></div></div>;
+    return <div className="onboarding-card"><div className="row" style={{ color: "var(--muted)", fontSize: 13 }}><Spinner /> <span>Checking account</span></div></div>;
   }
 
   return (

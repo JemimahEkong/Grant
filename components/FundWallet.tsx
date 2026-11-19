@@ -4,7 +4,7 @@ import { useState } from "react";
 import { fundWallet, refreshWallet } from "../lib/ui/actions";
 import type { ApiFailure, WalletView } from "../lib/ui/api";
 import { formatUsdc } from "../lib/ui/format";
-import { Spinner } from "./ui";
+import { Spinner, PrimaryButton, SecondaryButton } from "./ui";
 import { WalletAddress } from "./WalletAddress";
 
 export function FundWallet({
@@ -84,7 +84,7 @@ export function FundWallet({
       <div className="panel panel-pad">
         <div className="micro">Faucet</div>
         <div className="budget-number" style={{ marginTop: 4 }}>
-          <span className="mono" style={{ fontSize: 28, fontWeight: 600 }}>{formatUsdc(wallet.faucetAmountBaseUnits)}</span>
+          <span className="money" style={{ fontSize: 28.0, fontWeight: 600 }}>{formatUsdc(wallet.faucetAmountBaseUnits)}</span>
           <span className="of">testnet USDC</span>
         </div>
         <p className="fine-note">
@@ -93,14 +93,14 @@ export function FundWallet({
         {error ? <p className="error-text" role="alert">{error}</p> : null}
         {message ? <p className="explain-panel" style={{ marginTop: 10 }}>{message}</p> : null}
         <div className="row" style={{ gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-          <button className="btn btn-primary" type="button" onClick={() => void fund()} disabled={busy || checking}>
+          <PrimaryButton className="" type="button" onClick={() => void fund()} disabled={busy || checking}>
             {busy ? "Sending…" : "Fund from faucet"}
             {busy ? <Spinner /> : null}
-          </button>
+          </PrimaryButton>
           {manual ? (
-            <button className="btn btn-secondary" type="button" onClick={() => void check()} disabled={busy || checking}>
+            <SecondaryButton className="" type="button" onClick={() => void check()} disabled={busy || checking}>
               {checking ? "Checking…" : "Check balance"}
-            </button>
+            </SecondaryButton>
           ) : null}
         </div>
       </div>

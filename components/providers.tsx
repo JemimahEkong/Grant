@@ -6,8 +6,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { getMe, getWallet, listProjects } from "../lib/ui/actions";
 import type { Me, Project } from "../lib/ui/api";
 import { initials } from "../lib/ui/format";
-import { HomeIcon, PlusIcon, ProfileIcon, PurchasesIcon, TracksIcon } from "./icons";
-import { EmptyState, Logo, Spinner, TestnetBadge } from "./ui";
+
+import { EmptyState, Logo, Spinner, TestnetBadge, TabBar } from "./ui";
 
 type MeContextValue = {
   me: Me;
@@ -46,7 +46,7 @@ function FullPageLoading() {
         <div className="logo">
           Grant<span>.</span>
         </div>
-        <div className="row" style={{ color: "var(--muted)", fontSize: 10 }}>
+        <div className="row" style={{ color: "var(--muted)", fontSize: 13 }}>
           <Spinner /> <span>Opening your workspace</span>
         </div>
       </div>
@@ -200,42 +200,9 @@ export function WorkspaceFrame({ children }: { children: ReactNode }) {
 export function AppShell({ children }: { children: ReactNode }) {
   const { me } = useMe();
   const pathname = usePathname();
-  const isPurchase = pathname.startsWith("/app/purchase/");
-  const railItems = [
-    { href: "/app", label: "Home", icon: HomeIcon, active: pathname === "/app" },
-    { href: "/app/catalog", label: "Tracks", icon: TracksIcon, active: pathname === "/app/catalog" || isPurchase },
-    { href: "/app/new", label: "New license", icon: PlusIcon, active: pathname === "/app/new" },
-    { href: "/app/purchases", label: "Purchases", icon: PurchasesIcon, active: pathname === "/app/purchases" },
-    { href: "/app/profile", label: "Profile", icon: ProfileIcon, active: pathname === "/app/profile" },
-  ];
-
   return (
     <div className="app-shell">
-      <aside className="app-rail" aria-label="Primary">
-        <div className="rail-brand">
-          <Link href="/app" className="logo">
-            Grant<span>.</span>
-          </Link>
-          <TestnetBadge />
-        </div>
-        <nav className="rail-links">
-          {railItems.map(item => {
-            const Icon = item.icon;
-            return (
-              <Link key={item.href} href={item.href} className={`rail-link${item.active ? " on" : ""}`}>
-                <Icon />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="rail-foot">
-          Testnet USDC only. No real funds.
-          <br />
-          One approval per purchase.
-        </div>
-      </aside>
-
+      <TabBar pathname={pathname} />
       <main className="app-main">
         <header className="app-top">
           <div className="app-top-left">
@@ -251,27 +218,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {children}
       </main>
 
-      <nav className="bottom-nav" aria-label="Primary">
-        <Link href="/app" className={pathname === "/app" ? "on" : ""}>
-          <HomeIcon />
-          <span>Home</span>
-        </Link>
-        <Link href="/app/catalog" className={pathname === "/app/catalog" || isPurchase ? "on" : ""}>
-          <TracksIcon />
-          <span>Tracks</span>
-        </Link>
-        <Link href="/app/new" className="bottom-action" aria-label="New license">
-          +
-        </Link>
-        <Link href="/app/purchases" className={pathname === "/app/purchases" ? "on" : ""}>
-          <PurchasesIcon />
-          <span>Purchases</span>
-        </Link>
-        <Link href="/app/profile" className={pathname === "/app/profile" ? "on" : ""}>
-          <ProfileIcon />
-          <span>Profile</span>
-        </Link>
-      </nav>
+
     </div>
   );
 }

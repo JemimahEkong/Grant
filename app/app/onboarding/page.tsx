@@ -14,7 +14,7 @@ export default function OnboardingIndex() {
   }, [router]);
   return (
     <div className="onboarding-card">
-      <div className="row" style={{ justifyContent: "center", color: "var(--muted)", fontSize: 10 }}>
+      <div className="row" style={{ justifyContent: "center", color: "var(--muted)", fontSize: 13 }}>
         <Spinner /> <span>Opening onboarding</span>
       </div>
     </div>
