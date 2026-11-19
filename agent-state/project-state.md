@@ -25,3 +25,5 @@
 - Tests: 72 tests in 12 files pass. Typecheck, lint, build, db:check, db:check:test, and r2:check pass.
 - Missing: commercial authorized music, refunds/disputes, mainnet, multi-tenant seller onboarding. API gaps: no artifact byte sizes/content types, no license number in project purchase rows, BPM/seller display names join the demo catalog, wallet history labels limited by Horizon.
 - Git: main tracks origin/main at https://github.com/JemimahEkong/Grant.git. Seller separation commit e18299f is pushed. The demo reset fix and final evidence are the next commit.
+
+- V2 restyle: light canvas, lemon fills, shared primitives and responsive TabBar in components/ui.tsx. Behaviour handlers and backend are unchanged. DESIGN.md records accessible status text and opaque navigation clarifications.

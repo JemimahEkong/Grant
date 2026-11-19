@@ -12,7 +12,7 @@
 - Purchase-count cap defaults to 2 per project. It is enforced in the reservation transaction. Refusal code `PURCHASE_COUNT_CAP_EXCEEDED`. Reserved, payment_pending, settled, issuing, and ready consume slots. Refused and expired do not.
 - Add-ons: parent must be an owned, settled/ready base purchase with an active license. The add-on offer must reference the parent offer and seller. The server builds the delta: paid-ad use on the base platforms, base territory, original term, no new reposting, future campaigns, or client terms. The add-on has its own receipt and license with `parent_license_id`. The base license is unchanged. Combined coverage is computed from the license family.
 - CC0 audio is in `demo/audio/`. Provenance is in `demo/audio/PROVENANCE.md`. Seller identities and offer terms are fixtures. Do not label the audio as verified client work.
-- The UI follows DESIGN.md: dark tokens, Geist Sans/Mono, inline SVG, 900px breakpoint, mobile bottom nav, desktop rail, clearance strip, no gradients/glass/shadows/icon libraries/images.
+- The UI follows DESIGN.md: v2 iOS light tokens, Geist Sans/Mono, inline SVG, 900px breakpoint, mobile bottom nav, desktop rail, clearance strip, no gradients/glass/shadows/icon libraries/images.
 - App routes are static client shells that fetch live APIs. Landing, proof, and sign-in are dynamic. Proof is noindex/no-store and revocable.
 - DEMO_PROOF_PATH holds the demo proof link. Do not print the raw share token.
 - Migration 0004 owns wallets and faucet grants. Migration 0005 owns `purchase_count_cap`. Do not add a balance column.
@@ -31,3 +31,5 @@
 - Remaining product gaps: commercial authorized music, refunds/disputes, mainnet, multi-tenant seller onboarding.
 - Final evidence: `agent-state/seller-separation-evidence.md`, `agent-state/demo-reset-evidence.md`, `agent-state/addon-evidence.md`, `agent-state/faucet-capacity-evidence.md`, `agent-state/cc0-audio-evidence.md`.
 - Follow AGENTS.md writing, checkpoint, state, and database rules. Keep replies concise.
+
+- V2 restyle: light canvas, lemon fills, shared primitives and responsive TabBar in components/ui.tsx. Behaviour handlers and backend are unchanged. DESIGN.md records accessible status text and opaque navigation clarifications.

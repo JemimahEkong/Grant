@@ -150,3 +150,10 @@ Respect `prefers-reduced-motion`: no transforms, opacity only.
 - Custody disclosure stays on the wallet screen.
 - Do not change payment, auth, settlement, or rate-limit behaviour while
   restyling.
+
+## V2 implementation clarifications
+
+- Exact palette values remain unchanged. Ink-2 replaces ink-3 for small readable labels and inactive navigation. Ink-3 on white is about 3.1:1 and fails normal-text AA.
+- Pending chips use brand-ink on warning-soft. Refused chips use ink on danger-soft. Success chips use brand-deep on success-soft. Warning and success remain the strip rules and semantic border colours.
+- The tab bar uses an opaque white surface. This follows the project no-glass rule and preserves contrast without backdrop blur.
+- Lemon bands use brand-ink labels only. Lemon never colours text.

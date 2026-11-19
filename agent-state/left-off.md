@@ -1,6 +1,8 @@
 # Left off
 
-- Current task: record the demo and submit. The product changes and documentation are complete.
+- Current task: DESIGN.md v2 visual restyle.
+- Restyle done: tokens, shared primitives, responsive navigation, all existing screens. 72 tests pass, typecheck, lint and production build pass.
+- Restyle next: production deployment and route verification at 390px and 1280px.
 - Done: dedicated seller account `GB53WOPIUPZTTTGPNDACTMZ3DJZ62HNRJP53ARI6EVSSBEWMLMF5SKBD`, separate from treasury `GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB`. Seller activated with 3 XLM and a USDC trustline. Every active offer repointed to the seller. Approval and the seller route fail closed if any active offer pays the treasury. `lib/payments/payee-guard.ts` and `tests/payee-guard.test.ts` cover it. `npm run demo:reset` creates a new funded account and clean project without deletes. Health phase is `testnet-product-demo` with a stable response.
 - Seller setup: activation tx `4b12e00886204f7a33676c1def7b5666f1adf25d6e3da2586c22e7c51d43f0c0`, trustline tx `79af83dec9c93b5e056431d62180be1846e4b1851905ab290ed52caaa125d147`. Seller secret is local-only.
 - Seller proof: three distinct addresses. Faucet tx `d25abb7d7b3940c891cab201854856a67006233465be978598bb4ece3fb0eb80` moves 2.00 USDC treasury to buyer `GBBBO4IQTOCVMAUWP52SJAYOYVWQN776MIW2EJVSREKUPQAIOGJUECQD`. Base tx `5faefa5615dfb6305c7513780bf8fff48ac1d391ea9187d92c58a3bf83149a25`, license `GRANT-2026-73AB3285E6`. Add-on tx `550d615b40c94670a9f835fa4e94dd77d12add896581c86e4eac76b570197c38`, license `GRANT-2026-21C938B847`. Buyer 2.00 to 0.00, seller 2.00, treasury 79.00. Combined coverage organic and paid ads on Instagram and TikTok. Evidence: `agent-state/seller-separation-evidence.md`.

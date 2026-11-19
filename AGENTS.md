@@ -110,3 +110,5 @@
 - Paid-ad add-ons require an owned, settled base purchase, the same seller, a parent offer match, and a server-derived delta. Never accept the delta, parent, or price from the client. The add-on gets its own receipt and license and keeps the base term.
 - A real testnet settlement proves the protocol only. It does not prove a product purchase, license, or music ownership.
 - The approved payment evidence is in agent-state/payment-evidence.md. The Vercel seller route and the local buyer orchestration were both exercised with real testnet settlements.
+
+- DESIGN.md v2 supersedes dark v1 styling. Use iOS light tokens, lemon fills, sans tabular money, shared primitives in components/ui.tsx, and the documented contrast clarifications. Visual work must preserve all workflow handlers.
