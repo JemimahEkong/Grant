@@ -216,6 +216,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
         </header>
         {children}
+        <footer className="fine-note app-disclosure">Shows license terms, not legal advice. TESTNET only.</footer>
       </main>
 
 

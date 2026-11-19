@@ -243,7 +243,7 @@ export default function NewBriefPage() {
           </p>
         ) : null}
 
-        <PrimaryButton className="btn-wide" type="submit" disabled={busy}>
+        <PrimaryButton className="btn-wide sticky-cta" type="submit" disabled={busy}>
           <span>{busy ? "Creating project…" : "Find tracks"}</span>
           {busy ? <Spinner /> : <span aria-hidden="true">→</span>}
         </PrimaryButton>

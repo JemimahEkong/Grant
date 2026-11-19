@@ -1440,3 +1440,11 @@
 .profile-head .profile-avatar { width:56px; height:56px; background:var(--brand-soft); color:var(--brand-deep); }
 .btn[disabled] { opacity:.65; }
 .btn:has(+.fine-note),.review-sheet>.btn-primary { position:relative; }
+
+.sticky-cta { position:sticky; bottom:100px; z-index:10; }
+.app-disclosure { padding-top:24px; margin-top:24px; border-top:1px solid var(--hairline); }
+@media(min-width:900px) { .sticky-cta { bottom:20px; } }
+
+.exclusions li,.explain-panel p,.refused-panel ul,.brief-sentence p { font-size:17px; line-height:24px; }
+.page-lede,.track-meta,.purchase-sub,.ledger-sub,.review-by { font-size:15px; line-height:20px; }
+.section-label { margin-top:24px; }

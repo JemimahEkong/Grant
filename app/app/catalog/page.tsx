@@ -16,6 +16,7 @@ export default function CatalogPage() {
   const router = useRouter();
   const { selectedProject, selectedProjectId } = useProjects();
   const [catalog, setCatalog] = useState<CatalogResponse | null>(null);
+  const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -37,12 +38,13 @@ export default function CatalogPage() {
   const items = useMemo(() => {
     if (!catalog) return [];
     return catalog.items.filter(item => {
+      if (!`${item.title} ${item.sellerName}`.toLowerCase().includes(search.toLowerCase())) return false;
       if (filter === "organic") return (item.platformsByUse.organic ?? []).length > 0;
       if (filter === "paid_ad") return (item.platformsByUse.paid_ad ?? []).length > 0;
       if (filter === "short") return item.maximumTermDays <= 90;
       return true;
     });
-  }, [catalog, filter]);
+  }, [catalog, filter, search]);
 
   async function review(item: CatalogItem) {
     if (!selectedProjectId) return;
@@ -88,6 +90,7 @@ export default function CatalogPage() {
   return (
     <>
       <PageHeader title="Catalog" lede="Three demo tracks with CC0 audio. Coverage varies per track. Review the edges before you approve." />
+      <input className="input" type="search" aria-label="Search tracks" placeholder="Search tracks" value={search} onChange={event => setSearch(event.target.value)} />
       <div className="filters" role="group" aria-label="Filter tracks">
         {[
           { value: "all", label: "All" },
