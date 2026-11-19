@@ -2,24 +2,18 @@
 
 # Grant
 
-**Music clearance with a paper trail. Built on Stellar.**
+**Know what a music license covers before you export.**
 
-A client brief becomes exact license terms, one human approval, a real x402 payment,
-and a proof link the client can open without an account.
+Describe the video you're making. Grant shows you what each track's license actually
+allows, what it doesn't, and the price. You approve once. Then you get the audio, a
+license PDF, and a link your client can open.
 
 ![live](https://img.shields.io/badge/live-grant--roan.vercel.app-0D3B22?style=flat-square)
-![network](https://img.shields.io/badge/network-Stellar%20Testnet-6FCF97?style=flat-square)
-![settlement](https://img.shields.io/badge/settlement-USDC-0D3B22?style=flat-square)
-![payment](https://img.shields.io/badge/payment-x402%20exact-C9F24C?style=flat-square)
-
-![safety](https://img.shields.io/badge/safety-no%20double%20pay-0D3B22?style=flat-square)
-![tests](https://img.shields.io/badge/tests-72%20passing-6FCF97?style=flat-square)
-![framework](https://img.shields.io/badge/framework-Next.js%2016-0D3B22?style=flat-square)
+![network](https://img.shields.io/badge/network-Stellar%20testnet-6FCF97?style=flat-square)
+![tests](https://img.shields.io/badge/tests-72%20passing-0D3B22?style=flat-square)
 ![language](https://img.shields.io/badge/TypeScript-strict-C9F24C?style=flat-square)
 
-**Hackathon build · music licensing for freelance editors**
-
-[Open the live app](https://grant-roan.vercel.app) · [Judge guide](SUBMISSION.md) · [Settlement proof](#on-chain-proof) · [Architecture](#architecture) · [Local setup](#local-development)
+[Open the live app](https://grant-roan.vercel.app) · [Try it in 5 minutes](#try-grant) · [See a real payment](#a-real-payment-you-can-check) · [How it is built](#how-it-is-built)
 
 <img src="docs/hero.png" alt="Grant landing page" width="100%" />
 
@@ -27,213 +21,161 @@ and a proof link the client can open without an account.
 
 ---
 
-## Table of contents
+## What is Grant?
 
-- [The problem](#the-problem)
-- [The solution](#the-solution)
-- [Who it is for](#who-it-is-for)
-- [Product tour](#product-tour)
-- [Why Stellar and x402](#why-stellar-and-x402)
-- [Built with](#built-with)
-- [Architecture](#architecture)
-- [On-chain proof](#on-chain-proof)
-- [Routes](#routes)
-- [API overview](#api-overview)
-- [Try Grant](#try-grant)
-- [Local development](#local-development)
-- [Current limitations](#current-limitations)
-- [License, author and hackathon](#license-author-and-hackathon)
+Grant is a music licensing app for freelance video editors.
 
-## The problem
+You tell it what you're making. "A 30-second reel, Instagram and TikTok, three months,
+for my client Harbor Athletics." Grant turns that into a list of terms, then shows you
+which tracks cover those terms and which don't, with the price next to each one.
 
-A freelance editor needs one track for one client video. That small decision hides four
-practical gaps, and most music catalogs answer none of them.
+You pick a track, read what the license does and does not allow, and approve. The app
+pays the seller from your own test wallet. You get the audio file, a PDF of the license,
+and a link your client can open without an account.
 
-**Coverage is vague.** "Royalty free" describes a price, not a license. Use on Instagram
-is not use in a paid ad. Ninety days is not one year. Worldwide is not Nigeria. An editor
-finds out which one applies after the client has already seen the cut.
+If a track can't cover what you need, Grant refuses. It tells you which part is missing
+and charges nothing.
 
-**Budgets live in someone's head.** A project has a spend limit and often a per-purchase
-cap. A web page cannot enforce either, so the limit is a note in a spreadsheet.
+## The problem: "royalty free" doesn't tell you anything
 
-**A payment receipt is not a license.** A card charge proves money moved. It says nothing
-about platform, term, territory, or what happens when the client asks for proof.
+Imagine you're editing a 30-second reel for a client. You find a track you like for one
+dollar. The listing says royalty free. You use it.
 
-**Retries charge twice.** Payment fails mid-flight, the editor refreshes, and the second
-attempt signs again. Nobody can tell whether the first one settled.
+Three weeks later the client asks for a paid ad. Or the campaign runs past 90 days. Or
+they want it in Nigeria. Any of those can fall outside what you bought, and nobody told
+you where the line was.
 
-## The solution
+The same gap shows up four times:
 
-Grant runs the purchase as one auditable chain:
+1. **You can't see what you're buying.** A price is not a license. Platform, length of
+   use, country, and client delivery all change what is allowed.
+2. **Your budget lives in a spreadsheet.** A project has a limit. Nothing stops the app
+   from spending past it.
+3. **A receipt is not a license.** Your bank statement proves money moved. It doesn't
+   prove what you were allowed to do.
+4. **Retrying a failed payment can charge you twice.** Refresh the page at the wrong
+   moment and you sign again, with no way to tell if the first one already went through.
 
-```
-INTENT  ->  POLICY  ->  PROOF  ->  SETTLEMENT
-```
+## What Grant does about it
 
-- **Intent.** The brief resolves into explicit terms. Platforms, term, territory, client
-  delivery. The chips are authoritative and validated with Zod. There is no LLM guessing
-  at coverage.
-- **Policy.** Coverage is matched against the offer. If the track cannot cover the brief,
-  Grant refuses and records why. A human approval is bound to a quote fingerprint, and the
-  server reserves budget atomically before any signature exists.
-- **Proof.** Settlement is verified against Horizon: payer, payee, amount, asset, and
-  network. Only then does the license, the PDF, the audio, and the proof link exist.
-- **Settlement.** Each purchase has one logical intent, one approval, one signing attempt,
-  and one receipt. A repeat request returns `ALREADY_SETTLED`. An uncertain attempt stays
-  pending and asks for reconciliation instead of signing again.
+**It shows the edges.** Every license is drawn as one strip, one segment per term.
+Filled means covered. Hollow means not covered. You see both before you pay.
 
-The clearance strip is the product in one shape: one segment per coverage dimension,
-filled when covered, hollow and amber when it is not.
+**It checks before it spends.** Grant matches your brief against the license first. If
+the license can't cover it, you get a refusal with the reason, not a charge.
+
+**You approve the exact terms.** The approval is tied to that one quote. It cannot be
+reused for a different purchase or a different price.
+
+**Money is reserved before anything is signed.** The budget is held aside in the database
+first. If anything fails, it is released.
+
+**The payment is checked, not assumed.** Grant asks Stellar whether the money actually
+arrived, to the right seller, for the right amount, before it hands over anything.
+
+**You can't pay twice.** A second click returns the first result. If the app genuinely
+doesn't know what happened, the purchase stays pending and asks you to check again
+instead of signing again.
 
 ## Who it is for
 
-**Freelance video editors** who buy music for client work and need to know, before they
-export, whether the track can carry the campaign they were hired to make.
+- **Freelance video editors** who buy music for client work and can't afford to guess.
+- **Small studios** that want one cap and one receipt per project.
+- **Rights holders** who would rather say no than find out later.
 
-**Small studios** that want a spend cap and a receipt per project instead of an inbox of
-screenshots.
+## How a purchase works
 
-**Rights holders** who would rather refuse a use than discover it later.
+1. **Write the brief.** One sentence, then four groups of chips: platforms, how long,
+   where, and who it's for. The chips are the real input. There is no AI guessing what
+   you meant.
+2. **See the tracks.** Three catalog tracks, each with its coverage strip and price.
+3. **Read the review screen.** What's covered, what isn't, what the price leaves in your
+   budget, and one Approve button.
+4. **Approve.** The app reserves the amount and signs one payment from your wallet.
+5. **Wait a moment.** The screen says submitted, not confirmed, until the payment is
+   actually verified on Stellar.
+6. **Get your files.** The license PDF, the audio download, and a public link you can
+   send to the client.
 
-## Product tour
+If you need longer use, wider platforms, or paid ads, the add-on screen quotes the
+difference. The original license stays as it was.
 
-| Screen | What it does |
+## A real payment you can check
+
+Everything below happened on Stellar's test network, where money is not real.
+
+| What | Where |
 | --- | --- |
-| Landing | The pitch, a settled sample license, the refusal, the strip explainer |
-| Sign in | Email and password. No wallet extension, no seed phrase |
-| Onboarding | Wallet generated, account activated, USDC trustline, faucet grant |
-| Home | On-chain balance, budget left, purchase count, recent purchases |
-| Brief | One sentence and four chip groups. Editing a chip rewrites the sentence |
-| Catalog | Three fixture tracks with coverage, price, and duration |
-| Review | Clearance strip, exclusions, budget after approval, one Approve button |
-| Pending | Submitted, not confirmed. One action: check again |
-| License | License ID, PDF, audio, transaction, ledger, share link |
-| Purchases | Ledger of settled, pending, refused, and expired purchases |
-| Wallet | Address, QR, live balance, fund, transaction history |
-| Profile | Account, wallet row, projects, share links, sign out |
-| Proof | Public, signed out, noindex. Terms and chain reference only |
+| Faucet sent 2.00 USDC to the buyer | [`d25abb7d…`](https://stellar.expert/explorer/testnet/tx/d25abb7d7b3940c891cab201854856a67006233465be978598bb4ece3fb0eb80) |
+| Buyer paid the seller for a license | [`5faefa56…`](https://stellar.expert/explorer/testnet/tx/5faefa5615dfb6305c7513780bf8fff48ac1d391ea9187d92c58a3bf83149a25) |
+| Buyer paid again for the paid-ads add-on | [`550d615b…`](https://stellar.expert/explorer/testnet/tx/550d615b40c94670a9f835fa4e94dd77d12add896581c86e4eac76b570197c38) |
 
-## Why Stellar and x402
+Buyer, seller, and the faucet are three different accounts on purpose. A demo where the
+buyer pays the account that funded them would prove nothing, so the app refuses to run
+if a seller address ever matches the faucet.
 
-A music license is a one-dollar decision that has to settle instantly and cost almost
-nothing to move. Stellar gives sub-cent transfers, USDC with 7 decimals, and sponsored
-fees. x402 gives the HTTP-level handshake that makes a paid endpoint machine-payable
-without a checkout form.
+You can also open a finished license and see it as a client would:
+[grant-roan.vercel.app/proof/…](https://grant-roan.vercel.app)
 
-`exact` on `stellar:testnet` is confirmed through the facilitator capability endpoint
-before any payment work runs. The seller route returns genuine 402 requirements, the
-client signs one authorization, and the settlement is verified before delivery.
+## Why Stellar
 
-## Built with
+A music license costs about a dollar. Moving a dollar has to be instant and nearly free,
+or the fee eats the sale.
 
-| Layer | Choice |
+Stellar settles in seconds and costs a fraction of a cent. The app pays with USDC, which
+keeps the price steady. The payment request travels over the same HTTP call that asks for
+the file, so there is no checkout page and no card form.
+
+None of this is visible to the editor. That is the point.
+
+## Screens
+
+| Screen | What you see |
 | --- | --- |
-| Framework | Next.js 16.4.6, React 19.3.1, Node 24 |
-| Language | TypeScript 5.9, `strict: true` |
-| Database | Neon PostgreSQL 17, Drizzle ORM 0.45.4, drizzle-kit 0.31.11 |
-| Auth | Better Auth 1.7.25 with the Drizzle adapter, email and password |
-| Payments | `@x402/core`, `@x402/stellar`, `@x402/fetch`, `@x402/next` 2.30.0, `@stellar/stellar-sdk` 17.4.0 |
-| Storage | Cloudflare R2, private bucket, presigned downloads |
-| Artifacts | `pdf-lib`, `qrcode` |
-| Validation | Zod 4.6.7 |
-| Tests | Vitest 5.1.0, 72 tests in 12 files |
-| Hosting | Vercel |
-
-## Architecture
-
-```
-browser
-  │  session cookie + same-origin checks
-  ▼
-Next.js route handlers  ──  policy, approval, reservation, idempotency
-  │                         │                 │
-  │                         │                 └── Stellar testnet (Horizon)
-  │                         │                        verify payer/payee/amount
-  │                         ▼
-  │                    Neon PostgreSQL
-  │                    projects, offers, purchases, approvals,
-  │                    attempts, reservations, receipts, licenses,
-  │                    artifacts, share links, refusals, wallets
-  ▼
-Cloudflare R2 (private)  ──  presigned GET, issued only after entitlement checks
-```
-
-Trust boundaries:
-
-- Owner identity comes from the session, never from a request body or header.
-- Mutating routes require a same-origin `Origin`.
-- A signing key is never sent to the browser. Each user has their own encrypted wallet.
-- A payment receipt is not an entitlement. Downloads check session, ownership, settled
-  state, license, and a ready artifact.
-- The proof page is deliberately thin: terms and chain reference, no audio, no client
-  name.
-
-## On-chain proof
-
-Every transaction below is confirmed on `stellar:testnet`.
-
-| Event | Transaction |
-| --- | --- |
-| Faucet funding, treasury to buyer | `5a6672727f59d685cd97f4feb1a953e11142d50dc32ed11b9347117c4ec3f03f` |
-| Base license purchase | `5faefa5615dfb6305c7513780bf8fff48ac1d391ea9187d92c58a3bf83149a25` |
-| Paid-ad add-on | `550d615b40c94670a9f835fa4e94dd77d12add896581c86e4eac76b570197c38` |
-| Buyer wallet | `GBBBO4IQTOCVMAUWP52SJAYOYVWQN776MIW2EJVSREKUPQAIOGJUECQD` |
-| Seller payee | `GB53WOPIUPZTTTGPNDACTMZ3DJZ62HNRJP53ARI6EVSSBEWMLMF5SKBD` |
-| Treasury, faucet only | `GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB` |
-
-The seller and the treasury are different accounts on purpose. A demo where the buyer pays
-the same account that funded it proves nothing, so the payee guard fails closed if an
-active offer ever points at the treasury.
-
-## Routes
-
-| Route | Rendering |
-| --- | --- |
-| `/` | Dynamic, landing |
-| `/signin` | Dynamic, email and password |
-| `/app` | Static shell, live API data |
-| `/app/new` | Static shell, brief and project creation |
-| `/app/catalog` | Static shell, catalog and quotes |
-| `/app/purchases` | Static shell, ledger |
-| `/app/wallet` | Static shell, balance and history |
-| `/app/profile` | Static shell, account and share links |
-| `/app/onboarding/*` | Wallet, activate, trustline, fund |
-| `/app/purchase/[id]` | Dynamic, review, pending, license |
-| `/proof/[token]` | Dynamic, public and signed out |
-
-## API overview
-
-| Endpoint | Purpose |
-| --- | --- |
-| `GET /api/health` | Status, phase, purchases enabled |
-| `GET /api/catalog` | Fixture tracks and offers |
-| `POST /api/license/matches` | Public coverage matching, no storage |
-| `POST /api/projects` | Create a project with caps |
-| `POST /api/projects/[id]/quotes` | Idempotent quote |
-| `POST /api/purchases/[id]/approve` | Bind approval to a quote fingerprint |
-| `POST /api/purchases/[id]/pay` | Reserve, sign once, submit, verify |
-| `POST /api/purchases/[id]/reconcile` | Check an uncertain attempt, never re-signs |
-| `POST /api/purchases/[id]/addons` | Paid-ad delta from a settled base |
-| `GET /api/purchases/[id]/download` | Presigned URL after entitlement checks |
-| `POST /api/purchases/[id]/share` | Create or revoke a proof link |
-| `POST /api/wallet/*` | Activate, trustline, faucet, refresh, history |
-| `GET /api/x402/license` | Purchase-scoped seller route returning 402 |
+| Landing | The pitch, a finished license, and an example refusal |
+| Sign in | Email and password. No wallet app to install |
+| Setup | Four steps: create your test wallet, switch it on, add USDC, get free test money |
+| Home | Your balance, what's left in the budget, and what you bought |
+| Brief | One sentence and the chip groups |
+| Catalog | Three tracks with coverage and price |
+| Review | The strip, the exclusions, the price, and Approve |
+| Pending | Submitted, not confirmed. One button: check again |
+| License | PDF, audio, payment details, and a share link |
+| Purchases | Everything you bought, refused, or left unfinished |
+| Wallet | Your address, QR code, balance, and history |
+| Proof | The page your client opens. No account needed |
 
 ## Try Grant
 
-Five minutes, no wallet extension, no real funds.
+Five minutes. No wallet extension. No real money.
 
-1. Open [grant-roan.vercel.app](https://grant-roan.vercel.app) and choose **Start a demo project**.
-2. Create an account with any email and password.
-3. Complete the four onboarding steps. The faucet sends 2.00 testnet USDC once per wallet.
-4. Create a project, keep the default brief, and review **Quiet Cut**.
-5. Read the strip and the exclusions, then approve. The purchase settles from your own wallet.
+1. Open [grant-roan.vercel.app](https://grant-roan.vercel.app) and press **Start a demo project**.
+2. Make an account with any email and password.
+3. Finish the four setup steps. The faucet gives you 2.00 test USDC.
+4. Create a project and keep the default brief.
+5. Open **Quiet Cut**, read the strip, and approve.
 6. Download the PDF and the audio, then open the proof link in a private window.
 
-To see the refusal instead of a purchase, ask a **Studio Pulse** brief for paid ads. Grant
-refuses, records the reason, and signs nothing.
+To see a refusal instead, ask for paid ads on **Studio Pulse**. Grant says no, explains
+which term is missing, and charges nothing.
 
-## Local development
+## How it is built
+
+| Part | What we used |
+| --- | --- |
+| App | Next.js 16, React 19, TypeScript |
+| Database | Neon Postgres with Drizzle |
+| Sign in | Better Auth, email and password |
+| Payments | Stellar testnet with x402 (`@x402/*` 2.30.0) |
+| Files | Cloudflare R2, private bucket, short-lived download links |
+| PDF | pdf-lib |
+| Tests | Vitest, 72 tests |
+
+The browser never holds a signing key. Each person gets their own Stellar account, and
+the secret is encrypted before it is stored. Downloads are only issued after the app
+checks who is asking, whether they own the purchase, and whether it was paid.
+
+## Run it locally
 
 ```bash
 npm install
@@ -243,40 +185,26 @@ npm run db:seed
 npm run dev
 ```
 
-Environment groups: `DATABASE_URL`, `DATABASE_URL_TEST`, `BETTER_AUTH_SECRET`,
-`BETTER_AUTH_URL`, `APP_ORIGIN`, `WALLET_ENCRYPTION_KEY`, `FAUCET_TREASURY_SECRET`,
-`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`.
-
 ```bash
-npm test           # 72 tests
+npm test            # 72 tests
 npm run typecheck
 npm run lint
 npm run build
-npm run db:check   # database reachable
-npm run r2:check   # bucket reachable
-npm run demo:reset # fresh funded account and clean project
+npm run demo:reset  # fresh account and project for a new recording
 ```
 
-Migrations use `db:generate` then `db:migrate` and `db:migrate:test`. There is no
-`drizzle push`.
+## What it doesn't do yet
 
-## Current limitations
+- **Test money only.** The payment flow is real, the network is not.
+- **Demo music.** Three free tracks with pretend sellers. No real deals yet.
+- **No refunds.** Once a license settles there is no way back.
+- **The app holds your key.** That is fine for a test build, not for real money.
+- **Test USDC looks like it's worth a dollar.** It isn't. Explorers use a stale price.
 
-- **Testnet only.** Settlement proves the protocol, not a production payment rail.
-- **Demo catalog.** Three CC0 tracks with fixture sellers. No commercial deals, no
-  multi-tenant seller onboarding.
-- **Custody.** The app holds each user's testnet key, encrypted with AES-256-GCM. Fine for
-  a demo, not a model for real funds.
-- **No refunds or disputes.** A settled license has no reversal path.
-- **Testnet USDC is worth nothing.** Explorers price it off a stale oracle.
-- **API gaps.** No artifact byte sizes or content types on download rows, no license
-  number in ledger rows, wallet history labels limited by Horizon.
+## About this build
 
-## License, author and hackathon
+Made by the Grant team for a hackathon. [SUBMISSION.md](SUBMISSION.md) has the checklist,
+[DEMO.md](DEMO.md) has the recording script, and [DESIGN.md](DESIGN.md) has the design
+system.
 
-Built by the Grant team as a hackathon submission. See [SUBMISSION.md](SUBMISSION.md) for
-the checklist, [DEMO.md](DEMO.md) for the recording script, and [DESIGN.md](DESIGN.md) for
-the design system.
-
-Demo build. CC0 demo audio. Testnet USDC only. Grant shows license terms; it is not legal
-advice.
+Free demo audio. Test USDC only. Grant shows license terms. It is not legal advice.
