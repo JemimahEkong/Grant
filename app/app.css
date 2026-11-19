@@ -339,14 +339,6 @@
   color: var(--dim);
 }
 
-.status-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--covered);
-  display: block;
-}
-
 .field {
   display: flex;
   flex-direction: column;
@@ -1469,7 +1461,7 @@
 .budget-number .of { font-size:12px; }
 .balance-footer { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:24px; padding-top:14px; border-top:1px solid color-mix(in srgb,var(--surface) 18%,transparent); font-size:10px; color:var(--brand-soft); }
 .balance-network { display:flex; align-items:center; gap:6px; }
-.balance-network::before { content:""; width:5px; height:5px; border-radius:50%; background:var(--brand); }
+.balance-network { gap:0; }
 .quick-actions { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:20px 0 24px; }
 .quick-actions a { display:flex; flex-direction:column; gap:8px; width:auto; min-height:0; padding:0; border-radius:0; background:transparent; font-size:11px; line-height:16px; color:var(--ink); white-space:nowrap; }
 .quick-icon { display:grid; place-items:center; width:48px; height:48px; border:1px solid var(--hairline); border-radius:17px; background:var(--surface); color:var(--brand-deep); }

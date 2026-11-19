@@ -127,7 +127,6 @@ export default function WalletPage() {
         <p>{wallet.custody}</p>
       </div>
       <div className="status-line">
-        <span className="status-dot" />
         <span>Testnet only. Never send real funds.</span>
       </div>
     </>

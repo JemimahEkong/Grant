@@ -249,11 +249,50 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <footer className="landing-footer">
+      </div>
+
+      <footer className="site-footer">
+        <div className="site-footer-inner">
+          <div className="footer-brand">
+            <div className="footer-logo">Grant<span>.</span></div>
+            <p>Music clearance for freelance editors. Know what a license covers before you export.</p>
+            <div className="footer-social">
+              <a href="https://github.com/JemimahEkong/Grant" target="_blank" rel="noreferrer">GitHub</a>
+              <a href="https://stellar.org" target="_blank" rel="noreferrer">Stellar</a>
+              <a href="https://developers.stellar.org/docs/build/agentic-payments/x402" target="_blank" rel="noreferrer">x402</a>
+            </div>
+            <div className="footer-copy">© Grant 2026 · All rights reserved</div>
+          </div>
+          <div className="footer-cols">
+            <div>
+              <h4>Product</h4>
+              <a href="#how">How it works</a>
+              <a href="#catalog">The clearance strip</a>
+              <a href="#delivery">Delivery</a>
+              <Link href="/signin?mode=signup&next=%2Fapp%2Fnew">Start a demo</Link>
+            </div>
+            <div>
+              <h4>Built on</h4>
+              <a href="https://stellar.org" target="_blank" rel="noreferrer">Stellar testnet</a>
+              <a href="https://developers.stellar.org/docs/build/agentic-payments/x402" target="_blank" rel="noreferrer">x402 payments</a>
+              <a href="https://www.x402.org/facilitator" target="_blank" rel="noreferrer">Facilitator</a>
+              <a href="https://lab.stellar.org" target="_blank" rel="noreferrer">Stellar Lab</a>
+            </div>
+            <div>
+              <h4>Project</h4>
+              <a href="https://github.com/JemimahEkong/Grant" target="_blank" rel="noreferrer">GitHub</a>
+              {proofPath ? <Link href={proofPath}>Sample license</Link> : null}
+              <Link href="/signin">Sign in</Link>
+              <Link href="/app">Open the app</Link>
+            </div>
+          </div>
+        </div>
+        <div className="footer-legal">
           <span>Demo build · CC0 demo audio · testnet USDC only</span>
           <span>Shows license terms. Not legal advice.</span>
-        </footer>
-      </div>
+        </div>
+        <div className="footer-word" aria-hidden="true">Grant</div>
+      </footer>
     </div>
   );
 }

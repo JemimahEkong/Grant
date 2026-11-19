@@ -207,7 +207,6 @@ export default function HomePage() {
       )}
 
       <div className="status-line">
-        <span className="status-dot" />
         <span>Balance read from stellar:testnet · no real funds</span>
       </div>
     </>

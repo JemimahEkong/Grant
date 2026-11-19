@@ -685,7 +685,6 @@ export default function PurchasePage() {
       ) : null}
 
       <div className="status-line">
-        <span className="status-dot" />
         <span>Payment state is durable. Pending does not re-sign.</span>
       </div>
     </Sheet>
