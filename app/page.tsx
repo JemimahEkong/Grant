@@ -93,23 +93,35 @@ export default async function LandingPage() {
             <div className="hero-micro">Testnet USDC · no card · one approval per purchase</div>
           </div>
 
-          <div className="hero-card-wrap"><div className="hero-float-note"><span className="tick"><ProofIcon className="nav-icon" /></span><span>Terms checked<strong>Before you pay</strong></span></div>
-            <div className="license-card"><div className="license-eyebrow"><span>GRANT / CLEARANCE</span><span>TESTNET</span></div>
-              <div className="license-card-head">
-                <div>
-                  <h2>{heroTitle}</h2>
-                  <p>{heroSeller}</p>
+          <div className="hero-card-wrap">
+            <div className="hero-card-stage" aria-label="Example Grant clearance card">
+              <div className="hero-stats-glass">
+                <span className="hero-stats-label">Clearance</span>
+                <strong>4 of 6</strong>
+                <span className="hero-stats-bars" aria-hidden="true"><i /><i /><i /><i /><i /><i /></span>
+              </div>
+              <div className="license-card license-card-back">
+                <div className="license-eyebrow"><span>PROJECT BUDGET</span><span>TESTNET</span></div>
+                <div className="back-card-balance"><span>Available after license</span><strong>4.00 <small>USDC</small></strong></div>
+                <div className="back-card-footer"><span>One approval</span><span>Bound terms</span></div>
+              </div>
+              <div className="license-card license-card-front"><div className="license-eyebrow"><span>GRANT / CLEARANCE</span><span>TESTNET</span></div>
+                <div className="license-card-head">
+                  <div>
+                    <h2>{heroTitle}</h2>
+                    <p>{heroSeller}</p>
+                  </div>
+                  <div className="license-card-price">{heroPrice}<small>USDC</small></div>
                 </div>
-                <div className="license-card-price">{heroPrice}<small>USDC</small></div>
-              </div>
-              <div style={{ marginTop: 14 }}>
                 <ClearanceStrip segments={heroSegments} />
+                <div className="license-card-foot">
+                  <span className="id">{heroLicense}</span>
+                  <Chip tone="settled">Settled</Chip>
+                </div>
               </div>
-              <div className="license-card-foot">
-                <span className="id">{heroLicense}</span>
-                <Chip tone="settled">Settled</Chip>
-              </div>
-            </div><div className="hero-mini-receipt"><span className="micro">One approval. Three deliverables.</span><div><span>Audio</span><span>License PDF</span><span>Proof link</span></div></div>
+              <div className="hero-float-note"><span className="tick"><ProofIcon className="nav-icon" /></span><span>Terms checked<strong>Before you pay</strong></span></div>
+              <div className="hero-income-glass"><span>Delivered</span><strong>Audio + PDF + proof</strong></div>
+            </div>
           </div>
         </section>
 
@@ -130,17 +142,17 @@ export default async function LandingPage() {
             <p className="section-desc">No account manager, no email thread, no invoice in ten days.</p>
           </div>
           <div className="steps">
-            <div className="step">
+            <div className="step" data-step="1">
               <div className="n">01</div>
               <div className="h">Describe the cut</div>
               <div className="d">90 seconds, Instagram and TikTok, 90 days, for Harbor Athletics. Editable terms, not prose.</div>
             </div>
-            <div className="step">
+            <div className="step" data-step="2">
               <div className="n">02</div>
               <div className="h">See the edges</div>
               <div className="d">Covered and excluded side by side, with the price and the budget it leaves behind. Approve the exact terms or walk.</div>
             </div>
-            <div className="step">
+            <div className="step" data-step="3">
               <div className="n">03</div>
               <div className="h">Leave with a license</div>
               <div className="d">Audio, a PDF with the terms, and a proof link your client can open without an account.</div>

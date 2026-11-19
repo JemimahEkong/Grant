@@ -90,9 +90,8 @@ export default function HomePage() {
           <span className="of">testnet USDC</span>
         </div>
         <div className="balance-footer"><span className="balance-network">Stellar testnet</span><span className="mono">{shortAddress(wallet.address)}</span></div>
+        <QuickActions variant="glass" />
       </section>
-
-      <QuickActions />
       {projectsLoading ? (
         <div className="skeleton" style={{ height: 62 }} />
       ) : projects.length > 0 && selectedProject ? (

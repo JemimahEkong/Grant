@@ -30,3 +30,4 @@
 
 - V2 visual verification is recorded in agent-state/v2-visual-evidence.md, including signed-out proof, all onboarding steps, refusal URL wrapping, contrast ratios and the live-pending limitation.
 - November 19 UI refinement implements the founder's screenshot feedback. Font is now local Inter, navigation floats on mobile, Home has compact icon actions, purchases have separate white cards, Profile has a brief CTA, landing uses a layered license preview. No server or payment-handler changes.
+- November 19 glass refinement adds shared translucent buttons and mobile navigation, an overlapping Home action tray, and a realistic two-card landing hero with floating clearance/delivery information. Supporting landing cards now use the reference's green tonal family. No server or workflow changes.

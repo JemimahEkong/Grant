@@ -70,7 +70,7 @@
 
 - Always follow or reference the UI design system when creating or reviewing components or pages.
 - Design System: @DESIGN.md
-- Use the exact tokens, Geist Sans/Mono, inline SVG icons, the 900px breakpoint, and the clearance strip. No gradients, glass, decorative shadows, icon libraries, or images.
+- Use the exact tokens, local Inter/Geist Mono, inline SVG icons, the 900px breakpoint, and the clearance strip. DESIGN.md now permits controlled gradients and glass on buttons, floating navigation, balance/product cards, quick actions, and landing hero overlays. Keep long-form content and safety states solid.
 - Registration is public. There is no spending allowlist. Spending is bounded by the user wallet balance, faucet caps, project budget, approval, reservation, rate limits, and settlement checks.
 - Pending has exactly one action, Check again. Never add a retry that can sign again.
 
@@ -123,3 +123,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 - November 19 reference refinement supersedes v2 oversized controls: locally hosted Inter, compact icon-led quick actions, floating mobile navigation, and layered landing preview. Follow the refinement section in DESIGN.md. Preserve all backend/workflow handlers.
+- November 19 glass refinement supersedes the old blanket no-glass rule. Use the shared material tokens and keep blur/gradient treatments limited to the surfaces named in DESIGN.md. Preserve all backend/workflow handlers.

@@ -146,12 +146,12 @@ export function TabBar({ pathname }: { pathname: string }) {
   })}<p className="tab-foot">TESTNET USDC only. No real funds.<br />One approval per purchase.</p></nav>;
 }
 
-export function QuickActions() {
+export function QuickActions({ variant = "default" }: { variant?: "default" | "glass" }) {
   const actions = [
     { href: "/app/new", label: "New brief", icon: PlusIcon },
     { href: "/app/catalog", label: "Tracks", icon: TracksIcon },
     { href: "/app/wallet", label: "Wallet", icon: PdfIcon },
     { href: "/app/purchases", label: "Purchases", icon: PurchasesIcon },
   ];
-  return <nav className="quick-actions" aria-label="Quick actions">{actions.map(({href,label,icon:Icon}) => <Link href={href} key={href}><span className="quick-icon"><Icon className="nav-icon" /></span><span>{label}</span></Link>)}</nav>;
+  return <nav className={`quick-actions${variant === "glass" ? " quick-actions-glass" : ""}`} aria-label="Quick actions">{actions.map(({href,label,icon:Icon}) => <Link href={href} key={href}><span className="quick-icon"><Icon className="nav-icon" /></span><span>{label}</span></Link>)}</nav>;
 }

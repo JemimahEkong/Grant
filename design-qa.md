@@ -1,28 +1,50 @@
-﻿# Reference refinement QA
+# Design QA: glass material refinement
 
-Final result: passed for the adapted Grant visual system.
+## Evidence
 
-## Scope and comparison
-- Compared supplied wallet, invoice, profile, landing and typography screenshots with the running Grant UI. These are layout references, not identical product content. Grant remains light lemon/deep green, and the wallet reference is dark red.
-- Mobile viewport 390 x 844 CSS px; browser screenshots are 488 x 1055 pixels at OS scale 1.25. Comparison board normalizes images to a common display width and crops reference device surroundings. Desktop viewport 1280 x 900.
-- Comparison evidence: ../comparison-qa-final.png. Source attachments remain in the user's attachment directory. Browser captures are under the T3 browser-artifacts directory.
-
-## Findings and fixes
-- P1: text-only quick-action circles, nested white balance card and repeated project prompts. Fixed with icon containers and labels, a single balance/footer surface and a single project entry. Final Home capture browser-screenshot-localhost-mwndc372-2ed9a5d0.png confirms the revision.
-- P1: conflicting legacy primary-action rule produced dark text on dark fill. Explicit lemon fill now wins; final Home capture verifies readable text.
-- P2: purchase rows looked like uncontained text. Now separate white rounded cards with icon, metadata separator and status. Full refusal explanation remains on detail. Final list capture browser-screenshot-localhost-mwnd8qav-8a587740.png.
-- P2: body and button weights and sizes were too heavy. Local variable Inter now supplies the complete UI font, with 15px body, 13px supporting text, 14px controls, semibold titles and tabular money. The exact reference font cannot be identified from pixels alone.
-- P2: landing had a flat single card. Native license preview now has a floating term-check note and lemon deliverables layer; headline, CTAs, coverage band and closing section rebalanced. Desktop capture browser-screenshot-localhost-mwnd5rl4-ff913795.png.
+- Landing source truth: `C:/Users/emman/.t3/userdata/attachments/c0a86b8f-e7cb-4216-959e-74a4f3218b20-90d51a86-fdfa-4471-854f-2a3bb780d89d.jpg`, 1080 x 1920 pixels.
+- Home source truth: `C:/Users/emman/.t3/userdata/attachments/c0a86b8f-e7cb-4216-959e-74a4f3218b20-51cb9622-a519-4856-874f-82b978217c8d.jpg`, 1200 x 1800 pixels.
+- Landing implementation mobile: `C:/Users/emman/.t3/userdata/browser-artifacts/browser-screenshot-localhost-mwne6bcw-a00ebc9d.png`, 488 x 1055 pixels from a 390 x 844 CSS viewport.
+- Home implementation mobile: `C:/Users/emman/.t3/userdata/browser-artifacts/browser-screenshot-localhost-mwne6weo-0f344bdd.png`, 488 x 1055 pixels from a 390 x 844 CSS viewport.
+- Landing implementation desktop: `C:/Users/emman/.t3/userdata/browser-artifacts/browser-screenshot-localhost-mwne7o0z-a3361a06.png`, 1600 x 1000 pixels from a 1280 x 800 CSS viewport.
+- Full-view comparisons: `design-qa-landing-comparison.png` and `design-qa-home-comparison.png`. Each pair was normalized to a common height before compositing.
+- States: public landing with live settled sample, signed-in Home with a funded testnet wallet and selected demo project.
+- Browser checks: landing CTAs and navigation were present, signed-in Home loaded live wallet, project, catalog and purchase APIs, mobile navigation remained fixed, and the console showed no runtime errors.
 
 ## Required fidelity surfaces
-- Typography: local font loaded and verified from computed styles. Supporting copy, labels and control sizes are consistent; chain data stays mono.
-- Spacing: 20px mobile gutters, compact actions, floating navigation, separated list cards. Home, catalog, brief, purchases, wallet and profile checked at mobile. Landing and Home checked at desktop. No horizontal overflow in measured views.
-- Colours: existing lemon and deep-green palette retained. Main CTA contrast fixed. State chips preserve readable foregrounds.
-- Assets: existing product icons retained under repository policy. No copied reference logos, photos, financial imagery or device chrome. This is an intentional product adaptation.
-- Copy: existing claims, legal disclosure, custody disclosure and testnet labels retained. No invented subscription or payment feature.
 
-## Validation and limits
-- Typecheck, lint and production build pass. 72 tests pass with --testTimeout=60000. Initial run had one 30-second database integration timeout; isolated rerun and full rerun passed. No backend code changed.
-- No payment was submitted for visual QA. Live pending settlement was not induced. Shared styling covers the existing states.
-- P3 follow-up: desktop Home could use a denser multi-column dashboard in a separate design iteration. The supplied Home reference is mobile only.
-- Production deployment: dpl_BuAZuynNoTu1p2kVC4ENYz2cXYPM, code b259d2d, https://grant-roan.vercel.app. Live computed font is Inter and the new landing preview is present.
+- Fonts and typography: local Inter matches the rounded neo-grotesk character of both references. Hero weight, large numeric balance, compact labels and tabular money preserve the reference hierarchy without copying its brand.
+- Spacing and layout rhythm: landing uses the same two-column editorial hero, large quiet canvas and stacked product-card focal point as the source. Home uses a compact top rhythm, dominant balance surface, overlapping quick-action tray and floating tab bar.
+- Colors and visual tokens: the source green/red finance treatments are translated to Grant lemon and deep green. Glass edges, blur, tonal gradients and highlights are limited to controls and product surfaces. Text contrast remains solid on all readable surfaces.
+- Image quality and asset fidelity: no stock photography, reference logos, device chrome or borrowed financial content is used. The realistic hero is built from product UI with real Grant terms, clearance segments and testnet status.
+- Copy and content: all existing Grant claims and disclosures remain unchanged. The added product-card labels describe true Grant behavior only.
+
+## Comparison history
+
+### Pass 1 findings
+
+- [P1] Home actions were detached flat icons on a light canvas, while the source uses an overlapping translucent action tray inside the hero surface.
+- [P1] The landing example was one flat license card, while the source hero depends on overlapping realistic cards, rings and floating information panels.
+- [P2] Primary and secondary controls lacked the bright edge highlights, depth and translucency requested by the founder.
+- [P2] Supporting landing cards were visually uniform white panels instead of the compact tonal card family shown in the reference.
+
+### Fixes applied
+
+- Moved Home quick actions into the balance card and gave them a shared dark glass tray, circular translucent controls and a lemon active action.
+- Rebuilt the landing hero as a two-card scene with a budget card, clearance card, orbit treatment, clearance statistic, delivery chip and terms chip.
+- Added shared glass tokens and material states to primary buttons, secondary buttons and the floating mobile tab bar.
+- Added lime, green and deep-green tonal treatments to the three-step, coverage, delivery and close sections.
+
+### Pass 2 evidence
+
+- `design-qa-home-comparison.png` shows the same dominant balance-to-action-tray relationship and floating bottom navigation as the selected mobile source.
+- `design-qa-landing-comparison.png` shows the same editorial hero balance, layered green product cards, orbit composition and floating data card as the selected landing source.
+- Mobile landing measured 375 CSS pixels for both `clientWidth` and `scrollWidth`, so there is no horizontal overflow.
+- Desktop landing measured 1265 CSS pixels for both `clientWidth` and `scrollWidth` at the 1280 viewport, so there is no horizontal overflow.
+- Focused review of the hero card, quick-action tray, CTAs and tab bar found no remaining P0, P1 or P2 mismatch for the selected visual grammar.
+
+## Follow-up polish
+
+- [P3] Safari blur strength may vary slightly from Chromium. Solid fallback fills keep the same hierarchy and contrast.
+
+final result: passed

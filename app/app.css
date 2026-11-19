@@ -1556,3 +1556,72 @@
 .field label,.brief-sentence .q { font-size:10px; letter-spacing:.06em; font-weight:600; }
 .form-hint { font-size:11px; line-height:17px; }
 .brief-sentence p { font-size:14px; line-height:22px; }
+
+/* Glass material pass, matched to the founder's mobile finance reference. */
+.budget-hero {
+  position:relative;
+  overflow:visible;
+  background:
+    radial-gradient(circle at 78% 12%,rgba(201,242,76,.22),transparent 34%),
+    radial-gradient(circle at 12% 84%,rgba(59,143,88,.22),transparent 42%),
+    linear-gradient(145deg,#082b19 0%,#0d4728 56%,#082d1b 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 22px 50px rgba(13,59,34,.16);
+}
+.budget-hero::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border-radius:inherit;
+  background:linear-gradient(120deg,rgba(255,255,255,.11),transparent 30%,transparent 72%,rgba(201,242,76,.08));
+}
+.budget-hero > * { position:relative; z-index:1; }
+.budget-hero .quick-actions-glass {
+  margin:22px -8px -10px;
+  padding:14px 10px 12px;
+  border:1px solid var(--glass-line-dark);
+  border-radius:24px;
+  background:rgba(6,28,16,.46);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 14px 34px rgba(0,0,0,.22);
+  -webkit-backdrop-filter:blur(22px) saturate(145%);
+  backdrop-filter:blur(22px) saturate(145%);
+}
+.quick-actions-glass a { color:rgba(255,255,255,.82); }
+.quick-actions-glass .quick-icon {
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.16);
+  color:var(--surface);
+  background:rgba(255,255,255,.1);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.17),0 8px 16px rgba(0,0,0,.13);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+}
+.quick-actions-glass a:first-child .quick-icon {
+  color:var(--brand-ink);
+  background:linear-gradient(145deg,#ddff73,var(--brand));
+  border-color:rgba(255,255,255,.62);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 8px 20px rgba(151,196,43,.25);
+}
+@media(max-width:899px) {
+  .tab-bar {
+    background:rgba(5,27,15,.78);
+    border-color:rgba(255,255,255,.18);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 20px 42px rgba(4,22,12,.28);
+    -webkit-backdrop-filter:blur(24px) saturate(155%);
+    backdrop-filter:blur(24px) saturate(155%);
+  }
+  .tab-link.on:not(.tab-centre) .tab-icon {
+    background:rgba(255,255,255,.92);
+    box-shadow:inset 0 1px 0 #fff,0 7px 16px rgba(0,0,0,.16);
+  }
+  .tab-centre .tab-icon {
+    background:linear-gradient(145deg,#ddff73,var(--brand));
+    border:1px solid rgba(255,255,255,.55);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.78),0 10px 24px rgba(169,218,49,.24);
+  }
+}
+@media(min-width:900px) {
+  .budget-hero .quick-actions-glass { max-width:470px; }
+}

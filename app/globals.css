@@ -16,6 +16,10 @@
 --card-shadow:0 1px 2px rgba(15,26,18,.05);
 --floating-shadow:0 -1px 0 var(--hairline),0 8px 24px rgba(15,26,18,.08);
 --scrim:rgba(0,0,0,.4);
+--glass-light:rgba(255,255,255,.68); --glass-light-strong:rgba(255,255,255,.84);
+--glass-dark:rgba(8,32,18,.74); --glass-dark-strong:rgba(8,32,18,.9);
+--glass-line-light:rgba(255,255,255,.66); --glass-line-dark:rgba(255,255,255,.18);
+--glass-shadow:0 20px 48px rgba(13,59,34,.18),inset 0 1px 0 rgba(255,255,255,.58);
 }
 
 * {
@@ -435,3 +439,23 @@ body { font-size:15px; line-height:1.5; letter-spacing:-.015em; }
 .empty-state .btn { margin-top:16px; min-height:40px; font-size:13px; }
 .panel,.card,.grouped-list { border-color:transparent; box-shadow:none; border-radius:22px; }
 .input,.select,.textarea { font-size:15px; padding:12px 14px; border-color:var(--hairline); }
+
+/* V3 material refinement: controlled translucent controls and product surfaces. */
+.btn {
+  border-color:rgba(255,255,255,.62);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.72),0 7px 18px rgba(13,59,34,.08);
+  -webkit-backdrop-filter:blur(18px) saturate(145%);
+  backdrop-filter:blur(18px) saturate(145%);
+}
+.btn-primary,.primary-action {
+  background:linear-gradient(145deg,#d9ff62 0%,var(--brand) 58%,#b9e63b 100%);
+  border-color:rgba(255,255,255,.58);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),inset 0 -1px 0 rgba(20,33,15,.08),0 10px 24px rgba(86,126,22,.18);
+}
+.btn-primary:hover,.primary-action:hover { background:linear-gradient(145deg,#e5ff8a 0%,#cdf65b 60%,#c0e94a 100%); }
+.btn-secondary {
+  background:var(--glass-light);
+  border-color:var(--glass-line-light);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 22px rgba(13,59,34,.08);
+}
+.btn-secondary:hover { background:var(--glass-light-strong); border-color:rgba(255,255,255,.9); }

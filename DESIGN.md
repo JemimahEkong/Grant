@@ -68,7 +68,7 @@ transaction hashes, license IDs, object keys.
 - Screen gutter 20px. Section gap 24px. Card padding 16–20px.
 - Elevation: cards `0 1px 2px rgba(15,26,18,.05)`. Sheets and the tab bar
   `0 -1px 0 var(--hairline)` plus `0 8px 24px rgba(15,26,18,.08)`.
-- No gradients, no glassmorphism, no drop shadows on text.
+- No drop shadows on text. Controlled glass and gradients are allowed only on interactive controls, floating navigation, balance/product cards, and the landing hero composition. Body content and long-form cards stay solid for contrast.
 
 ## 4. Components
 
@@ -169,3 +169,12 @@ The founder rejected the first v2 implementation as too spacious and unlike the 
 - Profile uses an avatar greeting, a deep-green brief CTA card, wallet and grouped account/project rows. No invented paid subscription.
 - Landing uses a layered native product-license preview, compact pill CTAs, a lemon coverage section, and deep-green closing band. Keep existing claims and demo disclosures.
 - Existing inline icons are retained under the project icon rule. No reference brands, financial claims, stock imagery or device chrome are copied.
+
+## Glass material refinement, November 19
+
+The founder selected the layered material treatment from the mobile wallet and financial landing references. This section supersedes the earlier blanket no-gradient and no-glass rule.
+- Use translucent glass for secondary buttons, the mobile tab bar, floating hero chips, and the quick-action tray. Pair blur with a visible edge highlight and dark or light fallback fill so labels remain readable without backdrop-filter support.
+- Primary lemon controls use a restrained directional highlight. Dark green product surfaces may use subtle radial light and tonal gradients for depth.
+- Home places quick actions inside an overlapping dark glass tray at the base of the balance card. Keep labels short and preserve four equal targets.
+- The landing hero uses two offset, realistic Grant product cards, orbital rings, and small glass information cards. The cards show only true Grant concepts such as testnet balance, license coverage, approval, and deliverables.
+- Do not spread glass across long text panels, form fields, warnings, or legal disclosure. Those remain solid surfaces with accessible contrast.

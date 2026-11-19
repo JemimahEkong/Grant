@@ -36,3 +36,4 @@
 
 - V2 visual verification is recorded in agent-state/v2-visual-evidence.md, including signed-out proof, all onboarding steps, refusal URL wrapping, contrast ratios and the live-pending limitation.
 - Reference refinement: locally hosted Inter, smaller semibold controls, icon-led Home actions, floating pill navigation, individual purchase cards, native landing license preview. All changes are presentation only. See DESIGN.md refinement section.
+- Glass refinement: controlled blur and gradients are allowed only on buttons, floating navigation, balance/product cards, quick actions, and landing hero overlays. Long text, warnings, forms, and disclosures remain solid. See DESIGN.md.
