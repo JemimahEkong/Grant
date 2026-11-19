@@ -25,3 +25,4 @@ Final result: passed for the adapted Grant visual system.
 - Typecheck, lint and production build pass. 72 tests pass with --testTimeout=60000. Initial run had one 30-second database integration timeout; isolated rerun and full rerun passed. No backend code changed.
 - No payment was submitted for visual QA. Live pending settlement was not induced. Shared styling covers the existing states.
 - P3 follow-up: desktop Home could use a denser multi-column dashboard in a separate design iteration. The supplied Home reference is mobile only.
+- Production deployment: dpl_BuAZuynNoTu1p2kVC4ENYz2cXYPM, code b259d2d, https://grant-roan.vercel.app. Live computed font is Inter and the new landing preview is present.
