@@ -1,241 +1,282 @@
+<div align="center">
+
 # Grant
 
-Grant is a music-licensing checkout for freelance video editors. A client brief becomes a set of matching license terms, a human approval, a real Stellar testnet payment from the editor's own wallet, a receipt and license, private PDF and MP3 downloads, and a public proof link the client can check without an account.
+**Music clearance with a paper trail. Built on Stellar.**
 
-- Live app: [https://grant-roan.vercel.app](https://grant-roan.vercel.app)
-- Public repo: [https://github.com/JemimahEkong/Grant](https://github.com/JemimahEkong/Grant)
-- Recording script: [DEMO.md](DEMO.md)
-- Submission checklist: [SUBMISSION.md](SUBMISSION.md)
-- Design system: [DESIGN.md](DESIGN.md)
+A client brief becomes exact license terms, one human approval, a real x402 payment,
+and a proof link the client can open without an account.
 
-## Five-minute judge path
+![live](https://img.shields.io/badge/live-grant--roan.vercel.app-0D3B22?style=flat-square)
+![network](https://img.shields.io/badge/network-Stellar%20Testnet-6FCF97?style=flat-square)
+![settlement](https://img.shields.io/badge/settlement-USDC-0D3B22?style=flat-square)
+![payment](https://img.shields.io/badge/payment-x402%20exact-C9F24C?style=flat-square)
 
-The critical path fits in five minutes. The add-on is optional and uses the second testnet USDC from the faucet.
+![safety](https://img.shields.io/badge/safety-no%20double%20pay-0D3B22?style=flat-square)
+![tests](https://img.shields.io/badge/tests-72%20passing-6FCF97?style=flat-square)
+![framework](https://img.shields.io/badge/framework-Next.js%2016-0D3B22?style=flat-square)
+![language](https://img.shields.io/badge/TypeScript-strict-C9F24C?style=flat-square)
 
-### 1. Landing, 30 seconds
+**Hackathon build · music licensing for freelance editors**
 
-Open [https://grant-roan.vercel.app](https://grant-roan.vercel.app).
+[Open the live app](https://grant-roan.vercel.app) · [Judge guide](SUBMISSION.md) · [Settlement proof](#on-chain-proof) · [Architecture](#architecture) · [Local setup](#local-development)
 
-Look for the clearance strip. Each segment is a term from the license. Covered terms are green. Missing terms are amber or red. The page shows a settled sample license, a proof link, and the testnet badge.
+<img src="docs/hero.png" alt="Grant landing page" width="100%" />
 
-### 2. Sign up and fund, about 90 seconds
+</div>
 
-Open [https://grant-roan.vercel.app/signin](https://grant-roan.vercel.app/signin) and choose Create one. Email and password only.
+---
 
-Complete the four onboarding steps:
+## Table of contents
 
-1. Generate the user's Stellar testnet wallet.
-2. Activate the account with the minimum XLM reserve.
-3. Add the USDC trustline.
-4. Claim the faucet grant.
+- [The problem](#the-problem)
+- [The solution](#the-solution)
+- [Who it is for](#who-it-is-for)
+- [Product tour](#product-tour)
+- [Why Stellar and x402](#why-stellar-and-x402)
+- [Built with](#built-with)
+- [Architecture](#architecture)
+- [On-chain proof](#on-chain-proof)
+- [Routes](#routes)
+- [API overview](#api-overview)
+- [Try Grant](#try-grant)
+- [Local development](#local-development)
+- [Current limitations](#current-limitations)
+- [License, author and hackathon](#license-author-and-hackathon)
 
-The faucet sends 2.00 testnet USDC once per wallet. The daily treasury cap is 40.00 testnet USDC.
+## The problem
 
-### 3. Create a project, about 30 seconds
+A freelance editor needs one track for one client video. That small decision hides four
+practical gaps, and most music catalogs answer none of them.
 
-Open [https://grant-roan.vercel.app/app/new](https://grant-roan.vercel.app/app/new).
+**Coverage is vague.** "Royalty free" describes a price, not a license. Use on Instagram
+is not use in a paid ad. Ninety days is not one year. Worldwide is not Nigeria. An editor
+finds out which one applies after the client has already seen the cut.
 
-Use the default brief or edit the chips. The chips are the authority. There is no LLM parsing of free text. The default brief asks for organic use on Instagram and TikTok, worldwide, for 90 days, with a 30-second clip and client delivery.
+**Budgets live in someone's head.** A project has a spend limit and often a per-purchase
+cap. A web page cannot enforce either, so the limit is a note in a spreadsheet.
 
-### 4. Buy one license, about 90 seconds
+**A payment receipt is not a license.** A card charge proves money moved. It says nothing
+about platform, term, territory, or what happens when the client asks for proof.
 
-Open [https://grant-roan.vercel.app/app/catalog](https://grant-roan.vercel.app/app/catalog).
+**Retries charge twice.** Payment fails mid-flight, the editor refreshes, and the second
+attempt signs again. Nobody can tell whether the first one settled.
 
-Choose Morning Edit. Review the quote. The page shows the exact coverage and the exclusions. Approve and pay 1.00 testnet USDC.
+## The solution
 
-The payment is signed by the editor's own wallet. The seller is a separate account. The app verifies the settlement on Horizon, writes a receipt, and issues a license.
+Grant runs the purchase as one auditable chain:
 
-The account has 1.00 testnet USDC left after the base purchase.
+```
+INTENT  ->  POLICY  ->  PROOF  ->  SETTLEMENT
+```
 
-### 5. Files and proof, about 60 seconds
+- **Intent.** The brief resolves into explicit terms. Platforms, term, territory, client
+  delivery. The chips are authoritative and validated with Zod. There is no LLM guessing
+  at coverage.
+- **Policy.** Coverage is matched against the offer. If the track cannot cover the brief,
+  Grant refuses and records why. A human approval is bound to a quote fingerprint, and the
+  server reserves budget atomically before any signature exists.
+- **Proof.** Settlement is verified against Horizon: payer, payee, amount, asset, and
+  network. Only then does the license, the PDF, the audio, and the proof link exist.
+- **Settlement.** Each purchase has one logical intent, one approval, one signing attempt,
+  and one receipt. A repeat request returns `ALREADY_SETTLED`. An uncertain attempt stays
+  pending and asks for reconciliation instead of signing again.
 
-On the settled purchase page:
+The clearance strip is the product in one shape: one segment per coverage dimension,
+filled when covered, hollow and amber when it is not.
 
-1. Download the license PDF.
-2. Download the audio MP3.
-3. Create a proof link.
-4. Open the proof link in a private window.
+## Who it is for
 
-The PDF and MP3 come from a private R2 bucket through short-lived presigned URLs. The proof page is public and revocable. It shows the license terms, seller, and transaction. It does not show the client's private name, the object key, the raw token, or the audio.
+**Freelance video editors** who buy music for client work and need to know, before they
+export, whether the track can carry the campaign they were hired to make.
 
-### 6. Optional add-on, about 45 seconds
+**Small studios** that want a spend cap and a receipt per project instead of an inbox of
+screenshots.
 
-Return to the base purchase. The Add paid ads panel offers a second purchase for 1.00 testnet USDC.
+**Rights holders** who would rather refuse a use than discover it later.
 
-The add-on keeps the original term, territory, clip length, and client terms. It adds paid-ad use on the same platforms. It gets its own receipt and license. The purchase page shows the combined coverage from both licenses.
+## Product tour
 
-## What this is not
-
-- Testnet only. There is no mainnet support and no real money.
-- Testnet USDC is priced by a stale oracle and is worth nothing. The 1.00 and 2.00 amounts are test units, not money.
-- The catalog audio is CC0 demo material. It is not a commercial catalog, a rights-cleared library, or a legal clearance service.
-- The seller names and offer terms are fixtures. The credited CC0 creators are not the sellers and did not endorse Grant. There is no multi-tenant seller onboarding or authority verification.
-- There are no refunds or disputes. A settled testnet purchase is final in this demo.
-- Grant holds each demo wallet's testnet secret in encrypted form so the demo can sign for the editor. This is demo custody, not a production custodian. It is not insured.
-- `npm audit` reports dev-tool vulnerabilities in drizzle-kit/esbuild and vitest/picomatch. Fixing them requires breaking major-version updates. They are development tools, not the production runtime.
-- A testnet settlement proves the payment protocol only. It does not prove copyright ownership, legal clearance, or a commercial music license.
-- There is no mainnet, no commercial music catalog, no refund path, and no multi-tenant seller onboarding.
-
-## Live testnet facts
-
-| Item | Value |
+| Screen | What it does |
 | --- | --- |
-| Network | Stellar testnet |
-| USDC asset | `CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA` |
-| Faucet treasury, funder only | [GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB](https://stellar.expert/explorer/testnet/account/GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB) |
-| Seller payee | [GB53WOPIUPZTTTGPNDACTMZ3DJZ62HNRJP53ARI6EVSSBEWMLMF5SKBD](https://stellar.expert/explorer/testnet/account/GB53WOPIUPZTTTGPNDACTMZ3DJZ62HNRJP53ARI6EVSSBEWMLMF5SKBD) |
-| Faucet grant | 2.00 testnet USDC per wallet |
-| Faucet daily cap | 40.00 testnet USDC |
-| Seller activation, 3 XLM from treasury | [4b12e00886204f7a33676c1def7b5666f1adf25d6e3da2586c22e7c51d43f0c0](https://stellar.expert/explorer/testnet/tx/4b12e00886204f7a33676c1def7b5666f1adf25d6e3da2586c22e7c51d43f0c0) |
-| Seller USDC trustline | [79af83dec9c93b5e056431d62180be1846e4b1851905ab290ed52caaa125d147](https://stellar.expert/explorer/testnet/tx/79af83dec9c93b5e056431d62180be1846e4b1851905ab290ed52caaa125d147) |
+| Landing | The pitch, a settled sample license, the refusal, the strip explainer |
+| Sign in | Email and password. No wallet extension, no seed phrase |
+| Onboarding | Wallet generated, account activated, USDC trustline, faucet grant |
+| Home | On-chain balance, budget left, purchase count, recent purchases |
+| Brief | One sentence and four chip groups. Editing a chip rewrites the sentence |
+| Catalog | Three fixture tracks with coverage, price, and duration |
+| Review | Clearance strip, exclusions, budget after approval, one Approve button |
+| Pending | Submitted, not confirmed. One action: check again |
+| License | License ID, PDF, audio, transaction, ledger, share link |
+| Purchases | Ledger of settled, pending, refused, and expired purchases |
+| Wallet | Address, QR, live balance, fund, transaction history |
+| Profile | Account, wallet row, projects, share links, sign out |
+| Proof | Public, signed out, noindex. Terms and chain reference only |
 
-The treasury funds faucet grants and XLM activation only. It never receives purchase USDC. The seller is a dedicated account. Approval and the seller route fail closed if any active offer pays the treasury.
+## Why Stellar and x402
 
-Latest seller-separated proof:
+A music license is a one-dollar decision that has to settle instantly and cost almost
+nothing to move. Stellar gives sub-cent transfers, USDC with 7 decimals, and sponsored
+fees. x402 gives the HTTP-level handshake that makes a paid endpoint machine-payable
+without a checkout form.
 
-- Treasury to buyer, 2.00 USDC: [d25abb7d7b3940c891cab201854856a67006233465be978598bb4ece3fb0eb80](https://stellar.expert/explorer/testnet/tx/d25abb7d7b3940c891cab201854856a67006233465be978598bb4ece3fb0eb80)
-- Buyer to seller, base, 1.00 USDC: [5faefa5615dfb6305c7513780bf8fff48ac1d391ea9187d92c58a3bf83149a25](https://stellar.expert/explorer/testnet/tx/5faefa5615dfb6305c7513780bf8fff48ac1d391ea9187d92c58a3bf83149a25)
-- Buyer to seller, add-on, 1.00 USDC: [550d615b40c94670a9f835fa4e94dd77d12add896581c86e4eac76b570197c38](https://stellar.expert/explorer/testnet/tx/550d615b40c94670a9f835fa4e94dd77d12add896581c86e4eac76b570197c38)
+`exact` on `stellar:testnet` is confirmed through the facilitator capability endpoint
+before any payment work runs. The seller route returns genuine 402 requirements, the
+client signs one authorization, and the settlement is verified before delivery.
 
-The full three-address record is in [agent-state/seller-separation-evidence.md](agent-state/seller-separation-evidence.md).
+## Built with
 
-Testnet USDC has no monetary value. Any USD conversion or oracle quote is stale and irrelevant. The demo prices are fixed test units.
-
-## CC0 demo audio
-
-The three catalog tracks are real CC0 recordings. The full source list, hashes, and retrieval date are in [demo/audio/PROVENANCE.md](demo/audio/PROVENANCE.md).
-
-| Track | Source | Creator | License | Duration | BPM |
-| --- | --- | --- | --- | --- | --- |
-| Morning Edit | [Freesound 449812](https://freesound.org/people/tyballer92/sounds/449812) | tyballer92 | CC0 1.0 | 60.25 s | 129 estimate |
-| Quiet Cut | [Freesound 254856](https://freesound.org/people/indigo.cloud/sounds/254856) | indigo.cloud | CC0 1.0 | 48.02 s | beatless |
-| Studio Pulse | [Freesound 687006](https://freesound.org/people/Seth_Makes_Sounds/sounds/687006) | Seth_Makes_Sounds | CC0 1.0 | 173.00 s | 117 estimate |
-
-The seller names and offer terms are fixtures. The creators above are not Grant sellers and did not endorse Grant. The CC0 files are used as demo catalog audio only. They are delivered as private MP3 artifacts and are not evidence of a commercial music license.
+| Layer | Choice |
+| --- | --- |
+| Framework | Next.js 16.4.6, React 19.3.1, Node 24 |
+| Language | TypeScript 5.9, `strict: true` |
+| Database | Neon PostgreSQL 17, Drizzle ORM 0.45.4, drizzle-kit 0.31.11 |
+| Auth | Better Auth 1.7.25 with the Drizzle adapter, email and password |
+| Payments | `@x402/core`, `@x402/stellar`, `@x402/fetch`, `@x402/next` 2.30.0, `@stellar/stellar-sdk` 17.4.0 |
+| Storage | Cloudflare R2, private bucket, presigned downloads |
+| Artifacts | `pdf-lib`, `qrcode` |
+| Validation | Zod 4.6.7 |
+| Tests | Vitest 5.1.0, 72 tests in 12 files |
+| Hosting | Vercel |
 
 ## Architecture
 
-```text
-Browser
-  Next.js App Router
-    Better Auth + Neon Postgres
-      users, sessions, projects, quotes, approvals
-      reservations, receipts, licenses, share links
-    Per-user Stellar testnet wallet
-      AES-256-GCM encrypted secret, per-row IV
-    Quote -> approval -> budget reservation -> payment attempt
-    x402 seller route -> Stellar testnet USDC
-      Treasury: faucet grants and XLM activation only
-      Seller: dedicated payee, receives purchase USDC
-    Horizon verification -> receipt + license
-      reconciliation never signs again
-    Cloudflare R2 private bucket
-      short-lived presigned PDF and MP3 downloads
-    Public proof link
-      hashed token, revocable, no audio, no client name
+```
+browser
+  │  session cookie + same-origin checks
+  ▼
+Next.js route handlers  ──  policy, approval, reservation, idempotency
+  │                         │                 │
+  │                         │                 └── Stellar testnet (Horizon)
+  │                         │                        verify payer/payee/amount
+  │                         ▼
+  │                    Neon PostgreSQL
+  │                    projects, offers, purchases, approvals,
+  │                    attempts, reservations, receipts, licenses,
+  │                    artifacts, share links, refusals, wallets
+  ▼
+Cloudflare R2 (private)  ──  presigned GET, issued only after entitlement checks
 ```
 
-Key boundaries:
+Trust boundaries:
 
-- The owner ID comes from the verified session. The client never supplies the owner, price, parent purchase, or delta.
-- The project budget is a spending cap. The wallet balance is read from chain.
-- The purchase-count cap defaults to 2 per project and is enforced in the same transaction as the budget reservation.
-- The add-on parent must be an owned, settled base purchase. The server derives the paid-ad delta.
-- The seller payee must never equal the faucet treasury.
+- Owner identity comes from the session, never from a request body or header.
+- Mutating routes require a same-origin `Origin`.
+- A signing key is never sent to the browser. Each user has their own encrypted wallet.
+- A payment receipt is not an entitlement. Downloads check session, ownership, settled
+  state, license, and a ready artifact.
+- The proof page is deliberately thin: terms and chain reference, no audio, no client
+  name.
 
-## Setup
+## On-chain proof
 
-Use Node.js 24 and npm.
+Every transaction below is confirmed on `stellar:testnet`.
 
-```sh
-git clone https://github.com/JemimahEkong/Grant.git
-cd Grant
-npm ci
-cp .env.example .env.local
-```
+| Event | Transaction |
+| --- | --- |
+| Faucet funding, treasury to buyer | `5a6672727f59d685cd97f4feb1a953e11142d50dc32ed11b9347117c4ec3f03f` |
+| Base license purchase | `5faefa5615dfb6305c7513780bf8fff48ac1d391ea9187d92c58a3bf83149a25` |
+| Paid-ad add-on | `550d615b40c94670a9f835fa4e94dd77d12add896581c86e4eac76b570197c38` |
+| Buyer wallet | `GBBBO4IQTOCVMAUWP52SJAYOYVWQN776MIW2EJVSREKUPQAIOGJUECQD` |
+| Seller payee | `GB53WOPIUPZTTTGPNDACTMZ3DJZ62HNRJP53ARI6EVSSBEWMLMF5SKBD` |
+| Treasury, faucet only | `GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB` |
 
-Fill in `.env.local`. The main groups are:
+The seller and the treasury are different accounts on purpose. A demo where the buyer pays
+the same account that funded it proves nothing, so the payee guard fails closed if an
+active offer ever points at the treasury.
 
-```text
-DATABASE_URL, DATABASE_URL_TEST
-BETTER_AUTH_SECRET, BETTER_AUTH_URL, APP_ORIGIN
-WALLET_ENCRYPTION_KEY, FAUCET_TREASURY_SECRET
-FAUCET_GRANT_BASE_UNITS=20000000
-FAUCET_DAILY_CAP_BASE_UNITS=400000000
-WALLET_MIN_XLM=3
-R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME
-X402_SELLER_PUBLIC, X402_ATTEMPT_SECRET, X402_SELLER_BASE_URL
-X402_SELLER_SECRET   (local operator only, never deploy)
-PAYMENTS_ENABLED=true
-DEMO_PROOF_PATH
-```
+## Routes
 
-`WALLET_ENCRYPTION_KEY` is a 32-byte base64 key. `FAUCET_TREASURY_SECRET` is the faucet funder. `X402_SELLER_SECRET` is the seller keypair secret and stays local. The app never reads it. Never commit `.env.local` or any wallet secret.
+| Route | Rendering |
+| --- | --- |
+| `/` | Dynamic, landing |
+| `/signin` | Dynamic, email and password |
+| `/app` | Static shell, live API data |
+| `/app/new` | Static shell, brief and project creation |
+| `/app/catalog` | Static shell, catalog and quotes |
+| `/app/purchases` | Static shell, ledger |
+| `/app/wallet` | Static shell, balance and history |
+| `/app/profile` | Static shell, account and share links |
+| `/app/onboarding/*` | Wallet, activate, trustline, fund |
+| `/app/purchase/[id]` | Dynamic, review, pending, license |
+| `/proof/[token]` | Dynamic, public and signed out |
 
-Database and offers:
+## API overview
 
-```sh
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /api/health` | Status, phase, purchases enabled |
+| `GET /api/catalog` | Fixture tracks and offers |
+| `POST /api/license/matches` | Public coverage matching, no storage |
+| `POST /api/projects` | Create a project with caps |
+| `POST /api/projects/[id]/quotes` | Idempotent quote |
+| `POST /api/purchases/[id]/approve` | Bind approval to a quote fingerprint |
+| `POST /api/purchases/[id]/pay` | Reserve, sign once, submit, verify |
+| `POST /api/purchases/[id]/reconcile` | Check an uncertain attempt, never re-signs |
+| `POST /api/purchases/[id]/addons` | Paid-ad delta from a settled base |
+| `GET /api/purchases/[id]/download` | Presigned URL after entitlement checks |
+| `POST /api/purchases/[id]/share` | Create or revoke a proof link |
+| `POST /api/wallet/*` | Activate, trustline, faucet, refresh, history |
+| `GET /api/x402/license` | Purchase-scoped seller route returning 402 |
+
+## Try Grant
+
+Five minutes, no wallet extension, no real funds.
+
+1. Open [grant-roan.vercel.app](https://grant-roan.vercel.app) and choose **Start a demo project**.
+2. Create an account with any email and password.
+3. Complete the four onboarding steps. The faucet sends 2.00 testnet USDC once per wallet.
+4. Create a project, keep the default brief, and review **Quiet Cut**.
+5. Read the strip and the exclusions, then approve. The purchase settles from your own wallet.
+6. Download the PDF and the audio, then open the proof link in a private window.
+
+To see the refusal instead of a purchase, ask a **Studio Pulse** brief for paid ads. Grant
+refuses, records the reason, and signs nothing.
+
+## Local development
+
+```bash
+npm install
+cp .env.example .env.local   # fill in the values
 npm run db:migrate
-npm run db:migrate:test
 npm run db:seed
-npm run db:seed:testnet
-```
-
-Never run `drizzle push`.
-
-Seller setup:
-
-```sh
-npm run seller:create
-npm run db:seed:testnet
-```
-
-`seller:create` creates or reuses the dedicated seller keypair, funds 3 XLM from the treasury, and adds the USDC trustline. `db:seed:testnet` repoints every active offer at the seller and fails if any active offer still pays the treasury.
-
-Run locally:
-
-```sh
 npm run dev
 ```
 
-Repeatable demo account:
+Environment groups: `DATABASE_URL`, `DATABASE_URL_TEST`, `BETTER_AUTH_SECRET`,
+`BETTER_AUTH_URL`, `APP_ORIGIN`, `WALLET_ENCRYPTION_KEY`, `FAUCET_TREASURY_SECRET`,
+`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`.
 
-```sh
-npm run demo:reset
-```
-
-The reset targets `https://grant-roan.vercel.app` by default. Set `DEMO_RESET_BASE_URL` to use another origin. It creates a new account, a funded wallet, and one clean project. It prints the email, wallet address, balance, project ID, and faucet transaction. It does not delete evidence.
-
-## Test commands
-
-```sh
-npm test
+```bash
+npm test           # 72 tests
 npm run typecheck
 npm run lint
 npm run build
-npm run db:check
-npm run db:check:test
-npm run r2:check
+npm run db:check   # database reachable
+npm run r2:check   # bucket reachable
+npm run demo:reset # fresh funded account and clean project
 ```
 
-`npm test` runs 72 tests in 12 files. The suite covers auth, budget arithmetic, the purchase-count cap, concurrent reservations, paid-ad add-ons, the seller payee guard, storage, and wallet behavior.
+Migrations use `db:generate` then `db:migrate` and `db:migrate:test`. There is no
+`drizzle push`.
 
-The Neon integration suite runs when `DATABASE_URL_TEST` is present. It must use the separate Neon test branch. Never point integration tests at the main branch.
+## Current limitations
 
-The Vitest config emits a known CommonJS/ESM native-loader warning. It does not fail the suite.
+- **Testnet only.** Settlement proves the protocol, not a production payment rail.
+- **Demo catalog.** Three CC0 tracks with fixture sellers. No commercial deals, no
+  multi-tenant seller onboarding.
+- **Custody.** The app holds each user's testnet key, encrypted with AES-256-GCM. Fine for
+  a demo, not a model for real funds.
+- **No refunds or disputes.** A settled license has no reversal path.
+- **Testnet USDC is worth nothing.** Explorers price it off a stale oracle.
+- **API gaps.** No artifact byte sizes or content types on download rows, no license
+  number in ledger rows, wallet history labels limited by Horizon.
 
-## Evidence and product documents
+## License, author and hackathon
 
-- [Repeatable demo reset](agent-state/demo-reset-evidence.md)
-- [Seller separation and three addresses](agent-state/seller-separation-evidence.md)
-- [CC0 audio provenance](agent-state/cc0-audio-evidence.md)
-- [Faucet capacity proof](agent-state/faucet-capacity-evidence.md)
-- [Paid-ad add-on evidence, historical](agent-state/addon-evidence.md)
-- [Delivery evidence](agent-state/delivery-evidence.md)
-- [Recording shot list](DEMO.md)
-- [Submission checklist](SUBMISSION.md)
-- [Design system](DESIGN.md)
+Built by the Grant team as a hackathon submission. See [SUBMISSION.md](SUBMISSION.md) for
+the checklist, [DEMO.md](DEMO.md) for the recording script, and [DESIGN.md](DESIGN.md) for
+the design system.
 
-The earlier add-on evidence used the treasury as the payee. It is historical. The current seller-separated proof uses the dedicated seller account.
-
-Objects are private and served only through short-lived signed URLs. The database stores only share token hashes. Wallet secrets are encrypted at rest and are never returned or logged. Proof views are noindex and no-store.
+Demo build. CC0 demo audio. Testnet USDC only. Grant shows license terms; it is not legal
+advice.
