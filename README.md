@@ -203,7 +203,7 @@ npm run demo:reset  # fresh account and project for a new recording
 
 ## About this build
 
-Made by the Grant team for a hackathon. [SUBMISSION.md](SUBMISSION.md) has the checklist,
+Made by the Grant team for the EmpowerHer hackathon. [SUBMISSION.md](SUBMISSION.md) has the checklist,
 [DEMO.md](DEMO.md) has the recording script, and [DESIGN.md](DESIGN.md) has the design
 system.
 
