@@ -24,7 +24,7 @@
 - The earlier add-on proof used the treasury as payee. It is historical. Do not use it as the current seller model.
 - Demo reset: `npm run demo:reset` creates a new account, funded wallet, and one clean project. It never deletes evidence. The script polls the wallet after the faucet so project creation does not race the balance cache. Two consecutive runs: `prj_c7cb6fad32844f8ea178922af56a2565` used for the seller proof, and clean project `prj_e1f8cf242c2349ada0e251025bfe4c6e` with wallet `GBAOVXPGANWX6FONTYLV5T6ANC7P2HNKBBGP4Q273TP7N2UJFQYHT64N`.
 - Health phase is `testnet-product-demo`. The health response keys are stable.
-- Production URL: https://grant-roan.vercel.app. Final deployment: `dpl_D6oZuqiRLPZF1TBnkzoHZvL2tpPF`.
+- Production URL: https://grant-roan.vercel.app. Final deployment: `dpl_EfnLrgcbTPw6GFhxoSE7ncyLqFiW`.
 - G0 scripts are local-only. The G0 seller binds 127.0.0.1. G0 secrets are not deployed.
 - Catalog matching and fixture offers do not verify music ownership or seller authority. A testnet settlement proves the payment protocol only.
 - API gaps: no artifact byte sizes/content types, no license number in project purchase rows, BPM/seller display names join the demo catalog, wallet history labels limited by Horizon.

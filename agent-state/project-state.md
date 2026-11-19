@@ -20,8 +20,8 @@
 - Share/proof: 201 create, 200 read with no-store/noindex, revocation returns 404. No private client name, object key, raw token, or audio entitlement exposed.
 - Health: `GET /api/health` returns the stable keys `product`, `status`, `phase`, `databaseConfigured`, `purchasesEnabled`. Phase is `testnet-product-demo`.
 - Neon: project Grant dry-brook-80399258, aws-eu-central-1, PostgreSQL 17. Main and test at migration 0005.
-- Vercel: kaelah-s-projects/grant. Production https://grant-roan.vercel.app. Final deployment `dpl_D6oZuqiRLPZF1TBnkzoHZvL2tpPF`. `X402_SELLER_PUBLIC` points at the dedicated seller. `X402_SELLER_SECRET` is local only.
-- UI: DESIGN.md is the visual source of truth. Tokens, Geist Sans/Mono, inline SVG, clearance strip, 900px breakpoint, reduced motion, visible focus. No gradients, glass, icon library, or images. Wallet QR is inline SVG.
+- Vercel: kaelah-s-projects/grant. Production https://grant-roan.vercel.app. Final deployment `dpl_EfnLrgcbTPw6GFhxoSE7ncyLqFiW`. `X402_SELLER_PUBLIC` points at the dedicated seller. `X402_SELLER_SECRET` is local only.
+- UI: DESIGN.md is the visual source of truth. Tokens, local Inter/mono chain data, inline SVG, clearance strip, 900px breakpoint, reduced motion, and visible focus. Controlled glass and gradients are limited to buttons, floating navigation, balance/product cards, quick actions, and landing hero overlays. Wallet QR is inline SVG.
 - Tests: 72 tests in 12 files pass. Typecheck, lint, build, db:check, db:check:test, and r2:check pass.
 - Missing: commercial authorized music, refunds/disputes, mainnet, multi-tenant seller onboarding. API gaps: no artifact byte sizes/content types, no license number in project purchase rows, BPM/seller display names join the demo catalog, wallet history labels limited by Horizon.
 - Git: main tracks origin/main at https://github.com/JemimahEkong/Grant.git. Seller separation commit e18299f is pushed. The demo reset fix and final evidence are the next commit.
