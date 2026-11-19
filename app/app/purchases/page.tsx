@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useProjects } from "../../../components/providers";
-import { EmptyState, PageHeader, StatusChip, FilterChip } from "../../../components/ui";
+import { EmptyState, PageHeader, StatusChip, WaveThumb, FilterChip } from "../../../components/ui";
 import { getCatalog, getProject } from "../../../lib/ui/actions";
 import type { CatalogResponse, ProjectView } from "../../../lib/ui/api";
 import { effectivePurchaseStatus, formatDate, formatUsdc, statusMeta } from "../../../lib/ui/format";
@@ -140,7 +140,7 @@ export default function PurchasesPage() {
                 const meta = statusMeta(status);
                 const reason = refusalByPurchase.get(purchase.id);
                 return (
-                  <Link key={purchase.id} href={`/app/purchase/${purchase.id}`} className="ledger-row">
+                  <Link key={purchase.id} href={`/app/purchase/${purchase.id}`} className="ledger-row"><WaveThumb />
                     <div className="ledger-main">
                       <div className="ledger-title">{track?.title ?? purchase.trackId}</div>
                       <div className="ledger-sub">

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useProjects } from "../../components/providers";
-import { EmptyState, StatusChip, WaveThumb, GroupedList } from "../../components/ui";
+import { EmptyState, StatusChip, WaveThumb, GroupedList, QuickActions } from "../../components/ui";
 import { getCatalog, getProject, getWallet } from "../../lib/ui/actions";
 import type { CatalogResponse, ProjectView, WalletView } from "../../lib/ui/api";
 import { budgetPercent, effectivePurchaseStatus, formatUsdc, formatUsdcDecimal, shortAddress } from "../../lib/ui/format";
@@ -79,8 +79,20 @@ export default function HomePage() {
 
   return (
     <>
-      <h1 className="page-title">Home</h1>
-      <nav className="quick-actions" aria-label="Quick actions"><Link href="/app/new">New brief</Link><Link href="/app/catalog">Tracks</Link><Link href="/app/wallet">Wallet</Link><Link href="/app/purchases">Purchases</Link></nav>
+      <div className="home-heading"><div><p className="greeting">Your clearance workspace</p><h1 className="page-title">Overview</h1></div></div>
+      <section className="budget-hero" aria-labelledby="wallet-heading">
+        <div className="row-between">
+          <div className="micro" id="wallet-heading">Wallet balance</div>
+          <Link href="/app/wallet" className="muted" style={{ fontSize: 13 }}>Manage wallet ›</Link>
+        </div>
+        <div className="budget-number">
+          <span className="big">{formatUsdcDecimal(wallet.balance)}</span>
+          <span className="of">testnet USDC</span>
+        </div>
+        <div className="balance-footer"><span className="balance-network">Stellar testnet</span><span className="mono">{shortAddress(wallet.address)}</span></div>
+      </section>
+
+      <QuickActions />
       {projectsLoading ? (
         <div className="skeleton" style={{ height: 62 }} />
       ) : projects.length > 0 && selectedProject ? (
@@ -117,34 +129,13 @@ export default function HomePage() {
         </div>
       )}
 
-      <section className="budget-hero" aria-labelledby="wallet-heading">
-        <div className="row-between">
-          <div className="micro" id="wallet-heading">Wallet balance</div>
-          <Link href="/app/wallet" className="muted" style={{ fontSize: 13 }}>Manage wallet ›</Link>
-        </div>
-        <div className="budget-number">
-          <span className="big">{formatUsdcDecimal(wallet.balance)}</span>
-          <span className="of">testnet USDC</span>
-        </div>
-        <div className="wallet-strip" style={{ marginTop: 14 }}>
-          <div>
-            <div className="k">On-chain · {wallet.network}</div>
-            <div className="a">{shortAddress(wallet.address)}</div>
-          </div>
-          <div style={{ textAlign: "right" }}>
-            <div className="b">{formatUsdcDecimal(wallet.balance)}</div>
-            <div className="l">read from chain</div>
-          </div>
-        </div>
-      </section>
-
       {projectLoading ? (
         <div className="stack" style={{ marginTop: 20 }}>
           <div className="skeleton" style={{ height: 90 }} />
           <div className="skeleton" style={{ height: 62 }} />
         </div>
       ) : view && budget ? (
-        <section style={{ marginTop: 20 }} aria-labelledby="budget-heading">
+        <section className="project-budget" aria-labelledby="budget-heading">
           <div className="micro" id="budget-heading">Project budget left</div>
           <div className="budget-number" style={{ marginTop: 4 }}>
             <span className="money" style={{ fontSize: 28.0, fontWeight: 600 }}>{formatUsdc(budget.availableBaseUnits)}</span>
@@ -158,13 +149,7 @@ export default function HomePage() {
             <span>Cap, not balance</span>
           </div>
         </section>
-      ) : (
-        <div className="explain-panel" style={{ marginTop: 20 }}>
-          <div className="h">No project yet</div>
-          <p>A project adds a spending cap, a purchase cap, and a confirmed brief. The wallet balance stays yours.</p>
-          <Link href="/app/new" className="btn btn-secondary" style={{ marginTop: 10 }}>Create a project</Link>
-        </div>
-      )}
+      ) : null}
 
       {selectedProject ? (
         <Link href="/app/catalog" className="primary-action">
@@ -189,10 +174,10 @@ export default function HomePage() {
         <EmptyState
           title="No purchases yet"
           description="Review a track to see its exact coverage. A refusal is recorded before any money moves."
-          action={
+          action={selectedProject ?
             <Link href={selectedProject ? "/app/catalog" : "/app/new"} className="btn btn-secondary">
               {selectedProject ? "Browse the catalog" : "Create a project"}
-            </Link>
+            </Link> : null
           }
         />
       ) : (

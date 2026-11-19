@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode, HTMLAttributes, ButtonHTMLAttributes } from "react";
-import { CheckIcon, WaveIcon, HomeIcon, TracksIcon, PlusIcon, PurchasesIcon, ProfileIcon } from "./icons";
+import { CheckIcon, WaveIcon, HomeIcon, TracksIcon, PlusIcon, PurchasesIcon, ProfileIcon, PdfIcon } from "./icons";
 import { statusMeta } from "../lib/ui/format";
 import type { StripSegment } from "../lib/ui/strip";
 
@@ -83,7 +83,7 @@ export function PageHeader({ title, lede, right }: { title: string; lede?: strin
 
 export function EmptyState({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
   return (
-    <div className="empty-state">
+    <div className="empty-state"><span className="empty-icon" aria-hidden="true"><PurchasesIcon /></span>
       <div className="h">{title}</div>
       <p className="d">{description}</p>
       {action}
@@ -137,11 +137,21 @@ export function TabBar({ pathname }: { pathname: string }) {
     { href: "/app/catalog", label: "Tracks", icon: TracksIcon },
     { href: "/app/new", label: "New license", icon: PlusIcon },
     { href: "/app/purchases", label: "Purchases", icon: PurchasesIcon },
-    { href: "/app/profile", label: "Profile", icon: ProfileIcon },
+    { href: "/app/profile", label: "Profile", icon: ProfileIcon, PdfIcon },
   ];
   return <nav className="tab-bar" aria-label="Primary"><div className="tab-brand"><Logo href="/app" /><TestnetBadge /></div>{items.map((item, index) => {
     const active = pathname === item.href || (index === 1 && pathname.startsWith("/app/purchase/"));
     const Icon = item.icon;
     return <Link key={item.href} href={item.href} aria-label={item.label} aria-current={active ? "page" : undefined} className={`tab-link${active ? " on" : ""}${index === 2 ? " tab-centre" : ""}`}><span className="tab-icon"><Icon /></span><span>{item.label}</span></Link>;
   })}<p className="tab-foot">TESTNET USDC only. No real funds.<br />One approval per purchase.</p></nav>;
+}
+
+export function QuickActions() {
+  const actions = [
+    { href: "/app/new", label: "New brief", icon: PlusIcon },
+    { href: "/app/catalog", label: "Tracks", icon: TracksIcon },
+    { href: "/app/wallet", label: "Wallet", icon: PdfIcon },
+    { href: "/app/purchases", label: "Purchases", icon: PurchasesIcon },
+  ];
+  return <nav className="quick-actions" aria-label="Quick actions">{actions.map(({href,label,icon:Icon}) => <Link href={href} key={href}><span className="quick-icon"><Icon className="nav-icon" /></span><span>{label}</span></Link>)}</nav>;
 }

@@ -1451,3 +1451,108 @@
 
 .review-head > div { min-width:0; max-width:100%; }
 .fine-note { overflow-wrap:anywhere; }
+/* Reference-led mobile composition. */
+.app-main { padding:16px 20px 120px; }
+.app-top { padding:0 0 24px; }
+.app-brand { font-size:19px; font-weight:650; letter-spacing:-.055em; }
+.app-brand span { display:none; }
+.avatar { width:34px; height:34px; font-size:12px; background:var(--surface); }
+.page-title,.review-title,.onboarding-title,.auth-card h1,.proof-title { font-size:28px; line-height:35px; font-weight:600; letter-spacing:-.045em; }
+.page-lede,.review-by { font-size:13px; line-height:20px; max-width:420px; margin-top:6px; }
+.greeting { margin:0 0 3px; color:var(--ink-2); font-size:12px; }
+.home-heading { margin-bottom:18px; }
+.budget-hero { margin:0; padding:22px; border:0; border-radius:24px; }
+.budget-hero .micro { font-size:12px; text-transform:none; letter-spacing:0; font-weight:400; opacity:.8; }
+.budget-hero .row-between a { font-size:11px !important; opacity:.8; }
+.budget-number { gap:8px; margin-top:12px; }
+.budget-number .big { font-size:46px; line-height:54px; font-weight:500; letter-spacing:-.06em; }
+.budget-number .of { font-size:12px; }
+.balance-footer { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:24px; padding-top:14px; border-top:1px solid color-mix(in srgb,var(--surface) 18%,transparent); font-size:10px; color:var(--brand-soft); }
+.balance-network { display:flex; align-items:center; gap:6px; }
+.balance-network::before { content:""; width:5px; height:5px; border-radius:50%; background:var(--brand); }
+.quick-actions { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:20px 0 24px; }
+.quick-actions a { display:flex; flex-direction:column; gap:8px; width:auto; min-height:0; padding:0; border-radius:0; background:transparent; font-size:11px; line-height:16px; color:var(--ink); white-space:nowrap; }
+.quick-icon { display:grid; place-items:center; width:48px; height:48px; border:1px solid var(--hairline); border-radius:17px; background:var(--surface); color:var(--brand-deep); }
+.quick-actions a:first-child .quick-icon { background:var(--brand); border-color:var(--brand); }
+.quick-icon .nav-icon { width:21px; height:21px; }
+.project-switcher { border:0; padding:14px 16px; border-radius:20px; }
+.project-switcher .micro { margin-bottom:2px !important; }
+.project-switcher .muted { font-size:11px !important; line-height:17px; }
+.project-switcher .review-link { white-space:nowrap; background:var(--brand-soft); padding:7px 10px; border-radius:999px; font-size:11px; }
+.project-budget { margin-top:16px; padding:16px; background:var(--surface); border-radius:20px; }
+.project-budget .budget-meta { font-size:10px; }
+.project-budget .budget-number { margin-top:6px; }
+.primary-action { min-height:46px; font-size:14px; margin-top:16px; padding:12px 16px; }
+.primary-action small { font-size:11px; }
+.section-label .micro { font-size:14px; line-height:20px; text-transform:none; letter-spacing:-.025em; color:var(--ink); }
+.purchase-title,.ledger-title,.tx-title,.download-row .t,.track-card-head .nm,.list-row { font-size:14px; line-height:20px; font-weight:500; }
+.purchase-sub,.ledger-sub,.track-meta { font-size:12px; line-height:18px; }
+.purchase-row,.ledger-row,.tx-row { padding:16px 0; gap:12px; }
+.purchase-amount,.ledger-amount { font-size:14px; font-weight:600; }
+.track-card { border:0; border-radius:24px; padding:20px; box-shadow:none; }
+.track-card-head .pr { font-size:18px; font-weight:600; }
+.track-foot { font-size:11px; border-top:1px dashed var(--hairline); padding-top:12px; margin-top:14px; }
+.review-link { min-height:32px; display:inline-flex; align-items:center; font-size:12px; }
+.filter,.chip-toggle { min-height:36px; font-size:12px; padding:8px 16px; border:0; background:var(--surface); }
+.filter.on,.chip-toggle.on { background:var(--brand); color:var(--brand-ink); }
+.filters { gap:8px; margin:18px 0; }
+.explain-panel,.exclusions { border:0; border-radius:20px; padding:16px; }
+.explain-panel .h,.exclusions .h { text-transform:none; letter-spacing:-.02em; font-size:14px; font-weight:600; }
+.explain-panel p,.exclusions li,.refused-panel ul,.brief-sentence p { font-size:14px; line-height:22px; }
+.fine-note { font-size:11px; line-height:18px; }
+.app-disclosure { font-size:10px; line-height:16px; padding-top:16px; margin-top:22px; color:var(--ink-2); }
+.status-line { font-size:10px; line-height:16px; }
+.profile-head { padding:8px 0 18px; gap:12px; }
+.profile-head .n { font-size:20px; font-weight:500; line-height:27px; letter-spacing:-.04em; }
+.profile-head .e { font-size:12px; }
+.profile-head .profile-avatar { width:48px; height:48px; font-size:15px; }
+.wallet-card { border:0; padding:16px; border-radius:20px; }
+.wallet-card .k { font-size:10px; letter-spacing:.04em; }
+.wallet-card .l { font-size:10px; }
+.wallet-card .bt { padding-top:12px; }
+.profile-promo { display:flex; flex-direction:column; align-items:flex-start; background:var(--brand-deep); color:var(--surface); border-radius:24px; padding:24px; margin-top:20px; gap:14px; }
+.profile-promo .micro { color:var(--brand-soft); font-size:9px; }
+.profile-promo strong { font-size:26px; line-height:30px; font-weight:500; letter-spacing:-.04em; }
+.promo-link { display:inline-flex; align-items:center; gap:24px; padding:9px 14px; font-size:12px; background:var(--brand); color:var(--brand-ink); border-radius:999px; }
+.signout-button { color:var(--danger); }
+.summary-card { border:0; border-radius:22px; padding:20px; }
+.summary-card .v { font-size:26px; font-weight:500; letter-spacing:-.04em; margin-top:8px; }
+.summary-card .k { font-size:10px; letter-spacing:.04em; }
+.wallet-balance-card { border-radius:24px; padding:22px; }
+@media(max-width:899px) {
+ .tab-bar { left:20px; right:20px; bottom:calc(12px + env(safe-area-inset-bottom)); height:66px; padding:6px 10px; border:1px solid var(--hairline); border-radius:999px; background:var(--brand-ink); box-shadow:var(--floating-shadow); }
+ .tab-link { color:var(--surface); gap:3px; font-size:9px; line-height:12px; font-weight:400; }
+ .tab-link.on { color:var(--brand-soft); font-weight:500; }
+ .tab-icon { height:24px; }
+ .tab-icon .nav-icon { width:21px; height:21px; }
+ .tab-link.on:not(.tab-centre) .tab-icon { background:var(--surface); color:var(--brand-deep); width:40px; height:30px; border-radius:999px; }
+ .tab-centre .tab-icon { width:46px; height:46px; margin:0; border:0; }
+ .sticky-cta { bottom:92px; }
+ .review-sheet { padding:18px; }
+ .review-price { flex-wrap:wrap; }
+}
+@media(min-width:900px) {
+ .app-main { max-width:1180px; padding:32px 48px 60px; }
+ .budget-hero { padding:28px 32px; }
+ .budget-number .big { font-size:58px; line-height:66px; }
+ .quick-actions { max-width:430px; margin:24px 0; }
+ .project-switcher { max-width:700px; }
+ .page-title { font-size:32px; line-height:40px; }
+ .tab-link { font-size:14px; }
+}
+.primary-action { background:var(--brand); color:var(--brand-ink); }
+.project-budget { display:grid; grid-template-columns:1fr auto; align-items:center; gap:4px 12px; padding:14px 16px; }
+.project-budget .budget-number { margin:0 !important; }
+.project-budget .money { font-size:22px !important; font-weight:500 !important; }
+.project-budget .budget-bar,.project-budget .budget-meta { grid-column:1/-1; margin-top:6px; }
+.project-budget .budget-number .of { font-size:10px; }
+.ledger-row { background:var(--surface); padding:18px 16px; margin-bottom:12px; border:0; border-radius:22px; align-items:flex-start; }
+.ledger-row .thumb { width:34px; height:34px; }
+.ledger-sub { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; font-size:11px; line-height:17px; margin-top:7px; padding-top:7px; border-top:1px dashed var(--hairline); }
+.ledger-row>.chev { align-self:center; }
+.profile-promo { margin:4px 0 20px; }
+.profile-head .e { word-break:break-word; }
+.page-title,.review-title,.onboarding-title,.auth-card h1,.proof-title { letter-spacing:-.035em; }
+.field label,.brief-sentence .q { font-size:10px; letter-spacing:.06em; font-weight:600; }
+.form-hint { font-size:11px; line-height:17px; }
+.brief-sentence p { font-size:14px; line-height:22px; }

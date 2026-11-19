@@ -29,3 +29,4 @@
 - V2 restyle: light canvas, lemon fills, shared primitives and responsive TabBar in components/ui.tsx. Behaviour handlers and backend are unchanged. DESIGN.md records accessible status text and opaque navigation clarifications.
 
 - V2 visual verification is recorded in agent-state/v2-visual-evidence.md, including signed-out proof, all onboarding steps, refusal URL wrapping, contrast ratios and the live-pending limitation.
+- November 19 UI refinement implements the founder's screenshot feedback. Font is now local Inter, navigation floats on mobile, Home has compact icon actions, purchases have separate white cards, Profile has a brief CTA, landing uses a layered license preview. No server or payment-handler changes.

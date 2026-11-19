@@ -35,3 +35,4 @@
 - V2 restyle: light canvas, lemon fills, shared primitives and responsive TabBar in components/ui.tsx. Behaviour handlers and backend are unchanged. DESIGN.md records accessible status text and opaque navigation clarifications.
 
 - V2 visual verification is recorded in agent-state/v2-visual-evidence.md, including signed-out proof, all onboarding steps, refusal URL wrapping, contrast ratios and the live-pending limitation.
+- Reference refinement: locally hosted Inter, smaller semibold controls, icon-led Home actions, floating pill navigation, individual purchase cards, native landing license preview. All changes are presentation only. See DESIGN.md refinement section.

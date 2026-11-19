@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useMe, useProjects } from "../../../components/providers";
-import { EmptyState, PageHeader, SecondaryButton, Row } from "../../../components/ui";
+import { EmptyState, PageHeader, SecondaryButton, Row, GroupedList } from "../../../components/ui";
 import {
   getWallet,
   getCatalog,
@@ -107,16 +107,18 @@ export default function ProfilePage() {
 
   return (
     <>
-      <PageHeader title="Profile" lede="Account, read-only agent wallet, projects, and share links." />
+      <PageHeader title="Profile" />
       <div className="profile-head">
         <div className="profile-avatar">{initials(me.user.name || me.user.email)}</div>
         <div>
-          <div className="n">{me.user.name || "Grant user"}</div>
+          <div className="n">Hi, {me.user.name || "Grant user"}</div>
           <div className="e">{me.user.email}</div>
         </div>
       </div>
 
       {error ? <p className="error-text" role="alert">{error}</p> : null}
+
+      <Link href="/app/new" className="profile-promo"><span className="micro">Made for your next cut</span><strong>Clear terms.<br />Confident exports.</strong><span className="promo-link">Create a brief <span aria-hidden="true">&#8599;</span></span></Link>
 
       <Link href="/app/wallet" className="wallet-card" style={{ display: "block" }}>
         <div className="row-between">
@@ -131,6 +133,7 @@ export default function ProfilePage() {
           <div className="l">{wallet?.network ?? "stellar:testnet"} · testnet USDC</div>
         </div>
       </Link>
+
 
       <div className="section-label" style={{ marginTop: 20 }}>
         <span className="micro">Projects</span>
@@ -149,7 +152,7 @@ export default function ProfilePage() {
           }
         />
       ) : (
-        <div>
+        <GroupedList>
           {projects.map(project => (
             <button
               key={project.id}
@@ -162,7 +165,7 @@ export default function ProfilePage() {
               {project.id === selectedProjectId ? <span className="micro">Active</span> : <span className="m">Select ›</span>}
             </button>
           ))}
-        </div>
+        </GroupedList>
       )}
 
       <div className="section-label" style={{ marginTop: 20 }}>
@@ -210,7 +213,7 @@ export default function ProfilePage() {
       )}
 
       <div style={{ marginTop: 22 }}>
-        <SecondaryButton className="btn-wide" type="button" onClick={() => void logOut()} disabled={signingOut}>
+        <SecondaryButton className="btn-wide signout-button" type="button" onClick={() => void logOut()} disabled={signingOut}>
           <span>{signingOut ? "Signing out…" : "Sign out"}</span>
           <span aria-hidden="true">→</span>
         </SecondaryButton>

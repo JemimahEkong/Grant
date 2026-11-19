@@ -157,3 +157,15 @@ Respect `prefers-reduced-motion`: no transforms, opacity only.
 - Pending chips use brand-ink on warning-soft. Refused chips use ink on danger-soft. Success chips use brand-deep on success-soft. Warning and success remain the strip rules and semantic border colours.
 - The tab bar uses an opaque white surface. This follows the project no-glass rule and preserves contrast without backdrop blur.
 - Lemon bands use brand-ink labels only. Lemon never colours text.
+
+## Reference refinement, November 19
+
+The founder rejected the first v2 implementation as too spacious and unlike the references. This refinement supersedes conflicting v2 type and navigation measurements.
+- Use locally hosted variable Inter (OFL license in app/fonts), 15px body, 13px supporting copy, 28/35 semibold page titles, 14px semibold controls. Chain data alone uses Geist Mono.
+- Buttons are 44px high, with 40px compact secondary actions. Use pill shapes with balanced horizontal padding.
+- Home order: heading, deep-green balance card, four icon-led quick actions with labels outside their 48px containers, project selector/budget, recent purchases. No duplicate balance inset or repeated create-project panels.
+- Mobile navigation is a floating dark-green pill inset 20px, with a lemon centre action and white active-icon capsule. Preserve five-slot order and the desktop rail.
+- Purchases use individual white cards with icons, short metadata and status chips. Full refusal reasons remain on the linked detail screen.
+- Profile uses an avatar greeting, a deep-green brief CTA card, wallet and grouped account/project rows. No invented paid subscription.
+- Landing uses a layered native product-license preview, compact pill CTAs, a lemon coverage section, and deep-green closing band. Keep existing claims and demo disclosures.
+- Existing inline icons are retained under the project icon rule. No reference brands, financial claims, stock imagery or device chrome are copied.

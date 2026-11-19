@@ -1,17 +1,6 @@
-# Left off
+﻿# Left off
 
-- Current task: DESIGN.md v2 visual restyle.
-- Restyle done: tokens, shared primitives, responsive navigation, all existing screens. 72 tests pass, typecheck, lint and production build pass.
-- Restyle verification: production routes and all four onboarding screens checked at 390px and 1280px without horizontal overflow. Base/add-on license pages and fresh review checked. Live pending settlement was not induced. See v2-visual-evidence.md.
-- Restyle complete: production dpl_9AdbJJrMpFFng7uqz8RFz7uHPfr2, code checkpoint 7511555. Refused Studio Pulse now measures 375px scroll width at a 390px viewport. Expired quote also checked at both widths.
-- Next: record the demo. Backend handlers are unchanged. A live pending payment was not induced in this visual pass.
-- Done: dedicated seller account `GB53WOPIUPZTTTGPNDACTMZ3DJZ62HNRJP53ARI6EVSSBEWMLMF5SKBD`, separate from treasury `GBWSBWJGGL7EVHZPHQLOZTLOEDWZ2SQ4WCGX6YW5T4BXFQN74VMHLUMB`. Seller activated with 3 XLM and a USDC trustline. Every active offer repointed to the seller. Approval and the seller route fail closed if any active offer pays the treasury. `lib/payments/payee-guard.ts` and `tests/payee-guard.test.ts` cover it. `npm run demo:reset` creates a new funded account and clean project without deletes. Health phase is `testnet-product-demo` with a stable response.
-- Seller setup: activation tx `4b12e00886204f7a33676c1def7b5666f1adf25d6e3da2586c22e7c51d43f0c0`, trustline tx `79af83dec9c93b5e056431d62180be1846e4b1851905ab290ed52caaa125d147`. Seller secret is local-only.
-- Seller proof: three distinct addresses. Faucet tx `d25abb7d7b3940c891cab201854856a67006233465be978598bb4ece3fb0eb80` moves 2.00 USDC treasury to buyer `GBBBO4IQTOCVMAUWP52SJAYOYVWQN776MIW2EJVSREKUPQAIOGJUECQD`. Base tx `5faefa5615dfb6305c7513780bf8fff48ac1d391ea9187d92c58a3bf83149a25`, license `GRANT-2026-73AB3285E6`. Add-on tx `550d615b40c94670a9f835fa4e94dd77d12add896581c86e4eac76b570197c38`, license `GRANT-2026-21C938B847`. Buyer 2.00 to 0.00, seller 2.00, treasury 79.00. Combined coverage organic and paid ads on Instagram and TikTok. Evidence: `agent-state/seller-separation-evidence.md`.
-- Demo reset: two consecutive successful runs after the balance-visibility fix. Run 1 wallet `GBBBO4...`, project `prj_c7cb6fad32844f8ea178922af56a2565`, used for the seller proof. Run 2 wallet `GBAOVXPGANWX6FONTYLV5T6ANC7P2HNKBBGP4Q273TP7N2UJFQYHT64N`, project `prj_e1f8cf242c2349ada0e251025bfe4c6e`, still clean with 0 purchases, 5.00 USDC available, and 2.00 USDC. Evidence: `agent-state/demo-reset-evidence.md`.
-- Verified: 72 tests in 12 files. Typecheck, lint, build, db:check, db:check:test, and r2:check pass. Production health returns phase `testnet-product-demo`.
-- Documentation: README.md, DEMO.md, SUBMISSION.md, and the judge path. The recording is 2:45 with a 3:00 hard stop.
-- Deployment: `dpl_D6oZuqiRLPZF1TBnkzoHZvL2tpPF`. Git: seller separation commit e18299f and demo reset/evidence commit dd4d808 are pushed to main.
-- Next: record from DEMO.md, upload the video, paste the final proof URL into SUBMISSION.md, and run the private-window pass. Future work is hardening: refunds/disputes, commercial authorized music, mainnet, multi-tenant seller onboarding, and the remaining API gaps.
-- Blockers: commercial authorized music is absent (CC0 demo audio only). Refunds, disputes, mainnet, and multi-tenant seller onboarding are not built.
-- Warnings: npm audit reports dev-tool vulnerabilities in drizzle-kit/esbuild and vitest/picomatch. Fixing them needs breaking major-version changes, so they are deferred. Vitest emits a CommonJS/ESM native-loader warning.
+- Task: reference-led UI refinement after founder rejected the first v2 styling.
+- Done: local Inter font, compact icon quick actions, simplified balance card, floating mobile navigation, individual purchase cards, profile CTA and layered landing license preview. Full rules in DESIGN.md refinement section.
+- Verified: typecheck, lint, build and 72 tests pass. Test rerun used --testTimeout=60000 after one database timeout at 30s. Mobile browser checks and reference comparison recorded in design-qa.md.
+- Next: deploy and verify production assets. Preserve all payment/auth/wallet handlers. No backend changes or new settlements in this pass.

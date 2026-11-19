@@ -368,3 +368,78 @@
 .landing-close :is(.eyebrow,.muted,.dim,.section-desc) { color:var(--surface); }
 .landing-close .btn-secondary { color:var(--ink); }
 @media(max-width:899px) { .hero-copy h1 { font-size:32px; line-height:37px; } .hero-copy,.hero-card-wrap { min-width:0; } }
+/* Landing reference: editorial copy beside a layered product preview. */
+.landing-wrap { width:min(1120px,calc(100% - 48px)); }
+.landing-nav { padding:24px 0; border:0; }
+.nav-links { font-size:12px; gap:26px; }
+.landing-nav .btn { font-size:12px !important; min-height:36px !important; padding:8px 18px !important; }
+.landing-hero { display:grid; grid-template-columns:1.15fr 1fr; align-items:center; gap:60px; padding:72px 0 90px; }
+.hero-copy,.hero-card-wrap { min-width:0; max-width:none; }
+.eyebrow { display:inline-flex; font-size:10px; line-height:16px; letter-spacing:.03em; text-transform:none; background:var(--brand-soft); padding:6px 12px; border-radius:999px; }
+.hero-copy h1 { font-size:52px; line-height:1.06; font-weight:550; letter-spacing:-.06em; margin-top:22px; }
+.hero-copy h1 em { color:var(--brand-deep); }
+.hero-sub { font-size:15px; line-height:23px; max-width:400px; margin-top:20px; }
+.hero-ctas { margin-top:24px; gap:10px; }
+.hero-ctas .btn { font-size:13px; }
+.hero-micro { font-size:10px; margin-top:16px; }
+.hero-card-wrap { position:relative; padding:38px 0 25px 20px; }
+.license-card { position:relative; padding:28px; border:0; border-radius:26px; }
+.license-eyebrow { display:flex; justify-content:space-between; gap:16px; font-size:8px; letter-spacing:.12em; color:var(--brand-soft); margin-bottom:44px; }
+.license-card-head h2 { font-size:26px; font-weight:500; letter-spacing:-.045em; }
+.license-card-head p { font-size:10px; opacity:.8; }
+.license-card-price { font-size:27px; font-weight:500; letter-spacing:-.04em; }
+.license-card-price small { display:block; font-size:9px; line-height:16px; text-align:right; letter-spacing:.08em; }
+.license-card .clearance-strip { margin-top:22px; height:44px; }
+.license-card .clearance-seg { font-size:8px; line-height:11px; padding:5px 3px; }
+.license-card-foot { margin-top:24px; font-size:10px; border-color:color-mix(in srgb,var(--surface) 20%,transparent); }
+.license-card-foot .id { font-size:9px; }
+.hero-float-note { position:absolute; z-index:2; right:24px; top:0; display:flex; align-items:center; gap:10px; background:var(--surface); padding:12px 18px; border-radius:16px; box-shadow:var(--floating-shadow); font-size:10px; line-height:16px; color:var(--ink-2); }
+.hero-float-note strong { display:block; font-size:12px; font-weight:600; color:var(--ink); }
+.hero-float-note .tick { width:28px; height:28px; border:0; background:var(--brand-soft); }
+.hero-mini-receipt { position:relative; background:var(--brand); color:var(--brand-ink); padding:16px 20px; margin:-2px 22px 0 -20px; border-radius:0 0 22px 22px; }
+.hero-mini-receipt .micro { color:var(--brand-ink); font-size:8px; }
+.hero-mini-receipt>div { display:flex; justify-content:space-between; gap:8px; margin-top:10px; font-size:11px; font-weight:500; }
+.refusal-band { background:var(--surface); border-color:var(--hairline); border-radius:18px; padding:16px 20px; margin-bottom:52px; }
+.refusal-band p { font-size:12px; }
+.section-head h2,.landing-close h2 { font-size:36px; line-height:1.15; font-weight:550; letter-spacing:-.045em; }
+.section-desc { font-size:13px; line-height:21px; }
+.step { padding:24px; border:0; border-radius:22px; }
+.step .n { font-size:11px; width:32px; height:32px; display:grid; place-items:center; border-radius:50%; background:var(--brand-soft); color:var(--brand-deep); }
+.step .h { margin-top:22px; font-size:17px; font-weight:500; }
+.step .d { font-size:13px; line-height:21px; margin-top:8px; }
+#catalog { background:var(--brand); border:0; border-radius:26px; padding:40px; margin:20px 0; }
+#catalog .micro,#catalog .section-desc { color:var(--brand-ink); }
+#catalog .clearance-seg.covered { background:var(--surface); }
+#catalog .clearance-seg.excluded { color:var(--brand-ink); }
+.deliverable { border:0; border-radius:24px; padding:24px; }
+.deliverable-icon { width:42px; height:42px; border-radius:14px; background:var(--brand-soft); border:0; }
+.deliverable .h { font-size:17px; font-weight:500; }
+.deliverable .d { font-size:13px; line-height:21px; }
+.safety-band { background:var(--surface); border:0; border-radius:22px; }
+.safety-cell { padding:24px; }
+.safety-cell .k { font-size:10px; }
+.safety-cell .v { font-size:13px; line-height:21px; }
+.landing-close { padding:40px; border-radius:26px; }
+.landing-close .micro { color:var(--brand-soft); }
+.landing-footer { font-size:10px; }
+@media(max-width:899px) {
+ .landing-wrap { width:calc(100% - 40px); }
+ .landing-hero { grid-template-columns:1fr; gap:30px; padding:34px 0 36px; }
+ .hero-copy h1 { font-size:40px; line-height:43px; max-width:370px; }
+ .hero-sub { font-size:14px; line-height:22px; }
+ .hero-card-wrap { width:100%; padding-left:12px; padding-top:32px; }
+ .hero-mini-receipt { margin-left:-12px; margin-right:16px; }
+ .license-card { padding:22px; }
+ .license-eyebrow { margin-bottom:30px; }
+ .hero-ctas .btn { padding:10px 16px; font-size:12px; }
+ .landing-section { padding:36px 0; }
+ .section-head { gap:8px; }
+ .section-head h2,.landing-close h2 { font-size:28px; line-height:33px; }
+ .steps,.deliverables { gap:12px; margin-top:20px; }
+ .step { padding:20px; }
+ .step .h { margin-top:12px; }
+ #catalog { padding:24px 18px; }
+ #catalog .clearance-seg { font-size:8px; line-height:11px; }
+ .landing-close { padding:28px 24px; }
+ .refusal-band { margin-bottom:20px; }
+}

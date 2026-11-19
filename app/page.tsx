@@ -93,14 +93,14 @@ export default async function LandingPage() {
             <div className="hero-micro">Testnet USDC · no card · one approval per purchase</div>
           </div>
 
-          <div className="hero-card-wrap">
-            <div className="license-card">
+          <div className="hero-card-wrap"><div className="hero-float-note"><span className="tick"><ProofIcon className="nav-icon" /></span><span>Terms checked<strong>Before you pay</strong></span></div>
+            <div className="license-card"><div className="license-eyebrow"><span>GRANT / CLEARANCE</span><span>TESTNET</span></div>
               <div className="license-card-head">
                 <div>
                   <h2>{heroTitle}</h2>
                   <p>{heroSeller}</p>
                 </div>
-                <div className="license-card-price">{heroPrice}</div>
+                <div className="license-card-price">{heroPrice}<small>USDC</small></div>
               </div>
               <div style={{ marginTop: 14 }}>
                 <ClearanceStrip segments={heroSegments} />
@@ -109,7 +109,7 @@ export default async function LandingPage() {
                 <span className="id">{heroLicense}</span>
                 <Chip tone="settled">Settled</Chip>
               </div>
-            </div>
+            </div><div className="hero-mini-receipt"><span className="micro">One approval. Three deliverables.</span><div><span>Audio</span><span>License PDF</span><span>Proof link</span></div></div>
           </div>
         </section>
 

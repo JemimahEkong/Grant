@@ -12,7 +12,7 @@
 --amber-surface:var(--warning-soft); --amber-line:var(--warning);
 --red-surface:var(--danger-soft); --red-line:var(--danger);
 --radius:18px; --radius-lg:18px;
---font-ui:-apple-system,BlinkMacSystemFont,"SF Pro Text",var(--font-geist-sans),system-ui,sans-serif;
+--font-ui:var(--font-inter),-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
 --card-shadow:0 1px 2px rgba(15,26,18,.05);
 --floating-shadow:0 -1px 0 var(--hairline),0 8px 24px rgba(15,26,18,.08);
 --scrim:rgba(0,0,0,.4);
@@ -31,7 +31,7 @@ body {
 }
 
 body {
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -419,3 +419,19 @@ body { font-family:var(--font-ui); font-size:17px; line-height:24px; }
 .sheet { border-radius:24px 24px 18px 18px; background:var(--surface); padding:20px; border:1px solid var(--hairline); box-shadow:var(--floating-shadow); }
 .sheet-grabber { width:36px; height:5px; background:var(--hairline); border-radius:999px; margin:0 auto 24px; }
 @media(prefers-reduced-motion:reduce) { *:active { transform:none !important; } }
+/* Reference refinement: calm type, compact controls, clear surface hierarchy. */
+body { font-size:15px; line-height:1.5; letter-spacing:-.015em; }
+.logo { font-size:24px; font-weight:650; letter-spacing:-.06em; }
+.logo span { color:var(--brand-deep); }
+.btn { min-height:44px; padding:10px 20px; font-size:14px; line-height:20px; font-weight:600; letter-spacing:-.02em; }
+.btn-wide { justify-content:center; gap:12px; }
+.testnet-badge { min-height:22px; padding:3px 7px; font-size:9px; line-height:13px; letter-spacing:.07em; border:0; background:var(--brand-soft); color:var(--brand-deep); }
+.micro { font-size:10px; line-height:14px; letter-spacing:.07em; font-weight:600; }
+.chip { min-height:24px; padding:3px 8px; font-size:10px; line-height:16px; text-transform:none; letter-spacing:0; font-weight:500; }
+.empty-state { background:var(--surface); border:0; padding:24px 20px; border-radius:22px; }
+.empty-icon { display:grid; place-items:center; width:40px; height:40px; background:var(--surface-2); border-radius:14px; margin:0 auto 12px; color:var(--brand-deep); }
+.empty-state .h { font-size:15px; font-weight:600; }
+.empty-state .d { font-size:13px; line-height:20px; max-width:270px; margin-top:6px; }
+.empty-state .btn { margin-top:16px; min-height:40px; font-size:13px; }
+.panel,.card,.grouped-list { border-color:transparent; box-shadow:none; border-radius:22px; }
+.input,.select,.textarea { font-size:15px; padding:12px 14px; border-color:var(--hairline); }

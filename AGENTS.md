@@ -112,3 +112,14 @@
 - The approved payment evidence is in agent-state/payment-evidence.md. The Vercel seller route and the local buyer orchestration were both exercised with real testnet settlements.
 
 - DESIGN.md v2 supersedes dark v1 styling. Use iOS light tokens, lemon fills, sans tabular money, shared primitives in components/ui.tsx, and the documented contrast clarifications. Visual work must preserve all workflow handlers.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
+- November 19 reference refinement supersedes v2 oversized controls: locally hosted Inter, compact icon-led quick actions, floating mobile navigation, and layered landing preview. Follow the refinement section in DESIGN.md. Preserve all backend/workflow handlers.
