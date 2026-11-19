@@ -12,3 +12,5 @@
 
 - Final route sweep found Studio Pulse refusal provenance URL overflow at 390px. Fixed with a shrinkable review header and wrapping provenance text.
 - Signed-out proof verified at both widths with /api/me returning 401 and the proof still rendering. Final deployment uses light colour-scheme metadata.
+
+- Final production: dpl_9AdbJJrMpFFng7uqz8RFz7uHPfr2, code 7511555. Refused screen retested at 390px: scroll width 375px and provenance overflow-wrap anywhere. At 1280px: scroll width 1265px. Quote naturally expired and the expired screen was verified at both widths.
