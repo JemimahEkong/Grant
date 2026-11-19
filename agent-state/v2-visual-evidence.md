@@ -9,3 +9,6 @@
 - Contrast ratios: ink/canvas 16.39, ink-2/white 7.88, brand-ink/lemon 12.99, white/deep 12.61, deep/brand-soft 11.27, deep/success-soft 11.26, brand-ink/warning-soft 14.91, ink/danger-soft 15.43, danger/white 4.54.
 - DESIGN.md documents darker small text and status labels, plus opaque tab navigation under the project no-glass rule.
 - Initial v2 deployment: dpl_9Z1KajAwPR2UKqoasA2SoAnpfnfP. Final follow-up adds catalog search, sticky brief CTA, shared legal footer and light browser chrome.
+
+- Final route sweep found Studio Pulse refusal provenance URL overflow at 390px. Fixed with a shrinkable review header and wrapping provenance text.
+- Signed-out proof verified at both widths with /api/me returning 401 and the proof still rendering. Final deployment uses light colour-scheme metadata.

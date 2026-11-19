@@ -1448,3 +1448,6 @@
 .exclusions li,.explain-panel p,.refused-panel ul,.brief-sentence p { font-size:17px; line-height:24px; }
 .page-lede,.track-meta,.purchase-sub,.ledger-sub,.review-by { font-size:15px; line-height:20px; }
 .section-label { margin-top:24px; }
+
+.review-head > div { min-width:0; max-width:100%; }
+.fine-note { overflow-wrap:anywhere; }
