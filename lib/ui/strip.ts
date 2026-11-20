@@ -83,7 +83,12 @@ export function buildExclusions(request: Brief, offer: OfferSnapshot): string[] 
   if (offer.reposting !== true) exclusions.push("Re-uploading the track as standalone content.");
   if (offer.futureCampaigns !== true) exclusions.push("Future campaigns beyond this client project.");
   if (offer.clientDelivery !== true) exclusions.push("Delivering the track to a client.");
-  exclusions.push(`Use beyond ${formatTerm(request.termDays)} or outside ${formatTerritory(request.territory)}.`);
+  const territoryLabel = formatTerritory(request.territory);
+  exclusions.push(
+    territoryLabel.toLowerCase() === "worldwide"
+      ? `Use beyond ${formatTerm(request.termDays)}.`
+      : `Use beyond ${formatTerm(request.termDays)} or outside ${territoryLabel}.`,
+  );
   return exclusions;
 }
 
