@@ -66,15 +66,15 @@ export default async function LandingPage() {
 
         <section className="landing-hero" id="sample">
           <div className="hero-copy">
-            <div className="eyebrow">Music clearance for freelance editors</div>
+            <div className="eyebrow">Music licensing for freelance editors</div>
             <h1>
               Know what you can use
               <br />
               <em>before you export.</em>
             </h1>
             <p className="hero-sub">
-              Grant shows exactly what a track's license covers, refuses when it doesn't cover your cut, and pays
-              only after you approve the terms.
+              Find a track, see exactly what its license lets you do, and pay for it once. If it won't
+              cover your video, Grant says so before you spend anything.
             </p>
             <div className="hero-ctas">
               <Link href="/signin?mode=signup&next=%2Fapp%2Fnew" className="btn btn-primary">
@@ -90,7 +90,7 @@ export default async function LandingPage() {
                 </span>
               )}
             </div>
-            <div className="hero-micro">Testnet USDC · no card · one approval per purchase</div>
+            <div className="hero-micro">Test money only · no card · you approve every payment</div>
           </div>
 
           <div className="hero-card-wrap">
@@ -128,8 +128,8 @@ export default async function LandingPage() {
         <div className="refusal-band" role="note">
           <div className="x" aria-hidden="true">✕</div>
           <p>
-            <strong>Studio Pulse — paid ads not offered.</strong> Grant refused the quote instead of selling coverage
-            the track doesn't have. No signature. No reservation. No receipt.
+            <strong>Studio Pulse doesn't cover paid ads.</strong> So Grant said no, told you which part
+            didn't fit, and charged nothing.
           </p>
         </div>
 
@@ -137,25 +137,25 @@ export default async function LandingPage() {
           <div className="section-head">
             <div>
               <div className="micro">How it works</div>
-              <h2>Three screens. No surprises.</h2>
+              <h2>Three steps. No email thread.</h2>
             </div>
-            <p className="section-desc">No account manager, no email thread, no invoice in ten days.</p>
+            <p className="section-desc">Nobody to chase, and no invoice arriving next month.</p>
           </div>
           <div className="steps">
             <div className="step" data-step="1">
               <div className="n">01</div>
-              <div className="h">Describe the cut</div>
-              <div className="d">90 seconds, Instagram and TikTok, 90 days, for Harbor Athletics. Editable terms, not prose.</div>
+              <div className="h">Say what you're making</div>
+              <div className="d">30 seconds, Instagram and TikTok, three months. Tap the details instead of writing a paragraph.</div>
             </div>
             <div className="step" data-step="2">
               <div className="n">02</div>
-              <div className="h">See the edges</div>
-              <div className="d">Covered and excluded side by side, with the price and the budget it leaves behind. Approve the exact terms or walk.</div>
+              <div className="h">See what's covered</div>
+              <div className="d">Green means included, amber means it isn't. You see the price and what's left in your budget before you decide.</div>
             </div>
             <div className="step" data-step="3">
               <div className="n">03</div>
-              <div className="h">Leave with a license</div>
-              <div className="d">Audio, a PDF with the terms, and a proof link your client can open without an account.</div>
+              <div className="h">Pay once, get your files</div>
+              <div className="d">The audio, a one-page PDF of the license, and a link your client can open without an account.</div>
             </div>
           </div>
         </section>
@@ -165,13 +165,14 @@ export default async function LandingPage() {
             <div>
               <div className="micro">The strip</div>
               <h2>
-                Every license has edges.
+                Every license stops somewhere.
                 <br />
-                Grant draws them.
+                You should see where.
               </h2>
             </div>
             <p className="section-desc">
-              Most catalogs show a price and a vague "royalty free" badge. Coverage is where the money actually is.
+              "Royalty free" tells you the price, not what you're allowed to do with it. A paid ad isn't the
+              same as a post on Instagram.
             </p>
           </div>
           <div style={{ marginTop: 24 }}>
@@ -184,10 +185,10 @@ export default async function LandingPage() {
           <div className="section-head">
             <div>
               <div className="micro">Delivery</div>
-              <h2>What you actually walk away with.</h2>
+              <h2>What you get when you pay.</h2>
             </div>
             <p className="section-desc">
-              Delivered only after settlement. A payment receipt is not a download link. It has to be both.
+              Nothing downloads until the payment goes through.
             </p>
           </div>
           <div className="deliverables">
@@ -196,46 +197,46 @@ export default async function LandingPage() {
                 <PdfIcon className="nav-icon" />
               </div>
               <div className="h">License PDF</div>
-              <div className="d">The frozen terms you approved, the license ID, and the transaction that paid for it.</div>
+              <div className="d">One page with the terms you agreed to and the license number. Keep it, or send it to your client.</div>
             </div>
             <div className="deliverable">
               <div className="deliverable-icon">
                 <AudioIcon className="nav-icon" />
               </div>
-              <div className="h">Cleared audio</div>
-              <div className="d">A short-lived link, issued only to the owner of a settled purchase. No public URLs.</div>
+              <div className="h">The audio file</div>
+              <div className="d">The full-quality track, ready to drop into your edit. The download link is private and expires.</div>
             </div>
             <div className="deliverable">
               <div className="deliverable-icon">
                 <ProofIcon className="nav-icon" />
               </div>
               <div className="h">Proof link</div>
-              <div className="d">Public, revocable, and thin: terms and chain reference. Never your client's name.</div>
+              <div className="d">A page your client can open without an account. It shows the terms, never your files or your client's name.</div>
             </div>
           </div>
         </section>
 
         <div className="safety-band">
           <div className="safety-cell">
-            <div className="k">Approval</div>
-            <div className="v">One human approval, bound to an exact quote fingerprint.</div>
+            <div className="k">You approve the terms</div>
+            <div className="v">Nothing is charged until you tap approve. That approval only works for that one purchase.</div>
           </div>
           <div className="safety-cell">
-            <div className="k">Budget</div>
-            <div className="v">Capped per project, reserved atomically before signing.</div>
+            <div className="k">A limit you set</div>
+            <div className="v">Grant can't spend past your project budget, and it holds the money aside before paying.</div>
           </div>
           <div className="safety-cell">
-            <div className="k">Retries</div>
-            <div className="v">Uncertain outcomes stay pending. Nothing re-signs itself.</div>
+            <div className="k">No accidental double charge</div>
+            <div className="v">If a payment gets stuck, it waits to be checked instead of paying again.</div>
           </div>
         </div>
 
         <section className="landing-close">
           <div className="micro">Try it</div>
           <h2>
-            The catalog is a fixture.
+            The music is placeholder.
             <br />
-            The refusals are real.
+            The rules are real.
           </h2>
           <div className="close-row">
             <Link href="/signin?mode=signup&next=%2Fapp%2Fnew" className="btn btn-primary">
@@ -255,7 +256,7 @@ export default async function LandingPage() {
         <div className="site-footer-inner">
           <div className="footer-brand">
             <div className="footer-logo">Grant<span>.</span></div>
-            <p>Music clearance for freelance editors. Know what a license covers before you export.</p>
+            <p>Music licensing for freelance editors. Know what a license covers before you export.</p>
             <div className="footer-social">
               <a href="https://github.com/JemimahEkong/Grant" target="_blank" rel="noreferrer">GitHub</a>
               <a href="https://stellar.org" target="_blank" rel="noreferrer">Stellar</a>
