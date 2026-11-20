@@ -1433,7 +1433,7 @@
 .btn[disabled] { opacity:.65; }
 .btn:has(+.fine-note),.review-sheet>.btn-primary { position:relative; }
 
-.sticky-cta { position:sticky; bottom:100px; z-index:10; }
+.sticky-cta { position:sticky; bottom:calc(122px + env(safe-area-inset-bottom)); z-index:10; }
 .app-disclosure { padding-top:24px; margin-top:24px; border-top:1px solid var(--hairline); }
 @media(min-width:900px) { .sticky-cta { bottom:20px; } }
 
@@ -1519,7 +1519,7 @@
  .tab-icon .nav-icon { width:21px; height:21px; }
  .tab-link.on:not(.tab-centre) .tab-icon { background:var(--surface); color:var(--brand-deep); width:40px; height:30px; border-radius:999px; }
  .tab-centre .tab-icon { width:46px; height:46px; margin:0; border:0; }
- .sticky-cta { bottom:92px; }
+ .sticky-cta { bottom:calc(126px + env(safe-area-inset-bottom)); }
  .review-sheet { padding:18px; }
  .review-price { flex-wrap:wrap; }
 }
