@@ -1617,3 +1617,6 @@
 @media(min-width:900px) {
   .budget-hero .quick-actions-glass { max-width:470px; }
 }
+
+.brief-form { padding-bottom: 132px; }
+@media (max-width:420px) { .brief-form { padding-bottom: 150px; } }

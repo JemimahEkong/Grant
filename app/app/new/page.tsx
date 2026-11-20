@@ -103,9 +103,9 @@ export default function NewBriefPage() {
         title="What are you making?"
         lede="One sentence is enough. The chips are authoritative and go through the same coverage rules as every quote."
       />
-      <form onSubmit={submit} className="stack">
+      <form onSubmit={submit} className="stack brief-form">
         <div className="brief-sentence" aria-live="polite">
-          <div className="q">Your brief</div>
+          <div className="q">Your brief · updates as you edit</div>
           <p>{sentence}</p>
         </div>
 
@@ -116,7 +116,7 @@ export default function NewBriefPage() {
             className="input"
             value={clientName}
             onChange={event => setClientName(event.target.value)}
-            placeholder="Harbor Athletics"
+            placeholder="e.g. Harbor Athletics"
             autoComplete="organization"
             required
           />
@@ -130,7 +130,7 @@ export default function NewBriefPage() {
             className="input"
             value={publicLabel}
             onChange={event => setPublicLabel(event.target.value)}
-            placeholder="Harbor Athletics — Spring Reel"
+            placeholder="e.g. Harbor Athletics — Spring Reel"
             required
           />
           <span className="form-hint">This label appears on the license and proof page.</span>
