@@ -1,6 +1,7 @@
 import { demoOffers, demoTracks } from "../../demo/catalog";
 import type { GrantDatabase } from "./client";
 import { offers, tracks } from "./schema";
+import { assertOfferWithinLicense } from "../licensing/offer-license";
 
 export async function seedDemoCatalog(db: GrantDatabase): Promise<{ tracks: number; offers: number }> {
   for (const track of demoTracks) {
@@ -12,6 +13,24 @@ export async function seedDemoCatalog(db: GrantDatabase): Promise<{ tracks: numb
         sellerId: track.sellerId,
         audioObjectKey: track.audioObjectKey,
         durationSeconds: track.durationSeconds,
+        source: track.source,
+        sourceUrl: track.sourceUrl,
+        sourceId: track.sourceId,
+        licenseCode: track.licenseCode,
+        licenseUrl: track.licenseUrl,
+        attributionRequired: track.attributionRequired,
+        attributionText: track.attributionText,
+        commercialUse: track.commercialUse,
+        derivatives: track.derivatives,
+        standaloneRedistribution: track.standaloneRedistribution,
+        previewAllowed: track.previewAllowed,
+        genre: track.genre,
+        moods: track.moods,
+        energy: track.energy,
+        instrumental: track.instrumental,
+        bpm: track.bpm,
+        key: track.key,
+        previewKey: track.previewKey,
         authorityComposition: track.authorityComposition,
         authorityMaster: track.authorityMaster,
         provenanceReference: track.provenanceReference,
@@ -23,6 +42,24 @@ export async function seedDemoCatalog(db: GrantDatabase): Promise<{ tracks: numb
           title: track.title,
           sellerId: track.sellerId,
           durationSeconds: track.durationSeconds,
+          source: track.source,
+          sourceUrl: track.sourceUrl,
+          sourceId: track.sourceId,
+          licenseCode: track.licenseCode,
+          licenseUrl: track.licenseUrl,
+          attributionRequired: track.attributionRequired,
+          attributionText: track.attributionText,
+          commercialUse: track.commercialUse,
+          derivatives: track.derivatives,
+          standaloneRedistribution: track.standaloneRedistribution,
+          previewAllowed: track.previewAllowed,
+          genre: track.genre,
+          moods: track.moods,
+          energy: track.energy,
+          instrumental: track.instrumental,
+          bpm: track.bpm,
+          key: track.key,
+          previewKey: track.previewKey,
           authorityComposition: track.authorityComposition,
           authorityMaster: track.authorityMaster,
           provenanceReference: track.provenanceReference,
@@ -31,7 +68,16 @@ export async function seedDemoCatalog(db: GrantDatabase): Promise<{ tracks: numb
       });
   }
 
+  const trackById = new Map(demoTracks.map(track => [track.id, track]));
   for (const offer of demoOffers) {
+    const track = trackById.get(offer.trackId);
+    if (!track) throw new Error(`The offer ${offer.id} has no track.`);
+    assertOfferWithinLicense(track, {
+      platformsPaidAd: offer.platformsByUse.paid_ad ?? [],
+      clientDelivery: offer.clientDelivery,
+      reposting: offer.reposting,
+      futureCampaigns: offer.futureCampaigns,
+    });
     await db
       .insert(offers)
       .values({

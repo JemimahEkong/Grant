@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ClearanceStrip, Logo, TestnetBadge, Tick } from "../../../components/ui";
+import { ClearanceStrip, LicenseCredit, Logo, TestnetBadge, Tick } from "../../../components/ui";
 import { getDatabase } from "../../../lib/db/client";
 import { getPublicProof } from "../../../lib/documents/share";
 import { formatDate, formatUsdc, shortHash } from "../../../lib/ui/format";
@@ -49,6 +49,11 @@ export default async function ProofPage({ params }: ProofPageProps) {
             </div>
             <h1 className="proof-title">{proof.track.title}</h1>
             <div className="proof-by">{proof.track.sellerName} · licensed for one client project</div>
+            <LicenseCredit
+              licenseCode={proof.track.licenseCode}
+              attributionText={proof.track.attributionText}
+              sourceUrl={proof.track.sourceUrl}
+            />
             <div style={{ marginTop: 16 }}>
               <ClearanceStrip segments={strip} />
             </div>

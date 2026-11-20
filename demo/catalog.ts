@@ -1,4 +1,5 @@
 import type { Offer } from "../lib/licensing/schema";
+import type { TrackLicenseCode, TrackSource } from "../lib/licensing/types";
 
 export const stellarTestnetUsdc = {
   network: "stellar:testnet",
@@ -14,6 +15,23 @@ export type DemoTrack = {
   durationSeconds: number;
   bpm: number | null;
   sourceLabel: string;
+  source: TrackSource;
+  sourceUrl: string;
+  sourceId: string;
+  licenseCode: TrackLicenseCode;
+  licenseUrl: string;
+  attributionRequired: boolean;
+  attributionText: string;
+  commercialUse: boolean;
+  derivatives: boolean;
+  standaloneRedistribution: boolean;
+  previewAllowed: boolean;
+  genre: string;
+  moods: string[];
+  energy: number;
+  instrumental: boolean;
+  key: string | null;
+  previewKey: string | null;
   audioObjectKey: string | null;
   authorityComposition: boolean | null;
   authorityMaster: boolean | null;
@@ -24,6 +42,11 @@ export type DemoTrack = {
 export const demoTracks: readonly DemoTrack[] = [
   {
     id: "morning-edit", title: "Morning Edit", sellerId: "seller-demo-morning", sellerName: "Halcyon Fields", durationSeconds: 60, bpm: 129,
+    source: "freesound", sourceUrl: "https://freesound.org/people/tyballer92/sounds/449812", sourceId: "449812",
+    licenseCode: "cc0", licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
+    attributionRequired: false, attributionText: "CC0 · public domain",
+    commercialUse: true, derivatives: true, standaloneRedistribution: true, previewAllowed: true,
+    genre: "acoustic", moods: ["warm", "uplifting"], energy: 3, instrumental: true, key: null, previewKey: null,
     audioObjectKey: null, authorityComposition: true, authorityMaster: true,
     provenanceReference: "CC0 1.0 demo audio: \"Acoustic Guitar and Keys - Plains Soundtrack\" by tyballer92, Freesound 449812, https://freesound.org/people/tyballer92/sounds/449812. Retrieved 2026-11-18. Seller identity and offer terms are fixtures, not verified rights holders.",
     sourceLabel: "CC0 audio · Freesound · tyballer92",
@@ -31,6 +54,11 @@ export const demoTracks: readonly DemoTrack[] = [
   },
   {
     id: "quiet-cut", title: "Quiet Cut", sellerId: "seller-demo-quiet", sellerName: "Northline Audio", durationSeconds: 48, bpm: null,
+    source: "freesound", sourceUrl: "https://freesound.org/people/indigo.cloud/sounds/254856", sourceId: "254856",
+    licenseCode: "cc0", licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
+    attributionRequired: false, attributionText: "CC0 · public domain",
+    commercialUse: true, derivatives: true, standaloneRedistribution: true, previewAllowed: true,
+    genre: "ambient", moods: ["cinematic", "minimal"], energy: 1, instrumental: true, key: null, previewKey: null,
     audioObjectKey: null, authorityComposition: true, authorityMaster: true,
     provenanceReference: "CC0 1.0 demo audio: \"Long Ambient Pad\" by indigo.cloud, Freesound 254856, https://freesound.org/people/indigo.cloud/sounds/254856. Retrieved 2026-11-18. Beatless ambient recording. Seller identity and offer terms are fixtures, not verified rights holders.",
     sourceLabel: "CC0 audio · Freesound · indigo.cloud",
@@ -38,6 +66,11 @@ export const demoTracks: readonly DemoTrack[] = [
   },
   {
     id: "studio-pulse", title: "Studio Pulse", sellerId: "seller-demo-studio", sellerName: "Kite & Co.", durationSeconds: 173, bpm: 117,
+    source: "freesound", sourceUrl: "https://freesound.org/people/Seth_Makes_Sounds/sounds/687006", sourceId: "687006",
+    licenseCode: "cc0", licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
+    attributionRequired: false, attributionText: "CC0 · public domain",
+    commercialUse: true, derivatives: true, standaloneRedistribution: true, previewAllowed: true,
+    genre: "electronic", moods: ["driving", "gritty"], energy: 4, instrumental: true, key: null, previewKey: null,
     audioObjectKey: null, authorityComposition: true, authorityMaster: true,
     provenanceReference: "CC0 1.0 demo audio: \"Cinematic Lofi Beat\" by Seth_Makes_Sounds, Freesound 687006, https://freesound.org/people/Seth_Makes_Sounds/sounds/687006. Retrieved 2026-11-18. Seller identity and offer terms are fixtures, not verified rights holders.",
     sourceLabel: "CC0 audio · Freesound · Seth_Makes_Sounds",

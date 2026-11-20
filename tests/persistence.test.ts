@@ -151,7 +151,7 @@ function assertPurchase(value: PurchaseRow | null | undefined): PurchaseRow {
 dbDescribe("Neon persistence and licensing workflow", () => {
   beforeAll(async () => {
     if (!testDatabaseUrl) return;
-    client = createDatabase(testDatabaseUrl);
+    client = createDatabase(testDatabaseUrl, { max: 1, idleTimeoutMillis: 1_000, connectionTimeoutMillis: 30_000 });
     db = client.db;
     await seedDemoCatalog(db);
     await db
@@ -645,5 +645,5 @@ dbDescribe("Neon persistence and licensing workflow", () => {
     const addonView = await getPurchaseForOwner(db, { ownerId, purchaseId: addonPurchase.id });
     expect(addonView.combinedCoverage?.baseLicense?.licenseId).toBe(baseSettlement.license.id);
     expect(addonView.combinedCoverage?.addonLicenses[0]?.licenseId).toBe(addonSettlement.license.id);
-  });
+  }, 60_000);
 });

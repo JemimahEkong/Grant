@@ -1,6 +1,12 @@
-﻿# Left off
+# Left off
 
-- Task: glass material and realistic card refinement after the founder's second visual review.
-- Done: shared glass buttons, glass floating tab bar, Home balance/action composition, two-card landing hero, floating information chips, green tonal landing sections, updated DESIGN.md and AGENTS.md.
-- Verified: typecheck, lint, production build and 72 tests pass. Browser evidence at 390px and 1280px has no horizontal overflow or console errors. Side-by-side comparisons and the passing report are in design-qa.md.
-- Deployed: production alias `https://grant-roan.vercel.app` is on `dpl_EfnLrgcbTPw6GFhxoSE7ncyLqFiW`. The public landing and authenticated Home were rechecked at 390px and 1280px with no horizontal overflow or console errors. Preserve all payment/auth/wallet handlers; no backend changes or settlements were made in this pass.
+- Task: catalog v1. Phase 1 is built, deployed, and verified. The Phase 2 Freesound adapter is built, but ingestion is blocked on `FREESOUND_API_KEY`.
+- Done: migration 0006 adds track source, source URL/id, license code/URL, attribution, commercial/derivative/redistribution permissions, preview permission, genre, moods, energy, instrumental, BPM, key, and preview key. The three existing tracks are backfilled to Freesound CC0. Their offer ids are unchanged.
+- Done: one shared license credit line in the catalog card, review header, license PDF, and proof page. CC0 renders "CC0 · public domain". A CC-BY record renders its exact attribution. The PDF adds "Add this to your video description" when attribution is required.
+- Done: `lib/licensing/offer-license.ts` rejects an offer that exceeds the source grant. It is enforced in the seed, the testnet seed, and the quote transaction. The deliberate invalid-offer test throws `OFFER_EXCEEDS_LICENSE` with status 422.
+- Verified: 91 tests in 14 files. Typecheck, lint, build pass. Migrations 0006 and 0007 applied to main and test. Existing settled license `GRANT-2026-10014776FD` renders its original terms and the new credit at 390px and 1280px. Catalog and the existing paid purchase show the credit and source link. No horizontal overflow and no console errors. A CC-BY PDF text extraction shows the Music credit block and attribution instruction.
+- Deployed: `dpl_8oh6qaT5xJnhpjAm6PbBUUGA1sCd`. The catalog phase 1 and adapter checkpoint is committed with this update.
+- Phase 2: `lib/catalog/` contains the Freesound adapter, normalized license mapping, duration gate, duplicate-hash check, R2 upload, ffprobe duration, 40-second preview generation, draft metadata, and idempotent upsert on `(source, sourceId)`. `npm run catalog:ingest` writes `agent-state/catalog-ingest-report.json`. With no key it writes a blocked report and exits without calling the API. Do not scrape.
+- Next: add `FREESOUND_API_KEY` to `.env.local`, run `npm run catalog:ingest`, review the JSON report, and then proceed to Phase 3. Phases 3 through 5 are pending.
+- Blocker: missing Freesound API key. The test database is slow, so the suite runs with one worker, 60 second timeouts, and one short-lived test connection.
+- Warnings: npm audit reports dev-tool vulnerabilities in drizzle-kit/esbuild and vitest/picomatch. Fixing them needs breaking major-version changes. Vitest emits a CommonJS/ESM native-loader warning.

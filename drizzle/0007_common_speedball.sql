@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "tracks_source_source_id_unique" ON "tracks" USING btree ("source","source_id");

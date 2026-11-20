@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ClearanceStrip, Legend, PageHeader, Spinner, StatusChip, PrimaryButton, SecondaryButton, Sheet } from "../../../../components/ui";
+import { ClearanceStrip, Legend, PageHeader, Spinner, StatusChip, PrimaryButton, SecondaryButton, Sheet, LicenseCredit } from "../../../../components/ui";
 import {
   approvePurchase,
   createAddonQuote,
@@ -325,8 +325,12 @@ export default function PurchasePage() {
         <div>
           <h1 className="review-title">{title}</h1>
           <div className="review-by">{meta}</div>
-          {view.track?.provenanceReference ? (
-            <div className="fine-note" style={{ marginTop: 4 }}>{view.track.provenanceReference}</div>
+          {view.track ? (
+            <LicenseCredit
+              licenseCode={view.track.licenseCode}
+              attributionText={view.track.attributionText}
+              sourceUrl={view.track.sourceUrl}
+            />
           ) : null}
         </div>
         <StatusChip status={status} />

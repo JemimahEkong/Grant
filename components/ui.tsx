@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode, HTMLAttributes, ButtonHTMLAttributes } from "react";
 import { CheckIcon, WaveIcon, HomeIcon, TracksIcon, PlusIcon, PurchasesIcon, ProfileIcon, PdfIcon } from "./icons";
 import { statusMeta } from "../lib/ui/format";
+import { formatLicenseCredit } from "../lib/licensing/license-credit";
 import type { StripSegment } from "../lib/ui/strip";
 
 export function Logo({ href = "/" }: { href?: string }) {
@@ -66,6 +67,27 @@ export function WaveThumb() {
     <div className="thumb">
       <WaveIcon />
     </div>
+  );
+}
+
+export function LicenseCredit({
+  licenseCode,
+  attributionText,
+  sourceUrl,
+}: {
+  licenseCode: string | null;
+  attributionText: string | null;
+  sourceUrl: string | null;
+}) {
+  return (
+    <p className="license-credit">
+      <span>{formatLicenseCredit({ licenseCode, attributionText })}</span>
+      {sourceUrl ? (
+        <a href={sourceUrl} target="_blank" rel="noreferrer">
+          Source ↗
+        </a>
+      ) : null}
+    </p>
   );
 }
 

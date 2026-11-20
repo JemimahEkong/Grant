@@ -21,6 +21,14 @@ import type { CoverageSnapshot, StoredOfferSnapshot } from "../licensing/types";
 export const licensePlatformEnum = pgEnum("license_platform", ["instagram", "facebook", "tiktok", "youtube"]);
 export const intendedUseEnum = pgEnum("license_intended_use", ["organic", "paid_ad"]);
 export const offerKindEnum = pgEnum("offer_kind", ["base", "addon"]);
+export const trackSourceEnum = pgEnum("track_source", ["freesound", "fma", "pixabay", "original"]);
+export const trackLicenseCodeEnum = pgEnum("license_code", [
+  "cc0",
+  "cc-by-4.0",
+  "cc-by-3.0",
+  "pixabay",
+  "grant-commercial",
+]);
 export const purchaseStatusEnum = pgEnum("purchase_status", [
   "quoted",
   "approved",
@@ -236,6 +244,24 @@ export const tracks = pgTable(
     audioObjectKey: text("audio_object_key"),
     audioContentHash: text("audio_content_hash"),
     durationSeconds: integer("duration_seconds").notNull(),
+    source: trackSourceEnum("source").notNull(),
+    sourceUrl: text("source_url").notNull(),
+    sourceId: text("source_id").notNull(),
+    licenseCode: trackLicenseCodeEnum("license_code").notNull(),
+    licenseUrl: text("license_url"),
+    attributionRequired: boolean("attribution_required").notNull().default(false),
+    attributionText: text("attribution_text").notNull(),
+    commercialUse: boolean("commercial_use").notNull().default(false),
+    derivatives: boolean("derivatives").notNull().default(false),
+    standaloneRedistribution: boolean("standalone_redistribution").notNull().default(false),
+    previewAllowed: boolean("preview_allowed").notNull().default(false),
+    genre: text("genre"),
+    moods: text("moods").array().notNull().default(sql`'{}'::text[]`),
+    energy: integer("energy"),
+    instrumental: boolean("instrumental"),
+    bpm: integer("bpm"),
+    key: text("key"),
+    previewKey: text("preview_key"),
     authorityComposition: boolean("authority_composition"),
     authorityMaster: boolean("authority_master"),
     provenanceReference: text("provenance_reference"),
@@ -244,8 +270,15 @@ export const tracks = pgTable(
   },
   table => [
     index("tracks_seller_idx").on(table.sellerId),
+    uniqueIndex("tracks_source_source_id_unique").on(table.source, table.sourceId),
     check("tracks_title_nonempty", sql`length(btrim(${table.title})) > 0`),
     check("tracks_duration_positive", sql`${table.durationSeconds} > 0`),
+    check("tracks_source_url_nonempty", sql`length(btrim(${table.sourceUrl})) > 0`),
+    check("tracks_source_id_nonempty", sql`length(btrim(${table.sourceId})) > 0`),
+    check("tracks_attribution_text_nonempty", sql`length(btrim(${table.attributionText})) > 0`),
+    check("tracks_energy_range", sql`${table.energy} is null or (${table.energy} >= 1 and ${table.energy} <= 5)`),
+    check("tracks_bpm_positive", sql`${table.bpm} is null or ${table.bpm} > 0`),
+    check("tracks_moods_max", sql`cardinality(${table.moods}) <= 4`),
   ],
 );
 

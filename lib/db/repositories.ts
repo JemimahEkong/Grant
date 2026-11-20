@@ -4,6 +4,7 @@ import { assertPayeeIsNotTreasury } from "../payments/payee-guard";
 import { isStellarPublicKey } from "../payments/stellar-address";
 import { briefSchema, type Brief } from "../licensing/schema";
 import { matchOffer } from "../licensing/match";
+import { assertOfferWithinLicense } from "../licensing/offer-license";
 import type { CoverageSnapshot, StoredOfferSnapshot } from "../licensing/types";
 import { demoLimits, parseAmountBaseUnits, parsePositiveAmountBaseUnits } from "../policy/budget";
 import type { DatabaseTransaction, GrantDatabase } from "./client";
@@ -604,6 +605,14 @@ export async function quotePurchase(db: GrantDatabase, input: QuotePurchaseInput
       if (offer.trackId !== input.trackId || offer.kind !== input.kind) {
         throw new RepositoryError("REQUEST_MISMATCH", "The offer does not match the requested track and kind.", 400);
       }
+      const [offerTrack] = await tx.select().from(tracks).where(eq(tracks.id, offer.trackId)).limit(1);
+      if (!offerTrack) throw notFound("The offer track was not found.");
+      assertOfferWithinLicense(offerTrack, {
+        platformsPaidAd: offer.platformsPaidAd,
+        clientDelivery: offer.clientDelivery,
+        reposting: offer.reposting,
+        futureCampaigns: offer.futureCampaigns,
+      });
 
       if (input.kind === "addon") {
         if (!parentPurchaseId) {

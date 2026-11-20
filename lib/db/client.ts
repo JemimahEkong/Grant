@@ -17,12 +17,15 @@ export function resolveDatabaseUrl(env: NodeJS.ProcessEnv = process.env, name = 
   return value;
 }
 
-export function createDatabase(connectionString: string) {
+export function createDatabase(
+  connectionString: string,
+  options: { max?: number; idleTimeoutMillis?: number; connectionTimeoutMillis?: number } = {},
+) {
   const pool = new Pool({
     connectionString,
-    max: 5,
-    idleTimeoutMillis: 10_000,
-    connectionTimeoutMillis: 10_000,
+    max: options.max ?? 5,
+    idleTimeoutMillis: options.idleTimeoutMillis ?? 10_000,
+    connectionTimeoutMillis: options.connectionTimeoutMillis ?? 10_000,
   });
   const db = drizzle(pool, { schema });
   return {

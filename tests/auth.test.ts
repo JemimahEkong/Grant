@@ -52,7 +52,7 @@ describe("origin policy", () => {
 dbDescribe("Better Auth with the Drizzle adapter", () => {
   beforeAll(() => {
     if (!testDatabaseUrl) return;
-    client = createDatabase(testDatabaseUrl);
+    client = createDatabase(testDatabaseUrl, { max: 1, idleTimeoutMillis: 1_000, connectionTimeoutMillis: 30_000 });
     db = client.db;
     auth = createAuth(db, {
       secret: "grant-auth-test-secret-".padEnd(48, "x"),

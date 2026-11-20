@@ -40,7 +40,7 @@ describe("seller payee guard", () => {
 dbDescribe("active offer treasury guard", () => {
   beforeAll(async () => {
     if (!testDatabaseUrl) return;
-    client = createDatabase(testDatabaseUrl);
+    client = createDatabase(testDatabaseUrl, { max: 1, idleTimeoutMillis: 1_000, connectionTimeoutMillis: 30_000 });
     db = client.db;
     await seedDemoCatalog(db);
     offerId = randomId("guard-offer");

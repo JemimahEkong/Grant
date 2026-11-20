@@ -1,9 +1,10 @@
 import { eq } from "drizzle-orm";
-import { demoOffers } from "../demo/catalog";
+import { demoOffers, demoTracks } from "../demo/catalog";
 import { createDatabase, resolveDatabaseUrl } from "../lib/db/client";
 import { offers } from "../lib/db/schema";
 import { assertActiveOffersDoNotPayTreasury, assertPayeeIsNotTreasury } from "../lib/payments/payee-guard";
 import { isStellarPublicKey } from "../lib/payments/stellar-address";
+import { assertOfferWithinLicense } from "../lib/licensing/offer-license";
 
 const database = createDatabase(resolveDatabaseUrl(process.env, "DATABASE_URL"));
 
@@ -15,7 +16,16 @@ async function main() {
 
   let baseCount = 0;
   let addonCount = 0;
+  const trackById = new Map(demoTracks.map(track => [track.id, track]));
   for (const offer of demoOffers) {
+    const track = trackById.get(offer.trackId);
+    if (!track) throw new Error(`The offer ${offer.id} has no track.`);
+    assertOfferWithinLicense(track, {
+      platformsPaidAd: offer.platformsByUse.paid_ad ?? [],
+      clientDelivery: offer.clientDelivery,
+      reposting: offer.reposting,
+      futureCampaigns: offer.futureCampaigns,
+    });
     const isAddon = offer.kind === "addon";
     const id = isAddon ? `${offer.trackId}-testnet-addon` : `${offer.trackId}-testnet-base`;
     const parentOfferId = isAddon ? `${offer.trackId}-testnet-base` : null;

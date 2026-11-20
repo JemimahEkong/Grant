@@ -15,7 +15,7 @@
 - The UI follows DESIGN.md: v2 iOS light tokens, Geist Sans/Mono, inline SVG, 900px breakpoint, mobile bottom nav, desktop rail, clearance strip, no gradients/glass/shadows/icon libraries/images.
 - App routes are static client shells that fetch live APIs. Landing, proof, and sign-in are dynamic. Proof is noindex/no-store and revocable.
 - DEMO_PROOF_PATH holds the demo proof link. Do not print the raw share token.
-- Migration 0004 owns wallets and faucet grants. Migration 0005 owns `purchase_count_cap`. Do not add a balance column.
+- Migration 0004 owns wallets and faucet grants. Migration 0005 owns `purchase_count_cap`. Migration 0006 owns track source/license/metadata. Migration 0007 owns the unique `(source, source_id)` index. Do not add a balance column.
 - R2 bucket grant-private. Short-lived presigned GET URLs only after entitlement checks. No public object URLs.
 - Seller route derives price, asset, and payee from the immutable purchase and a short-lived HMAC attempt token. X402_ATTEMPT_SECRET must match. Approval and the seller route fail closed if any active offer pays the treasury.
 - Reconciliation never signs again or creates a new attempt.
@@ -24,9 +24,12 @@
 - The earlier add-on proof used the treasury as payee. It is historical. Do not use it as the current seller model.
 - Demo reset: `npm run demo:reset` creates a new account, funded wallet, and one clean project. It never deletes evidence. The script polls the wallet after the faucet so project creation does not race the balance cache. Two consecutive runs: `prj_c7cb6fad32844f8ea178922af56a2565` used for the seller proof, and clean project `prj_e1f8cf242c2349ada0e251025bfe4c6e` with wallet `GBAOVXPGANWX6FONTYLV5T6ANC7P2HNKBBGP4Q273TP7N2UJFQYHT64N`.
 - Health phase is `testnet-product-demo`. The health response keys are stable.
-- Production URL: https://grant-roan.vercel.app. Final deployment: `dpl_EfnLrgcbTPw6GFhxoSE7ncyLqFiW`.
+- Production URL: https://grant-roan.vercel.app. Phase 1 deployment: `dpl_8oh6qaT5xJnhpjAm6PbBUUGA1sCd`.
 - G0 scripts are local-only. The G0 seller binds 127.0.0.1. G0 secrets are not deployed.
 - Catalog matching and fixture offers do not verify music ownership or seller authority. A testnet settlement proves the payment protocol only.
+- Catalog Phase 1: tracks store source, source URL/id, license code/URL, attribution, commercial/derivative/redistribution/preview permissions, genre, moods, energy, instrumental, BPM, key, and preview key. The three existing tracks are Freesound CC0. Their offer ids are unchanged. The shared `LicenseCredit` line renders in catalog, review, PDF, and proof. `formatLicenseCredit` returns "CC0 · public domain" for CC0 and the exact attribution for CC-BY. `assertOfferWithinLicense` enforces offering-subset-of-source in both seeds and the quote transaction.
+- Catalog Phase 2 adapter is built in `lib/catalog/` and `scripts/ingest-catalog.ts`. `npm run catalog:ingest` writes `agent-state/catalog-ingest-report.json`. Without `FREESOUND_API_KEY` it writes a blocked report and makes no API call. Do not scrape. Phase 3 through 5 are pending.
+- The test suite is 91 tests in 14 files. It runs with one Vitest worker, 60 second timeouts, and one short-lived test DB connection because the Neon test branch is slow. The production DB pool defaults are unchanged.
 - API gaps: no artifact byte sizes/content types, no license number in project purchase rows, BPM/seller display names join the demo catalog, wallet history labels limited by Horizon.
 - Remaining product gaps: commercial authorized music, refunds/disputes, mainnet, multi-tenant seller onboarding.
 - Final evidence: `agent-state/seller-separation-evidence.md`, `agent-state/demo-reset-evidence.md`, `agent-state/addon-evidence.md`, `agent-state/faucet-capacity-evidence.md`, `agent-state/cc0-audio-evidence.md`.

@@ -1,5 +1,8 @@
 import type { Brief, IntendedUse, Platform } from "./schema";
 
+export type TrackSource = "freesound" | "fma" | "pixabay" | "original";
+export type TrackLicenseCode = "cc0" | "cc-by-4.0" | "cc-by-3.0" | "pixabay" | "grant-commercial";
+
 export type RefusalReasonCode =
   | "AUTHORITY_UNKNOWN"
   | "USE_NOT_COVERED"

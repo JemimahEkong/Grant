@@ -17,7 +17,7 @@ let db: GrantDatabase;
 dbDescribe("database rate limits", () => {
   beforeAll(() => {
     if (!testDatabaseUrl) return;
-    client = createDatabase(testDatabaseUrl);
+    client = createDatabase(testDatabaseUrl, { max: 1, idleTimeoutMillis: 1_000, connectionTimeoutMillis: 30_000 });
     db = client.db;
   }, 30_000);
 

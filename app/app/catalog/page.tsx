@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useProjects } from "../../../components/providers";
-import { ClearanceStrip, EmptyState, PageHeader, Spinner, FilterChip, Card } from "../../../components/ui";
+import { ClearanceStrip, EmptyState, PageHeader, Spinner, FilterChip, Card, LicenseCredit } from "../../../components/ui";
 import { createQuote, getCatalog } from "../../../lib/ui/actions";
 import type { CatalogItem, CatalogResponse } from "../../../lib/ui/api";
 import { formatDuration, formatUsdc } from "../../../lib/ui/format";
@@ -134,7 +134,11 @@ export default function CatalogPage() {
                 <div className="track-meta">
                   {item.sellerName} · {formatDuration(item.durationSeconds)} · {item.bpm ? `${item.bpm} BPM` : "beatless"}
                 </div>
-                {item.sourceLabel ? <div className="track-meta" style={{ marginTop: 3 }}>{item.sourceLabel}</div> : null}
+                <LicenseCredit
+                  licenseCode={item.licenseCode}
+                  attributionText={item.attributionText}
+                  sourceUrl={item.sourceUrl}
+                />
               </div>
               <div className="pr">{formatUsdc(item.amountBaseUnits)}</div>
             </div>

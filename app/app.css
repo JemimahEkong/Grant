@@ -628,6 +628,23 @@
   margin-top: 9px;
 }
 
+.license-credit {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--ink-2);
+}
+
+.license-credit a {
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.license-credit a:hover {
+  color: var(--ink);
+}
+
 .explain-panel {
   border: 1px solid var(--amber-line);
   background: var(--amber-surface);

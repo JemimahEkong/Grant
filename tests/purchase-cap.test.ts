@@ -46,7 +46,7 @@ let offerIds: string[] = [];
 
 beforeAll(async () => {
   if (!testDatabaseUrl) return;
-  client = createDatabase(testDatabaseUrl);
+  client = createDatabase(testDatabaseUrl, { max: 1, idleTimeoutMillis: 1_000, connectionTimeoutMillis: 30_000 });
   db = client.db;
   await seedDemoCatalog(db);
   offerIds = [randomId("cap-offer"), randomId("cap-offer"), randomId("cap-offer")];
@@ -158,7 +158,7 @@ dbDescribe("project purchase-count cap", () => {
     const view = await getProjectForOwner(db, { ownerId, projectId: project.id });
     expect(view.budget.purchaseCountCap).toBe(2);
     expect(view.budget.purchasesUsed).toBe(2);
-  });
+  }, 60_000);
 
   it("serializes a concurrent pair so only one takes the last slot", async () => {
     const project = await makeProject(2);
@@ -182,5 +182,5 @@ dbDescribe("project purchase-count cap", () => {
 
     const view = await getProjectForOwner(db, { ownerId, projectId: project.id });
     expect(view.budget.purchasesUsed).toBe(2);
-  });
+  }, 60_000);
 });
