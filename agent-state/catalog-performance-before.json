@@ -1,0 +1,11 @@
+{
+  "base": "https://grant-roan.vercel.app",
+  "viewport": "390x844",
+  "throttle": "Fast 3G 1.6Mbps down / 750kbps up / 150ms",
+  "cacheDisabled": true,
+  "appReadyMs": 5846,
+  "headerMs": 816,
+  "firstCardMs": 2170,
+  "catalogBytes": 489795,
+  "errors": []
+}

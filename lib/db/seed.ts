@@ -61,7 +61,7 @@ export async function seedDemoCatalog(db: GrantDatabase): Promise<{ tracks: numb
           instrumental: track.instrumental,
           bpm: track.bpm,
           key: track.key,
-          previewKey: track.previewKey,
+          ...(track.previewKey ? { previewKey: track.previewKey } : {}),
           authorityComposition: track.authorityComposition,
           authorityMaster: track.authorityMaster,
           provenanceReference: track.provenanceReference,

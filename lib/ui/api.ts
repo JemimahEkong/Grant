@@ -351,7 +351,6 @@ export type PurchaseView = {
 
 export type CatalogItem = {
   offerId: string;
-  fixtureOfferId: string;
   offerVersion: number;
   trackId: string;
   title: string;
@@ -359,26 +358,13 @@ export type CatalogItem = {
   sellerName: string;
   durationSeconds: number;
   bpm: number | null;
-  source: string | null;
-  sourceUrl: string | null;
-  sourceId: string | null;
   sourceAuthor: string | null;
   licenseCode: string | null;
-  licenseUrl: string | null;
-  attributionRequired: boolean | null;
   attributionText: string | null;
-  commercialUse: boolean | null;
-  derivatives: boolean | null;
-  standaloneRedistribution: boolean | null;
-  previewAllowed: boolean | null;
+  sourceUrl: string | null;
   genre: string | null;
   moods: string[];
   energy: number | null;
-  instrumental: boolean | null;
-  key: string | null;
-  previewKey: string | null;
-  sourceLabel: string | null;
-  provenanceReference: string | null;
   amountBaseUnits: string;
   platformsByUse: PlatformsByUse;
   territory: Brief["territory"];
@@ -395,8 +381,6 @@ export type CatalogResponse = {
   purchasesEnabled: boolean;
   audioAvailable: boolean;
   disclosure: string;
-  offers: unknown[];
-  tracks: unknown[];
   items: CatalogItem[];
 };
 

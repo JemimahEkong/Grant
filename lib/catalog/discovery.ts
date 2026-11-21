@@ -125,6 +125,68 @@ export function sortCatalog(items: CatalogItem[], sort: DiscoverySort, search: s
   return sorted;
 }
 
+export function filtersFromParams(params: URLSearchParams, brief?: Brief | null): DiscoveryFilters {
+  const defaults = brief ? filtersFromBrief(brief) : emptyFilters;
+
+  const useParam = params.get("use");
+  const use: DiscoveryUse = useParam === "all" || useParam === "organic" || useParam === "paid_ad" ? useParam : defaults.use;
+
+  const platformParam = params.get("platform");
+  const platform: Platform | "all" =
+    platformParam === "all"
+      ? "all"
+      : platforms.includes(platformParam as Platform)
+        ? (platformParam as Platform)
+        : defaults.platform;
+
+  const term = params.get("term");
+  const termNumber = term === null ? null : Number(term);
+  const termDays: DiscoveryFilters["termDays"] =
+    termNumber === 0 || termNumber === 90 || termNumber === 180 || termNumber === 365
+      ? termNumber
+      : defaults.termDays;
+
+  const clip = params.get("clip");
+  const clipNumber = clip === null ? null : Number(clip);
+  const minClipSeconds: DiscoveryFilters["minClipSeconds"] =
+    clipNumber === 0 || clipNumber === 15 || clipNumber === 30 || clipNumber === 60
+      ? clipNumber
+      : defaults.minClipSeconds;
+
+  const energy = params.get("energy");
+  const energyNumber = energy === null ? null : Number(energy);
+  const energyValue: DiscoveryFilters["energy"] =
+    energyNumber === 0 || energyNumber === 1 || energyNumber === 2 || energyNumber === 3 || energyNumber === 4 || energyNumber === 5
+      ? energyNumber
+      : defaults.energy;
+
+  const territory = params.get("territory");
+  const territoryValue: DiscoveryTerritory =
+    territory === "all" || territory === "worldwide" || territory === "us" || territory === "uk"
+      ? territory
+      : defaults.territory;
+
+  return {
+    search: params.get("q") ?? defaults.search,
+    use,
+    platform,
+    termDays,
+    minClipSeconds,
+    mood: params.get("mood") ?? defaults.mood,
+    energy: energyValue,
+    territory: territoryValue,
+  };
+}
+
+export function sortFromParam(value: string | null): DiscoverySort {
+  return value === "price" || value === "duration" ? value : "relevance";
+}
+
+export function pageFromParam(value: string | null): number {
+  const page = Number(value);
+  return Number.isInteger(page) && page > 0 ? page : 1;
+}
+
 export function discoverCatalog(
   items: CatalogItem[],
   filters: DiscoveryFilters,

@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { getMe, getWallet, listProjects } from "../lib/ui/actions";
+import { getMe, getWallet, listProjects, prefetchCatalog } from "../lib/ui/actions";
 import type { Me, Project } from "../lib/ui/api";
 import { initials } from "../lib/ui/format";
 
 import { EmptyState, Logo, Spinner, TestnetBadge, TabBar } from "./ui";
+import { PreviewProvider } from "./preview";
 
 type MeContextValue = {
   me: Me;
@@ -65,6 +66,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
       const result = await getMe();
       setMe(result);
       setError(null);
+      prefetchCatalog();
     } catch (failure) {
       const status = (failure as { status?: number }).status;
       if (status === 401) {
@@ -201,8 +203,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { me } = useMe();
   const pathname = usePathname();
   return (
-    <div className="app-shell">
-      <TabBar pathname={pathname} />
+    <PreviewProvider>
+      <div className="app-shell">
+        <TabBar pathname={pathname} />
       <main className="app-main">
         <header className="app-top">
           <div className="app-top-left">
@@ -218,8 +221,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {children}
         <footer className="fine-note app-disclosure">Shows license terms, not legal advice. TESTNET only.</footer>
       </main>
-
-
-    </div>
+      </div>
+    </PreviewProvider>
   );
 }

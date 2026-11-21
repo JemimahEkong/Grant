@@ -4,6 +4,7 @@ import {
   discoverCatalog,
   emptyFilters,
   filtersFromBrief,
+  filtersFromParams,
   moodOptions,
   sortCatalog,
   type DiscoveryFilters,
@@ -25,7 +26,6 @@ const brief: Brief = {
 function item(overrides: Partial<CatalogItem> = {}): CatalogItem {
   return {
     offerId: "offer-1",
-    fixtureOfferId: "offer-1",
     offerVersion: 1,
     trackId: "track-1",
     title: "Morning Edit",
@@ -33,26 +33,13 @@ function item(overrides: Partial<CatalogItem> = {}): CatalogItem {
     sellerName: "Grant Catalog",
     durationSeconds: 60,
     bpm: 120,
-    source: "freesound",
     sourceUrl: "https://freesound.org/s/1",
-    sourceId: "1",
     sourceAuthor: "Ava",
     licenseCode: "cc0",
-    licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
-    attributionRequired: false,
     attributionText: null,
-    commercialUse: true,
-    derivatives: true,
-    standaloneRedistribution: false,
-    previewAllowed: true,
     genre: "ambient",
     moods: ["warm", "cinematic"],
     energy: 3,
-    instrumental: true,
-    key: null,
-    previewKey: "previews/1.mp3",
-    sourceLabel: null,
-    provenanceReference: null,
     amountBaseUnits: "10000000",
     platformsByUse: {
       organic: ["instagram", "tiktok"],
@@ -129,6 +116,25 @@ describe("catalog discovery", () => {
     });
     expect(activeFilterCount(filtersFromBrief(brief))).toBe(5);
     expect(activeFilterCount(emptyFilters)).toBe(0);
+  });
+
+  it("reads filters and sort from the URL with brief defaults", () => {
+    const params = new URLSearchParams("q=night&use=paid_ad&platform=youtube&term=180&clip=60&mood=tense&energy=4&territory=us");
+    expect(filtersFromParams(params, brief)).toMatchObject({
+      search: "night",
+      use: "paid_ad",
+      platform: "youtube",
+      termDays: 180,
+      minClipSeconds: 60,
+      mood: "tense",
+      energy: 4,
+      territory: "us",
+    });
+    expect(filtersFromParams(new URLSearchParams(), brief)).toMatchObject(filtersFromBrief(brief));
+    expect(filtersFromParams(new URLSearchParams("term=999&clip=999"), brief)).toMatchObject({
+      termDays: 90,
+      minClipSeconds: 30,
+    });
   });
 
   it("lists unique moods in order", () => {

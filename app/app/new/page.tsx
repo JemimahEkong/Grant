@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useProjects } from "../../../components/providers";
+import { useVideoPreview } from "../../../components/preview";
 import { PageHeader, Spinner, PrimaryButton } from "../../../components/ui";
 import { createProject } from "../../../lib/ui/actions";
 import type { Brief, Platform } from "../../../lib/licensing/schema";
@@ -31,6 +32,8 @@ const territoryOptions = [
 export default function NewBriefPage() {
   const router = useRouter();
   const { refreshProjects, selectProjectId } = useProjects();
+  const { video, busy: videoBusy, error: videoError, setVideo, clearVideo } = useVideoPreview();
+  const videoInput = useRef<HTMLInputElement>(null);
   const [clientName, setClientName] = useState("");
   const [publicLabel, setPublicLabel] = useState("");
   const [intendedUse, setIntendedUse] = useState<Brief["intendedUse"]>("organic");
@@ -46,6 +49,10 @@ export default function NewBriefPage() {
 
   const selectedTerritory = territoryOptions.find(option => option.value === territory) ?? territoryOptions[0];
 
+  useEffect(() => {
+    if (video) setClipDuration(Math.min(3600, Math.max(1, Math.round(video.duration))));
+  }, [video]);
+
   const sentence = useMemo(() => {
     const platformText = platforms.length
       ? platforms.map(platform => platformOptions.find(option => option.value === platform)?.label ?? platform).join(" and ")
@@ -57,6 +64,16 @@ export default function NewBriefPage() {
 
   function togglePlatform(platform: Platform) {
     setPlatforms(current => (current.includes(platform) ? current.filter(item => item !== platform) : [...current, platform]));
+  }
+
+  async function chooseVideo(file?: File) {
+    if (!file) return;
+    try {
+      const metadata = await setVideo(file);
+      setClipDuration(Math.min(3600, Math.max(1, Math.round(metadata.duration))));
+    } catch {
+      // The video provider keeps the specific read error for the field.
+    }
   }
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
@@ -206,7 +223,10 @@ export default function NewBriefPage() {
         </div>
 
         <div className="field">
-          <span className="micro">Clip duration</span>
+          <div className="row-between">
+            <span className="micro">Clip duration</span>
+            {video ? <span className="micro">From your video</span> : null}
+          </div>
           <div className="chip-group">
             {[15, 30, 60].map(seconds => (
               <button
@@ -214,12 +234,62 @@ export default function NewBriefPage() {
                 type="button"
                 className={`chip-toggle${clipDuration === seconds ? " on" : ""}`}
                 aria-pressed={clipDuration === seconds}
+                disabled={Boolean(video)}
                 onClick={() => setClipDuration(seconds)}
               >
                 {seconds} seconds
               </button>
             ))}
           </div>
+
+          {video ? (
+            <>
+              <div className="video-note" style={{ marginTop: 10 }}>
+                <div>
+                  <div style={{ fontWeight: 600 }}>
+                    {Math.round(video.duration)} sec · {video.width}×{video.height}
+                  </div>
+                  <div className="meta">Your footage stays in this browser tab. It is not uploaded.</div>
+                </div>
+                <button type="button" className="link-button" onClick={clearVideo}>
+                  Clear
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <input
+                ref={videoInput}
+                className="visually-hidden"
+                type="file"
+                accept="video/*"
+                tabIndex={-1}
+                onChange={event => {
+                  const file = event.target.files?.[0];
+                  void chooseVideo(file);
+                  event.target.value = "";
+                }}
+              />
+              <button
+                type="button"
+                className="btn btn-secondary"
+                disabled={videoBusy}
+                onClick={() => videoInput.current?.click()}
+                style={{ marginTop: 10 }}
+              >
+                {videoBusy ? "Reading video…" : "Use my video"}
+              </button>
+              <span className="form-hint">
+                We read the length in your browser to set the clip duration. Your footage never leaves this device.
+              </span>
+            </>
+          )}
+
+          {videoError ? (
+            <p className="error-text" role="alert">
+              {videoError}
+            </p>
+          ) : null}
         </div>
 
         <div className="field">

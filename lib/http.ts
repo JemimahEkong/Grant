@@ -13,6 +13,22 @@ export function jsonResponse(body: unknown, status = 200) {
   });
 }
 
+export function publicJsonResponse(
+  body: unknown,
+  options: { maxAge?: number; sMaxAge?: number; staleWhileRevalidate?: number } = {},
+) {
+  const maxAge = options.maxAge ?? 60;
+  const sMaxAge = options.sMaxAge ?? 300;
+  const staleWhileRevalidate = options.staleWhileRevalidate ?? 600;
+  return Response.json(body, {
+    status: 200,
+    headers: {
+      "Cache-Control": `public, max-age=${maxAge}, s-maxage=${sMaxAge}, stale-while-revalidate=${staleWhileRevalidate}`,
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
+}
+
 export async function parseJsonBody<Schema extends z.ZodType>(
   request: Request,
   schema: Schema,

@@ -75,6 +75,22 @@ export function XIcon({ className }: IconProps) {
   );
 }
 
+export function PlayIcon({ className = "nav-icon" }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M8 5l11 7-11 7z" />
+    </svg>
+  );
+}
+
+export function PauseIcon({ className = "nav-icon" }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M9 5v14M15 5v14" />
+    </svg>
+  );
+}
+
 export function WaveIcon({ className = "wave" }: IconProps) {
   return (
     <span className={className} aria-hidden="true">

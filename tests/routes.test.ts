@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { GET as health } from "../app/api/health/route";
 import { GET as catalog } from "../app/api/catalog/route";
+import { GET as preview } from "../app/api/catalog/[trackId]/preview/route";
+import { GET as download } from "../app/api/purchases/[purchaseId]/download/route";
 import { POST as matches } from "../app/api/license/matches/route";
 import { closeDatabase } from "../lib/db/client";
 
@@ -44,7 +46,36 @@ describe("backend routes", () => {
   });
   it("labels catalog terms as fixtures with CC0 audio and no authority evidence", async () => {
     const response = await catalogResponse();
-    expect(await response.json()).toMatchObject({ mode: "fixture", audioAvailable: true, purchasesEnabled: expect.any(Boolean), offers: expect.any(Array) });
+    expect(response.headers.get("cache-control")).toContain("public");
+    expect(await response.json()).toMatchObject({
+      mode: "fixture",
+      audioAvailable: true,
+      purchasesEnabled: expect.any(Boolean),
+      items: expect.any(Array),
+    });
+  });
+  it("serves preview URLs publicly and returns a clear 404 for unknown tracks", async () => {
+    const previous = process.env.DATABASE_URL;
+    if (process.env.DATABASE_URL_TEST) process.env.DATABASE_URL = process.env.DATABASE_URL_TEST;
+    try {
+      const response = await preview(
+        new Request("http://localhost/api/catalog/not-a-track/preview"),
+        { params: Promise.resolve({ trackId: "not-a-track" }) },
+      );
+      expect(response.status).toBe(404);
+      expect(await response.json()).toMatchObject({ code: "TRACK_NOT_FOUND" });
+    } finally {
+      await closeDatabase();
+      if (previous === undefined) delete process.env.DATABASE_URL;
+      else process.env.DATABASE_URL = previous;
+    }
+  });
+  it("keeps the full audio download behind a session", async () => {
+    const response = await download(
+      new Request("http://localhost/api/purchases/pur_test/download?asset=audio"),
+      { params: Promise.resolve({ purchaseId: "pur_test" }) },
+    );
+    expect(response.status).toBe(401);
   });
   it("returns paid-ad compatibility and specific refusal reasons", async () => {
     const response = await matches(request(body));

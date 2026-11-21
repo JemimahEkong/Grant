@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useProjects } from "../../../components/providers";
+import { LazyMount } from "../../../components/lazy-mount";
+import { PreviewPlayer } from "../../../components/preview";
 import { ClearanceStrip, EmptyState, PageHeader, Spinner, FilterChip, Card, LicenseCredit } from "../../../components/ui";
 import { createQuote, getCatalog } from "../../../lib/ui/actions";
 import type { CatalogItem, CatalogResponse } from "../../../lib/ui/api";
@@ -13,29 +15,48 @@ import {
   activeFilterCount,
   availablePlatforms,
   discoverCatalog,
-  emptyFilters,
-  filtersFromBrief,
+  filtersFromParams,
   moodOptions,
+  pageFromParam,
   platformLabel,
-  type DiscoveryFilters,
+  sortFromParam,
   type DiscoverySort,
-  type DiscoveryTerritory,
   type DiscoveryUse,
 } from "../../../lib/catalog/discovery";
-import type { Platform } from "../../../lib/licensing/schema";
 
 const PAGE_SIZE = 24;
+const filterKeys = ["q", "use", "platform", "term", "clip", "mood", "energy", "territory"];
+
+function CatalogFallback() {
+  return (
+    <>
+      <PageHeader title="Catalog" lede="Browse the catalog. Coverage varies per track. Review the edges before you approve." />
+      <div className="stack">
+        <div className="skeleton" />
+        <div className="skeleton" />
+        <div className="skeleton" />
+      </div>
+    </>
+  );
+}
 
 export default function CatalogPage() {
+  return (
+    <Suspense fallback={<CatalogFallback />}>
+      <CatalogContent />
+    </Suspense>
+  );
+}
+
+function CatalogContent() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { selectedProject, selectedProjectId } = useProjects();
   const [catalog, setCatalog] = useState<CatalogResponse | null>(null);
-  const [filters, setFilters] = useState<DiscoveryFilters>(emptyFilters);
-  const [sort, setSort] = useState<DiscoverySort>("relevance");
-  const [shown, setShown] = useState(PAGE_SIZE);
-  const [usingBrief, setUsingBrief] = useState(false);
+  const [catalogError, setCatalogError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -44,54 +65,68 @@ export default function CatalogPage() {
         if (active) setCatalog(response);
       })
       .catch(failure => {
-        if (active) setError((failure as Error).message);
+        if (active) setCatalogError((failure as Error).message);
       });
     return () => {
       active = false;
     };
   }, []);
 
-  const briefHash = selectedProject?.briefHash ?? null;
-  useEffect(() => {
-    if (!selectedProject) {
-      setFilters(emptyFilters);
-      setUsingBrief(false);
-      return;
-    }
-    setFilters(filtersFromBrief(selectedProject.briefSnapshot));
-    setUsingBrief(true);
-    setShown(PAGE_SIZE);
-  }, [selectedProject?.id, briefHash, selectedProject]);
+  const params = useMemo(() => new URLSearchParams(searchParams.toString()), [searchParams]);
+  const filters = useMemo(
+    () => filtersFromParams(params, selectedProject?.briefSnapshot),
+    [params, selectedProject?.briefSnapshot],
+  );
+  const sort = sortFromParam(params.get("sort"));
+  const requestedPage = pageFromParam(params.get("page"));
+  const usingBrief = !filterKeys.some(key => params.has(key));
+  const filtersActive = activeFilterCount(filters);
 
   const moods = useMemo(() => (catalog ? moodOptions(catalog.items) : []), [catalog]);
+  const moodChoices = filters.mood !== "all" && !moods.includes(filters.mood) ? [filters.mood, ...moods] : moods;
   const items = useMemo(
     () => (catalog ? discoverCatalog(catalog.items, filters, sort) : []),
     [catalog, filters, sort],
   );
-  const visible = items.slice(0, shown);
-  const filtersActive = activeFilterCount(filters);
+  const pageCount = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  const page = Math.min(requestedPage, pageCount);
+  const visible = items.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  function updateFilters(patch: Partial<DiscoveryFilters>) {
-    setFilters(current => ({ ...current, ...patch }));
-    setShown(PAGE_SIZE);
-    setUsingBrief(false);
+  function replaceParams(next: URLSearchParams) {
+    const query = next.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  }
+
+  function setParam(key: string, value: string | number | undefined) {
+    const next = new URLSearchParams(params);
+    if (value === undefined || value === "") next.delete(key);
+    else next.set(key, String(value));
+    next.delete("page");
+    replaceParams(next);
+  }
+
+  function setSort(value: DiscoverySort) {
+    const next = new URLSearchParams(params);
+    if (value === "relevance") next.delete("sort");
+    else next.set("sort", value);
+    next.delete("page");
+    replaceParams(next);
+  }
+
+  function setPage(nextPage: number) {
+    const next = new URLSearchParams(params);
+    if (nextPage <= 1) next.delete("page");
+    else next.set("page", String(nextPage));
+    replaceParams(next);
   }
 
   function resetFilters() {
-    if (selectedProject) {
-      setFilters(filtersFromBrief(selectedProject.briefSnapshot));
-      setUsingBrief(true);
-    } else {
-      setFilters(emptyFilters);
-      setUsingBrief(false);
-    }
-    setSort("relevance");
-    setShown(PAGE_SIZE);
+    replaceParams(new URLSearchParams());
   }
 
   async function review(item: CatalogItem) {
     if (!selectedProjectId) return;
-    setError(null);
+    setQuoteError(null);
     setBusyId(item.trackId);
     try {
       const outcome = await createQuote(selectedProjectId, {
@@ -104,10 +139,10 @@ export default function CatalogPage() {
       if (outcome.purchase) {
         router.push(`/app/purchase/${outcome.purchase.id}`);
       } else {
-        setError(outcome.reasons?.[0]?.message ?? "The quote was refused before a purchase record was created.");
+        setQuoteError(outcome.reasons?.[0]?.message ?? "The quote was refused before a purchase record was created.");
       }
     } catch (failure) {
-      setError((failure as Error).message);
+      setQuoteError((failure as Error).message);
     } finally {
       setBusyId(null);
     }
@@ -130,6 +165,17 @@ export default function CatalogPage() {
     );
   }
 
+  const filterLabels = [
+    filters.search ? `"${filters.search}"` : null,
+    filters.use !== "all" ? (filters.use === "paid_ad" ? "paid ads" : "organic") : null,
+    filters.platform !== "all" ? platformLabel(filters.platform) : null,
+    filters.termDays ? `${filters.termDays}-day term` : null,
+    filters.minClipSeconds ? `${filters.minClipSeconds}s clip` : null,
+    filters.mood !== "all" ? `${filters.mood} mood` : null,
+    filters.energy ? `energy ${filters.energy}+` : null,
+    filters.territory !== "all" ? filters.territory.toUpperCase() : null,
+  ].filter((label): label is string => Boolean(label));
+
   return (
     <>
       <PageHeader title="Catalog" lede="Browse the catalog. Coverage varies per track. Review the edges before you approve." />
@@ -139,7 +185,7 @@ export default function CatalogPage() {
         aria-label="Search tracks by title, artist, genre, or mood"
         placeholder="Search title, artist, genre, or mood"
         value={filters.search}
-        onChange={event => updateFilters({ search: event.target.value })}
+        onChange={event => setParam("q", event.target.value)}
       />
 
       <div className="filters" role="group" aria-label="Filter by use">
@@ -153,7 +199,7 @@ export default function CatalogPage() {
             type="button"
             className={`filter${filters.use === option.value ? " on" : ""}`}
             aria-pressed={filters.use === option.value}
-            onClick={() => updateFilters({ use: option.value })}
+            onClick={() => setParam("use", option.value)}
           >
             {option.label}
           </FilterChip>
@@ -163,11 +209,7 @@ export default function CatalogPage() {
       <div className="filter-grid" aria-label="Catalog filters">
         <label className="filter-field">
           <span>Platform</span>
-          <select
-            className="input"
-            value={filters.platform}
-            onChange={event => updateFilters({ platform: event.target.value as Platform | "all" })}
-          >
+          <select className="input" value={filters.platform} onChange={event => setParam("platform", event.target.value)}>
             <option value="all">Any platform</option>
             {availablePlatforms().map(platform => (
               <option key={platform} value={platform}>
@@ -181,12 +223,12 @@ export default function CatalogPage() {
           <select
             className="input"
             value={filters.termDays}
-            onChange={event => updateFilters({ termDays: Number(event.target.value) as DiscoveryFilters["termDays"] })}
+            onChange={event => setParam("term", event.target.value)}
           >
             <option value={0}>Any term</option>
-            <option value={90}>Covers 90 days</option>
-            <option value={180}>Covers 180 days</option>
-            <option value={365}>Covers 365 days</option>
+            <option value={90}>90 days</option>
+            <option value={180}>180 days</option>
+            <option value={365}>365 days</option>
           </select>
         </label>
         <label className="filter-field">
@@ -194,9 +236,7 @@ export default function CatalogPage() {
           <select
             className="input"
             value={filters.minClipSeconds}
-            onChange={event =>
-              updateFilters({ minClipSeconds: Number(event.target.value) as DiscoveryFilters["minClipSeconds"] })
-            }
+            onChange={event => setParam("clip", event.target.value)}
           >
             <option value={0}>Any clip</option>
             <option value={15}>Covers 15s</option>
@@ -206,13 +246,9 @@ export default function CatalogPage() {
         </label>
         <label className="filter-field">
           <span>Mood</span>
-          <select
-            className="input"
-            value={filters.mood}
-            onChange={event => updateFilters({ mood: event.target.value })}
-          >
+          <select className="input" value={filters.mood} onChange={event => setParam("mood", event.target.value)}>
             <option value="all">Any mood</option>
-            {moods.map(mood => (
+            {moodChoices.map(mood => (
               <option key={mood} value={mood}>
                 {mood}
               </option>
@@ -224,7 +260,7 @@ export default function CatalogPage() {
           <select
             className="input"
             value={filters.energy}
-            onChange={event => updateFilters({ energy: Number(event.target.value) as DiscoveryFilters["energy"] })}
+            onChange={event => setParam("energy", event.target.value)}
           >
             <option value={0}>Any energy</option>
             <option value={1}>1 or more</option>
@@ -239,7 +275,7 @@ export default function CatalogPage() {
           <select
             className="input"
             value={filters.territory}
-            onChange={event => updateFilters({ territory: event.target.value as DiscoveryTerritory })}
+            onChange={event => setParam("territory", event.target.value)}
           >
             <option value="all">Any territory</option>
             <option value="worldwide">Worldwide</option>
@@ -249,14 +285,7 @@ export default function CatalogPage() {
         </label>
         <label className="filter-field">
           <span>Sort</span>
-          <select
-            className="input"
-            value={sort}
-            onChange={event => {
-              setSort(event.target.value as DiscoverySort);
-              setShown(PAGE_SIZE);
-            }}
-          >
+          <select className="input" value={sort} onChange={event => setSort(event.target.value as DiscoverySort)}>
             <option value="relevance">Relevance</option>
             <option value="price">Price, low to high</option>
             <option value="duration">Shortest first</option>
@@ -266,25 +295,39 @@ export default function CatalogPage() {
 
       <div className="catalog-count" aria-live="polite">
         <span>
-          {items.length} {items.length === 1 ? "track" : "tracks"}
-          {filtersActive > 0 ? ` · ${filtersActive} ${filtersActive === 1 ? "filter" : "filters"}` : ""}
-          {usingBrief ? " · defaults from your brief" : ""}
+          {!catalog
+            ? "Loading tracks…"
+            : `${items.length} ${items.length === 1 ? "track" : "tracks"}${
+                filtersActive > 0 ? ` · ${filtersActive} ${filtersActive === 1 ? "filter" : "filters"}` : ""
+              }${usingBrief ? " · defaults from your brief" : ""}${
+                items.length > 0 ? ` · page ${page} of ${pageCount}` : ""
+              }`}
         </span>
-        {filtersActive > 0 || !usingBrief ? (
+        {catalog && !usingBrief ? (
           <button className="link-button" type="button" onClick={resetFilters}>
             Reset filters
           </button>
         ) : null}
       </div>
 
-      {error ? (
+      {quoteError ? (
         <div className="refused-panel" role="alert">
           <div className="h">Quote refused</div>
-          <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.5 }}>{error}</p>
+          <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.5 }}>{quoteError}</p>
         </div>
       ) : null}
 
-      {!catalog ? (
+      {catalogError && !catalog ? (
+        <EmptyState
+          title="Catalog unavailable"
+          description={`The catalog could not be loaded. ${catalogError}`}
+          action={
+            <button className="btn btn-secondary" type="button" onClick={() => window.location.reload()}>
+              Try again
+            </button>
+          }
+        />
+      ) : !catalog ? (
         <div className="stack">
           <div className="skeleton" />
           <div className="skeleton" />
@@ -293,7 +336,11 @@ export default function CatalogPage() {
       ) : items.length === 0 ? (
         <EmptyState
           title="No tracks match these filters"
-          description="No track covers every selected term. Remove the narrowest filter, usually the platform or clip length."
+          description={
+            filterLabels.length
+              ? `No track covers ${filterLabels.join(", ")}. Remove the narrowest filter, usually the platform or clip length.`
+              : "No track matches the current brief. Try a wider term or a shorter clip."
+          }
           action={
             <button className="btn btn-secondary" type="button" onClick={resetFilters}>
               Reset filters
@@ -302,38 +349,55 @@ export default function CatalogPage() {
         />
       ) : (
         <>
-          {visible.map(item => (
-            <Card className="track-card" key={item.trackId}>
-              <div className="track-card-head">
-                <div>
-                  <div className="nm">{item.title}</div>
-                  <div className="track-meta">
-                    {item.sourceAuthor ?? item.sellerName} · {formatDuration(item.durationSeconds)} ·{" "}
-                    {item.bpm ? `${item.bpm} BPM` : "beatless"}
+          {visible.map((item, index) => (
+            <LazyMount key={item.trackId} priority={index < 2} placeholderHeight={210}>
+              <Card className="track-card">
+                <div className="track-card-head">
+                  <div>
+                    <div className="nm">{item.title}</div>
+                    <div className="track-meta">
+                      {item.sourceAuthor ?? item.sellerName} · {formatDuration(item.durationSeconds)} ·{" "}
+                      {item.bpm ? `${item.bpm} BPM` : "beatless"}
+                    </div>
+                    <LicenseCredit
+                      licenseCode={item.licenseCode}
+                      attributionText={item.attributionText}
+                      sourceUrl={item.sourceUrl}
+                    />
                   </div>
-                  <LicenseCredit
-                    licenseCode={item.licenseCode}
-                    attributionText={item.attributionText}
-                    sourceUrl={item.sourceUrl}
-                  />
+                  <div className="pr">{formatUsdc(item.amountBaseUnits)}</div>
                 </div>
-                <div className="pr">{formatUsdc(item.amountBaseUnits)}</div>
-              </div>
-              <div style={{ marginTop: 10 }}>
-                <ClearanceStrip segments={buildCatalogStrip(item)} />
-              </div>
-              <div className="track-foot">
-                <span>{coverageSummary(item)}</span>
-                <button className="review-link" type="button" onClick={() => void review(item)} disabled={busyId === item.trackId}>
-                  {busyId === item.trackId ? "Quoting…" : "Review →"}
-                </button>
-              </div>
-            </Card>
+                <PreviewPlayer trackId={item.trackId} title={item.title} compact />
+                <div style={{ marginTop: 10 }}>
+                  <ClearanceStrip segments={buildCatalogStrip(item)} />
+                </div>
+                <div className="track-foot">
+                  <span>{coverageSummary(item)}</span>
+                  <button className="review-link" type="button" onClick={() => void review(item)} disabled={busyId === item.trackId}>
+                    {busyId === item.trackId ? "Quoting…" : "Review →"}
+                  </button>
+                </div>
+              </Card>
+            </LazyMount>
           ))}
-          {visible.length < items.length ? (
-            <button className="btn btn-secondary show-more" type="button" onClick={() => setShown(count => count + PAGE_SIZE)}>
-              Show {Math.min(PAGE_SIZE, items.length - visible.length)} more of {items.length}
-            </button>
+
+          {pageCount > 1 ? (
+            <nav className="pagination" aria-label="Catalog pages">
+              <button className="btn btn-secondary" type="button" disabled={page <= 1} onClick={() => setPage(page - 1)}>
+                Previous
+              </button>
+              <span>
+                Page {page} of {pageCount}
+              </span>
+              <button
+                className="btn btn-secondary"
+                type="button"
+                disabled={page >= pageCount}
+                onClick={() => setPage(page + 1)}
+              >
+                Next
+              </button>
+            </nav>
           ) : null}
         </>
       )}

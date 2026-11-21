@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ClearanceStrip, Legend, PageHeader, Spinner, StatusChip, PrimaryButton, SecondaryButton, Sheet, LicenseCredit } from "../../../../components/ui";
+import { PreviewPlayer } from "../../../../components/preview";
 import {
   approvePurchase,
   createAddonQuote,
@@ -335,6 +336,7 @@ export default function PurchasePage() {
         </div>
         <StatusChip status={status} />
       </div>
+      <PreviewPlayer trackId={purchase.trackId} title={title} />
       <div className="review-price">
         <span className="p">{formatUsdc(purchase.priceBaseUnits)}</span>
         <span className="u">USDC · testnet · one purchase</span>

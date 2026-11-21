@@ -56,8 +56,21 @@ export async function getProject(projectId: string): Promise<ProjectView> {
   return request(`/api/projects/${projectId}`);
 }
 
-export async function getCatalog(): Promise<CatalogResponse> {
-  return request("/api/catalog");
+let catalogCache: { promise: Promise<CatalogResponse>; createdAt: number } | null = null;
+const catalogCacheMs = 60_000;
+
+export function getCatalog(): Promise<CatalogResponse> {
+  if (catalogCache && Date.now() - catalogCache.createdAt < catalogCacheMs) return catalogCache.promise;
+  const entry = { promise: request<CatalogResponse>("/api/catalog"), createdAt: Date.now() };
+  catalogCache = entry;
+  void entry.promise.catch(() => {
+    if (catalogCache === entry) catalogCache = null;
+  });
+  return entry.promise;
+}
+
+export function prefetchCatalog(): void {
+  void getCatalog().catch(() => {});
 }
 
 export async function createQuote(

@@ -1,0 +1,18 @@
+{
+  "base": "https://grant-roan.vercel.app",
+  "viewport": "390x844",
+  "throttle": "Fast 3G 1.6Mbps down / 750kbps up / 150ms",
+  "cacheDisabled": true,
+  "appReadyMs": 6869,
+  "headerMs": 1193,
+  "firstCardMs": 1299,
+  "mountedCards": 3,
+  "countText": "149 tracks · 4 filters · defaults from your brief · page 1 of 7",
+  "overflow": 0,
+  "catalogBytes": 122513,
+  "warm": {
+    "headerMs": 113,
+    "firstCardMs": 131
+  },
+  "errors": []
+}

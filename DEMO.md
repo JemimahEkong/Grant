@@ -47,9 +47,9 @@ Action: Click Review another track to return to the catalog.
 
 Screen: `https://grant-roan.vercel.app/app/catalog`
 
-Action: Choose Morning Edit. Click Review. Show the quote, the clearance strip, and the exclusions. Scroll to the approval button.
+Action: Choose Morning Edit. Play the 40-second excerpt. Point at the progress bar and the remaining time. Then click Review and show the quote, the clearance strip, and the exclusions. Scroll to the approval button.
 
-Say: "Morning Edit covers the brief. The quote shows the exact terms and the exclusions. I approve these exact terms."
+Say: "Morning Edit covers the brief. This is the 40-second preview, not the full file. The quote shows the exact terms and the exclusions. I approve these exact terms."
 
 Action: Click Approve and pay 1.00. Keep the pointer away from the button after clicking.
 
