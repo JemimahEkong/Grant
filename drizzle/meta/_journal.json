@@ -57,6 +57,13 @@
       "when": 1795208373510,
       "tag": "0007_common_speedball",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795290187898,
+      "tag": "0008_demonic_menace",
+      "breakpoints": true
     }
   ]
 }

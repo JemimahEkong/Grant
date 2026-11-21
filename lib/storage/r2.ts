@@ -1,4 +1,4 @@
-import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { RepositoryError } from "../db/errors";
 
@@ -87,6 +87,17 @@ export async function putPrivateObject(input: {
     }),
   );
   return { key: input.key, etag: result.ETag ?? null };
+}
+
+export async function deletePrivateObject(input: {
+  key: string;
+  config?: R2Config;
+  client?: S3Client;
+}): Promise<void> {
+  assertPrivateObjectKey(input.key);
+  const config = input.config ?? resolveR2Config();
+  const client = input.client ?? getR2Client(config);
+  await client.send(new DeleteObjectCommand({ Bucket: config.bucketName, Key: input.key }));
 }
 
 export async function createSignedDownload(input: {

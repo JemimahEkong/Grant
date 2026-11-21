@@ -2,11 +2,24 @@ import { describe, expect, it } from "vitest";
 import { GET as health } from "../app/api/health/route";
 import { GET as catalog } from "../app/api/catalog/route";
 import { POST as matches } from "../app/api/license/matches/route";
+import { closeDatabase } from "../lib/db/client";
 
 const body = { intendedUse: "paid_ad", platforms: ["instagram", "tiktok"], territory: { worldwide: true, countries: [] }, termDays: 90, clipDurationSeconds: 30, clientDelivery: true, reposting: false, futureCampaigns: false };
 
 function request(value: unknown) {
   return new Request("http://localhost/api/license/matches", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(value) });
+}
+
+async function catalogResponse() {
+  const previous = process.env.DATABASE_URL;
+  if (process.env.DATABASE_URL_TEST) process.env.DATABASE_URL = process.env.DATABASE_URL_TEST;
+  try {
+    return await catalog();
+  } finally {
+    await closeDatabase();
+    if (previous === undefined) delete process.env.DATABASE_URL;
+    else process.env.DATABASE_URL = previous;
+  }
 }
 
 describe("backend routes", () => {
@@ -30,7 +43,8 @@ describe("backend routes", () => {
     ]);
   });
   it("labels catalog terms as fixtures with CC0 audio and no authority evidence", async () => {
-    expect(await catalog().json()).toMatchObject({ mode: "fixture", audioAvailable: true, purchasesEnabled: expect.any(Boolean), offers: expect.any(Array) });
+    const response = await catalogResponse();
+    expect(await response.json()).toMatchObject({ mode: "fixture", audioAvailable: true, purchasesEnabled: expect.any(Boolean), offers: expect.any(Array) });
   });
   it("returns paid-ad compatibility and specific refusal reasons", async () => {
     const response = await matches(request(body));

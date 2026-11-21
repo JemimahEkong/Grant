@@ -257,6 +257,7 @@ export type Track = {
   source: string;
   sourceUrl: string;
   sourceId: string;
+  sourceAuthor: string | null;
   licenseCode: string;
   licenseUrl: string | null;
   attributionRequired: boolean;
@@ -361,6 +362,7 @@ export type CatalogItem = {
   source: string | null;
   sourceUrl: string | null;
   sourceId: string | null;
+  sourceAuthor: string | null;
   licenseCode: string | null;
   licenseUrl: string | null;
   attributionRequired: boolean | null;

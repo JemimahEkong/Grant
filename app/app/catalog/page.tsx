@@ -73,7 +73,7 @@ export default function CatalogPage() {
   if (!selectedProject) {
     return (
       <>
-        <PageHeader title="Catalog" lede="Three demo tracks with CC0 audio. Coverage varies per track. That is the point." />
+        <PageHeader title="Catalog" lede="Browse the catalog. Coverage varies per track. That is the point." />
         <EmptyState
           title="Create a brief first"
           description="The catalog checks every track against your confirmed brief. A project gives the quote something real to compare."
@@ -89,7 +89,7 @@ export default function CatalogPage() {
 
   return (
     <>
-      <PageHeader title="Catalog" lede="Three demo tracks with CC0 audio. Coverage varies per track. Review the edges before you approve." />
+      <PageHeader title="Catalog" lede="Browse the catalog. Coverage varies per track. Review the edges before you approve." />
       <input className="input" type="search" aria-label="Search tracks" placeholder="Search tracks" value={search} onChange={event => setSearch(event.target.value)} />
       <div className="filters" role="group" aria-label="Filter tracks">
         {[
@@ -124,7 +124,7 @@ export default function CatalogPage() {
           <div className="skeleton" />
         </div>
       ) : items.length === 0 ? (
-        <EmptyState title="No tracks match this filter" description="Clear the filter. The demo catalog has three tracks with different coverage." />
+        <EmptyState title="No tracks match this filter" description="Clear the filter. No track matches the selected coverage filter." />
       ) : (
         items.map(item => (
           <Card className="track-card" key={item.trackId}>

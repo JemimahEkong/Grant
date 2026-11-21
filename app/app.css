@@ -477,6 +477,29 @@
   gap: 12px;
 }
 
+.track-card-head > div {
+  min-width: 0;
+}
+
+.track-card-head .pr {
+  flex: none;
+}
+
+.track-card-head .nm,
+.track-card-head .track-meta,
+.license-credit {
+  overflow-wrap: anywhere;
+}
+
+.track-foot {
+  flex-wrap: wrap;
+}
+
+.track-foot > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .track-card-head .nm {
   font-size: 13px;
   font-weight: 600;

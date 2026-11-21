@@ -3,7 +3,7 @@
 How Grant goes from three placeholder tracks to a real library of 200, without signing a
 single rights holder, without mainnet, and without lying about any license.
 
-Status: Phase 1 is built and deployed. The three existing tracks carry source license records and credits. The Phase 2 Freesound adapter is built. The first run accepted 52 tracks before the 30-minute command limit and produced a partial report recovered from the database. The broad query included non-music results, so a music-only filter and incremental reporting are required before the 150-track run. Phase 3 through 5 are pending.
+Status: Phase 1 and Phase 2 are built. The catalog has 150 tracks and 150 active base offers. 147 offers were created for ingested tracks and the 3 existing tracks keep their testnet offers. The three fixture base offers are inactive so each track has one active base offer. 48 non-music tracks were removed after the music filter. Zero tracks are orphaned. Phase 3 is next. A newly ingested track was quoted and bought end to end with license `GRANT-2026-C0C6D3D77D`.
 
 ---
 

@@ -88,6 +88,35 @@ export function isDurationAllowed(seconds: number): boolean {
   return Number.isFinite(seconds) && seconds >= 15 && seconds <= 480;
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+export function cleanTitle(title: string, author: string): string {
+  let value = title.replace(/\s+/g, " ").trim();
+  const authorName = author.trim();
+  if (authorName) {
+    value = value.replace(new RegExp(`\\s+by\\s+${escapeRegExp(authorName)}\\s*$`, "i"), "").trim();
+  }
+  if (value.length > 60) {
+    const sliced = value.slice(0, 60);
+    const lastSpace = sliced.lastIndexOf(" ");
+    value = (lastSpace >= 20 ? sliced.slice(0, lastSpace) : sliced).trim();
+  }
+  return value || "Untitled";
+}
+
+const forbiddenMusicTerms = /\b(textures?|soundscapes?|field[- ]recordings?|foley|drones?|sample[- ]packs?|sfx|sound[- ]effects?|sound[- ]design|vocals?|vocal[- ]samples?|voices?|singing|acapellas?|a cappella)\b/i;
+
+export function isMusicCandidate(input: { title: string; tags: string[]; description?: string | null }): { ok: true } | { ok: false; reason: string } {
+  const text = `${input.title} ${input.tags.join(" ")} ${input.description ?? ""}`;
+  const forbidden = text.match(forbiddenMusicTerms);
+  if (forbidden) return { ok: false, reason: `forbidden_term:${forbidden[1].toLowerCase()}` };
+  const hasMusicTag = input.tags.some(tag => /(^|[\s_-])music($|[\s_-])/i.test(tag));
+  if (!hasMusicTag) return { ok: false, reason: "missing_music_tag" };
+  return { ok: true };
+}
+
 const genres = ["acoustic", "ambient", "cinematic", "electronic"] as const;
 const moodRules: Array<{ mood: string; matches: RegExp }> = [
   { mood: "warm", matches: /warm|soft|mellow|cozy|gentle/i },

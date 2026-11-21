@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { FreesoundApiError, normalizeFreesoundSound, searchFreesound } from "../lib/catalog/adapters/freesound";
-import { draftMetadata, isDurationAllowed, licenseFactsFor, mapFreesoundLicense } from "../lib/catalog/license-policy";
+import { cleanTitle, draftMetadata, isDurationAllowed, isMusicCandidate, licenseFactsFor, mapFreesoundLicense } from "../lib/catalog/license-policy";
 
 describe("Freesound license mapping", () => {
   it("accepts CC0 and both CC-BY versions with their exact labels", () => {
@@ -81,6 +81,7 @@ describe("catalog quality gates", () => {
     });
     expect(candidate?.source).toBe("freesound");
     expect(candidate?.sourceId).toBe("449812");
+    expect(candidate?.sourceAuthor).toBe("tyballer92");
     expect(candidate?.sourceUrl).toBe("https://freesound.org/people/tyballer92/sounds/449812/");
     expect(candidate?.audioUrl).toBe("https://cdn.example/preview.mp3");
   });
@@ -117,5 +118,42 @@ describe("Freesound API errors", () => {
     expect(error).toMatchObject({ status: 403, apiMessage: "Invalid token" });
     expect(String(error.message)).not.toContain(key);
     expect(JSON.stringify(error.apiMessage)).not.toContain(key);
+  });
+});
+
+describe("catalog title hygiene and music filter", () => {
+  it("collapses whitespace, strips a trailing byline, and cuts at a word boundary", () => {
+    expect(cleanTitle("  A   Long   Song by Alice  ", "Alice")).toBe("A Long Song");
+    const long = cleanTitle(`${"word ".repeat(20)}by Bob`, "Bob");
+    expect(long.length).toBeLessThanOrEqual(60);
+    expect(long.endsWith(" ")).toBe(false);
+  });
+
+  it("accepts a music-tagged track without forbidden subject matter", () => {
+    expect(isMusicCandidate({ title: "Warm Guitar", tags: ["music", "acoustic", "warm"] })).toEqual({ ok: true });
+  });
+
+  it("rejects textures, field recordings, foley, drones, sample packs, SFX, and vocals", () => {
+    for (const title of [
+      "Rain texture",
+      "Forest soundscape",
+      "Field recording in Vienna",
+      "Foley footsteps",
+      "Dark drone",
+      "Sample pack 01",
+      "SFX whoosh",
+      "Vocal sample",
+      "A cappella stem",
+    ]) {
+      const result = isMusicCandidate({ title, tags: ["music"] });
+      expect(result.ok).toBe(false);
+    }
+  });
+
+  it("rejects a track with no music tag", () => {
+    expect(isMusicCandidate({ title: "Untitled", tags: ["ambient", "loop"] })).toEqual({
+      ok: false,
+      reason: "missing_music_tag",
+    });
   });
 });

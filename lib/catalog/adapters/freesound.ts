@@ -1,3 +1,4 @@
+import { cleanTitle } from "../license-policy";
 import type { CatalogCandidate } from "../types";
 
 export type FreesoundSound = {
@@ -35,8 +36,9 @@ export function normalizeFreesoundSound(sound: FreesoundSound): CatalogCandidate
   return {
     source: "freesound",
     sourceId: String(sound.id),
-    title: sound.name,
+    title: cleanTitle(sound.name, sound.username),
     author: sound.username,
+    sourceAuthor: sound.username,
     sourceUrl: `https://freesound.org/people/${encodeURIComponent(sound.username)}/sounds/${sound.id}/`,
     licenseRaw: sound.license,
     durationSeconds: Number(sound.duration),
@@ -46,9 +48,32 @@ export function normalizeFreesoundSound(sound: FreesoundSound): CatalogCandidate
   };
 }
 
+async function apiError(response: Response): Promise<FreesoundApiError> {
+  let apiMessage: string | null = null;
+  try {
+    const body = (await response.json()) as { detail?: unknown; error?: unknown; message?: unknown };
+    const raw = body.detail ?? body.error ?? body.message;
+    if (typeof raw === "string") apiMessage = raw;
+    else if (raw) apiMessage = JSON.stringify(raw);
+  } catch {
+    apiMessage = null;
+  }
+  return new FreesoundApiError(response.status, apiMessage);
+}
+
+export async function getFreesoundSound(input: { apiKey: string; id: string }): Promise<FreesoundSound> {
+  const url = new URL(`https://freesound.org/apiv2/sounds/${encodeURIComponent(input.id)}/`);
+  url.searchParams.set("fields", fields);
+  url.searchParams.set("token", input.apiKey);
+  const response = await fetch(url);
+  if (!response.ok) throw await apiError(response);
+  return (await response.json()) as FreesoundSound;
+}
+
 export async function searchFreesound(input: {
   apiKey: string;
   query: string;
+  filter?: string;
   page?: number;
   pageSize?: number;
 }): Promise<FreesoundSearchResult> {
@@ -60,20 +85,10 @@ export async function searchFreesound(input: {
   url.searchParams.set("page_size", String(pageSize));
   url.searchParams.set("fields", fields);
   url.searchParams.set("token", input.apiKey);
+  if (input.filter) url.searchParams.set("filter", input.filter);
 
   const response = await fetch(url);
-  if (!response.ok) {
-    let apiMessage: string | null = null;
-    try {
-      const body = (await response.json()) as { detail?: unknown; error?: unknown; message?: unknown };
-      const raw = body.detail ?? body.error ?? body.message;
-      if (typeof raw === "string") apiMessage = raw;
-      else if (raw) apiMessage = JSON.stringify(raw);
-    } catch {
-      apiMessage = null;
-    }
-    throw new FreesoundApiError(response.status, apiMessage);
-  }
+  if (!response.ok) throw await apiError(response);
   const body = (await response.json()) as {
     count?: number;
     next?: string | null;

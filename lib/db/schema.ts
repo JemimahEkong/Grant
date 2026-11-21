@@ -247,6 +247,7 @@ export const tracks = pgTable(
     source: trackSourceEnum("source").notNull(),
     sourceUrl: text("source_url").notNull(),
     sourceId: text("source_id").notNull(),
+    sourceAuthor: text("source_author"),
     licenseCode: trackLicenseCodeEnum("license_code").notNull(),
     licenseUrl: text("license_url"),
     attributionRequired: boolean("attribution_required").notNull().default(false),

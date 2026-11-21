@@ -18,6 +18,7 @@ export type DemoTrack = {
   source: TrackSource;
   sourceUrl: string;
   sourceId: string;
+  sourceAuthor: string;
   licenseCode: TrackLicenseCode;
   licenseUrl: string;
   attributionRequired: boolean;
@@ -42,7 +43,7 @@ export type DemoTrack = {
 export const demoTracks: readonly DemoTrack[] = [
   {
     id: "morning-edit", title: "Morning Edit", sellerId: "seller-demo-morning", sellerName: "Halcyon Fields", durationSeconds: 60, bpm: 129,
-    source: "freesound", sourceUrl: "https://freesound.org/people/tyballer92/sounds/449812", sourceId: "449812",
+    source: "freesound", sourceUrl: "https://freesound.org/people/tyballer92/sounds/449812", sourceId: "449812", sourceAuthor: "tyballer92",
     licenseCode: "cc0", licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
     attributionRequired: false, attributionText: "CC0 · public domain",
     commercialUse: true, derivatives: true, standaloneRedistribution: true, previewAllowed: true,
@@ -54,7 +55,7 @@ export const demoTracks: readonly DemoTrack[] = [
   },
   {
     id: "quiet-cut", title: "Quiet Cut", sellerId: "seller-demo-quiet", sellerName: "Northline Audio", durationSeconds: 48, bpm: null,
-    source: "freesound", sourceUrl: "https://freesound.org/people/indigo.cloud/sounds/254856", sourceId: "254856",
+    source: "freesound", sourceUrl: "https://freesound.org/people/indigo.cloud/sounds/254856", sourceId: "254856", sourceAuthor: "indigo.cloud",
     licenseCode: "cc0", licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
     attributionRequired: false, attributionText: "CC0 · public domain",
     commercialUse: true, derivatives: true, standaloneRedistribution: true, previewAllowed: true,
@@ -66,7 +67,7 @@ export const demoTracks: readonly DemoTrack[] = [
   },
   {
     id: "studio-pulse", title: "Studio Pulse", sellerId: "seller-demo-studio", sellerName: "Kite & Co.", durationSeconds: 173, bpm: 117,
-    source: "freesound", sourceUrl: "https://freesound.org/people/Seth_Makes_Sounds/sounds/687006", sourceId: "687006",
+    source: "freesound", sourceUrl: "https://freesound.org/people/Seth_Makes_Sounds/sounds/687006", sourceId: "687006", sourceAuthor: "Seth_Makes_Sounds",
     licenseCode: "cc0", licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
     attributionRequired: false, attributionText: "CC0 · public domain",
     commercialUse: true, derivatives: true, standaloneRedistribution: true, previewAllowed: true,

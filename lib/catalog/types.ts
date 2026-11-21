@@ -5,6 +5,7 @@ export type CatalogCandidate = {
   sourceId: string;
   title: string;
   author: string;
+  sourceAuthor: string;
   sourceUrl: string;
   licenseRaw: string;
   durationSeconds: number;
