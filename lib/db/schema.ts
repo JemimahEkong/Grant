@@ -22,6 +22,7 @@ export const licensePlatformEnum = pgEnum("license_platform", ["instagram", "fac
 export const intendedUseEnum = pgEnum("license_intended_use", ["organic", "paid_ad"]);
 export const offerKindEnum = pgEnum("offer_kind", ["base", "addon"]);
 export const trackSourceEnum = pgEnum("track_source", ["freesound", "fma", "pixabay", "original"]);
+export const sellerApplicationStatusEnum = pgEnum("seller_application_status", ["submitted", "approved", "rejected"]);
 export const trackLicenseCodeEnum = pgEnum("license_code", [
   "cc0",
   "cc-by-4.0",
@@ -665,6 +666,31 @@ export const refusals = pgTable(
   ],
 );
 
+export const sellerApplications = pgTable(
+  "seller_applications",
+  {
+    id: text("id").primaryKey(),
+    ownerId: text("owner_id").notNull(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    payoutAddress: text("payout_address").notNull(),
+    catalogueUrl: text("catalogue_url").notNull(),
+    termsGranted: text("terms_granted").notNull(),
+    status: sellerApplicationStatusEnum("status").notNull().default("submitted"),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  table => [
+    index("seller_applications_owner_idx").on(table.ownerId),
+    index("seller_applications_status_idx").on(table.status),
+    check("seller_applications_name_nonempty", sql`length(btrim(${table.name})) > 0`),
+    check("seller_applications_email_nonempty", sql`length(btrim(${table.email})) > 0`),
+    check("seller_applications_payout_nonempty", sql`length(btrim(${table.payoutAddress})) > 0`),
+    check("seller_applications_catalogue_nonempty", sql`length(btrim(${table.catalogueUrl})) > 0`),
+    check("seller_applications_terms_nonempty", sql`length(btrim(${table.termsGranted})) > 0`),
+  ],
+);
+
 export const budgetAdjustments = pgTable(
   "budget_adjustments",
   {
@@ -703,3 +729,4 @@ export type ArtifactRow = typeof artifacts.$inferSelect;
 export type ShareLinkRow = typeof shareLinks.$inferSelect;
 export type RefusalRow = typeof refusals.$inferSelect;
 export type BudgetAdjustmentRow = typeof budgetAdjustments.$inferSelect;
+export type SellerApplicationRow = typeof sellerApplications.$inferSelect;

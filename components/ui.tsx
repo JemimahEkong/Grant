@@ -162,7 +162,7 @@ export function TabBar({ pathname }: { pathname: string }) {
     { href: "/app/profile", label: "Profile", icon: ProfileIcon, PdfIcon },
   ];
   return <nav className="tab-bar" aria-label="Primary"><div className="tab-brand"><Logo href="/app" /><TestnetBadge /></div>{items.map((item, index) => {
-    const active = pathname === item.href || (index === 1 && pathname.startsWith("/app/purchase/"));
+    const active = pathname === item.href || (index === 1 && (pathname.startsWith("/app/purchase/") || pathname === "/app/shortlist"));
     const Icon = item.icon;
     return <Link key={item.href} href={item.href} aria-label={item.label} aria-current={active ? "page" : undefined} className={`tab-link${active ? " on" : ""}${index === 2 ? " tab-centre" : ""}`}><span className="tab-icon"><Icon /></span><span>{item.label}</span></Link>;
   })}<p className="tab-foot">TESTNET USDC only. No real funds.<br />One approval per purchase.</p></nav>;

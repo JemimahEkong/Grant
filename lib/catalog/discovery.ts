@@ -43,6 +43,8 @@ export function filtersFromBrief(brief: Brief): DiscoveryFilters {
     platform: brief.platforms.length === 1 ? brief.platforms[0] : "all",
     termDays: brief.termDays <= 90 ? 90 : brief.termDays <= 180 ? 180 : brief.termDays <= 365 ? 365 : 0,
     minClipSeconds: brief.clipDurationSeconds <= 15 ? 15 : brief.clipDurationSeconds <= 30 ? 30 : 60,
+    mood: brief.mood ?? emptyFilters.mood,
+    energy: (brief.energy ?? emptyFilters.energy) as DiscoveryFilters["energy"],
     territory: brief.territory.worldwide
       ? "worldwide"
       : brief.territory.countries.includes("us")
@@ -75,7 +77,12 @@ export function filterCatalog(items: CatalogItem[], filters: DiscoveryFilters): 
     }
 
     if (filters.termDays > 0 && item.maximumTermDays < filters.termDays) return false;
-    if (filters.minClipSeconds > 0 && item.maximumClipSeconds < filters.minClipSeconds) return false;
+    if (
+      filters.minClipSeconds > 0 &&
+      (item.durationSeconds < filters.minClipSeconds || item.maximumClipSeconds < filters.minClipSeconds)
+    ) {
+      return false;
+    }
     if (filters.mood !== "all" && !item.moods.includes(filters.mood)) return false;
     if (filters.energy > 0 && (item.energy ?? 0) < filters.energy) return false;
 

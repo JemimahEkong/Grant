@@ -28,6 +28,8 @@ export const briefSchema = z.strictObject({
   territory: territorySchema,
   termDays: z.number().int().min(1).max(3650),
   clipDurationSeconds: z.number().int().min(1).max(3600),
+  mood: z.string().min(1).max(32).optional(),
+  energy: z.number().int().min(1).max(5).optional(),
   clientDelivery: z.boolean(),
   reposting: z.boolean(),
   futureCampaigns: z.boolean(),

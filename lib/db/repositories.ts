@@ -22,6 +22,7 @@ import {
   receipts,
   refusals,
   reservations,
+  sellerApplications,
   tracks,
   type ApprovalRow,
   type ArtifactRow,
@@ -35,6 +36,7 @@ import {
   type ReceiptRow,
   type RefusalRow,
   type ReservationRow,
+  type SellerApplicationRow,
 } from "./schema";
 
 const activeIntentStatuses = ["quoted", "approved", "reserved", "payment_pending", "settled", "issuing", "ready"] as const;
@@ -425,6 +427,33 @@ export async function createProject(
     })
     .returning();
   return project;
+}
+
+export async function createSellerApplication(
+  db: GrantDatabase,
+  input: {
+    ownerId: string;
+    name: string;
+    email: string;
+    payoutAddress: string;
+    catalogueUrl: string;
+    termsGranted: string;
+  },
+): Promise<SellerApplicationRow> {
+  const [application] = await db
+    .insert(sellerApplications)
+    .values({
+      id: randomId("sap"),
+      ownerId: input.ownerId,
+      name: input.name,
+      email: input.email,
+      payoutAddress: input.payoutAddress,
+      catalogueUrl: input.catalogueUrl,
+      termsGranted: input.termsGranted,
+      status: "submitted",
+    })
+    .returning();
+  return application;
 }
 
 export async function listProjectsForOwner(db: GrantDatabase, ownerId: string): Promise<ProjectRow[]> {

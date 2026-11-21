@@ -5,12 +5,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useProjects } from "../../../components/providers";
 import { LazyMount } from "../../../components/lazy-mount";
-import { PreviewPlayer } from "../../../components/preview";
-import { ClearanceStrip, EmptyState, PageHeader, Spinner, FilterChip, Card, LicenseCredit } from "../../../components/ui";
+import { TrackCard } from "../../../components/track-card";
+import { EmptyState, PageHeader, Spinner, FilterChip } from "../../../components/ui";
 import { createQuote, getCatalog } from "../../../lib/ui/actions";
 import type { CatalogItem, CatalogResponse } from "../../../lib/ui/api";
-import { formatDuration, formatUsdc } from "../../../lib/ui/format";
-import { buildCatalogStrip, coverageSummary } from "../../../lib/ui/strip";
 import {
   activeFilterCount,
   availablePlatforms,
@@ -351,33 +349,7 @@ function CatalogContent() {
         <>
           {visible.map((item, index) => (
             <LazyMount key={item.trackId} priority={index < 2} placeholderHeight={210}>
-              <Card className="track-card">
-                <div className="track-card-head">
-                  <div>
-                    <div className="nm">{item.title}</div>
-                    <div className="track-meta">
-                      {item.sourceAuthor ?? item.sellerName} · {formatDuration(item.durationSeconds)} ·{" "}
-                      {item.bpm ? `${item.bpm} BPM` : "beatless"}
-                    </div>
-                    <LicenseCredit
-                      licenseCode={item.licenseCode}
-                      attributionText={item.attributionText}
-                      sourceUrl={item.sourceUrl}
-                    />
-                  </div>
-                  <div className="pr">{formatUsdc(item.amountBaseUnits)}</div>
-                </div>
-                <PreviewPlayer trackId={item.trackId} title={item.title} compact />
-                <div style={{ marginTop: 10 }}>
-                  <ClearanceStrip segments={buildCatalogStrip(item)} />
-                </div>
-                <div className="track-foot">
-                  <span>{coverageSummary(item)}</span>
-                  <button className="review-link" type="button" onClick={() => void review(item)} disabled={busyId === item.trackId}>
-                    {busyId === item.trackId ? "Quoting…" : "Review →"}
-                  </button>
-                </div>
-              </Card>
+              <TrackCard item={item} onReview={item => void review(item)} busy={busyId === item.trackId} />
             </LazyMount>
           ))}
 

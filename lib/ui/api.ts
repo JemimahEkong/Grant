@@ -359,6 +359,8 @@ export type CatalogItem = {
   durationSeconds: number;
   bpm: number | null;
   sourceAuthor: string | null;
+  authority: { composition: boolean | null; master: boolean | null };
+  createdAt: string;
   licenseCode: string | null;
   attributionText: string | null;
   sourceUrl: string | null;
@@ -382,6 +384,19 @@ export type CatalogResponse = {
   audioAvailable: boolean;
   disclosure: string;
   items: CatalogItem[];
+};
+
+export type SellerApplication = {
+  id: string;
+  ownerId: string;
+  name: string;
+  email: string;
+  payoutAddress: string;
+  catalogueUrl: string;
+  termsGranted: string;
+  status: "submitted" | "approved" | "rejected";
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type QuoteOutcome = {

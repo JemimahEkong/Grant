@@ -212,6 +212,19 @@ export default function ProfilePage() {
         </div>
       )}
 
+      <div className="section-label" style={{ marginTop: 20 }}>
+        <span className="micro">Sell music</span>
+      </div>
+      <Link href="/app/sellers/apply" className="list-row" style={{ width: "100%" }}>
+        <span>
+          Apply to sell music
+          <span className="m" style={{ display: "block", marginTop: 2 }}>
+            Manual review. No payout and no auto-approval.
+          </span>
+        </span>
+        <span className="m">Submit ›</span>
+      </Link>
+
       <div style={{ marginTop: 22 }}>
         <SecondaryButton className="btn-wide signout-button" type="button" onClick={() => void logOut()} disabled={signingOut}>
           <span>{signingOut ? "Signing out…" : "Sign out"}</span>

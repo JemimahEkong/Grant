@@ -35,6 +35,8 @@ function item(overrides: Partial<CatalogItem> = {}): CatalogItem {
     bpm: 120,
     sourceUrl: "https://freesound.org/s/1",
     sourceAuthor: "Ava",
+    authority: { composition: true, master: true },
+    createdAt: "2026-11-18T00:00:00.000Z",
     licenseCode: "cc0",
     attributionText: null,
     genre: "ambient",
@@ -80,11 +82,12 @@ describe("catalog discovery", () => {
 
   it("filters by covered term, clip length, mood, and energy", () => {
     const short = item({ offerId: "o2", trackId: "t2", maximumTermDays: 30, maximumClipSeconds: 15, energy: 1, moods: ["gritty"] });
-    const items = [item(), short];
-    expect(discoverCatalog(items, filters({ termDays: 90 }), "relevance").map(i => i.trackId)).toEqual(["track-1"]);
+    const shortTrack = item({ offerId: "o3", trackId: "t3", durationSeconds: 12 });
+    const items = [item(), short, shortTrack];
+    expect(discoverCatalog(items, filters({ termDays: 90 }), "relevance").map(i => i.trackId)).toEqual(["track-1", "t3"]);
     expect(discoverCatalog(items, filters({ minClipSeconds: 30 }), "relevance").map(i => i.trackId)).toEqual(["track-1"]);
     expect(discoverCatalog(items, filters({ mood: "gritty" }), "relevance").map(i => i.trackId)).toEqual(["t2"]);
-    expect(discoverCatalog(items, filters({ energy: 3 }), "relevance").map(i => i.trackId)).toEqual(["track-1"]);
+    expect(discoverCatalog(items, filters({ energy: 3 }), "relevance").map(i => i.trackId)).toEqual(["track-1", "t3"]);
   });
 
   it("keeps worldwide offers for a country filter and hides limited offers from worldwide", () => {

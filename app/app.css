@@ -1896,3 +1896,27 @@
     animation: none !important;
   }
 }
+
+/* Phase 5a: ranked shortlist. */
+.shortlist-budget {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 4px 0 16px;
+  color: var(--muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.shortlist-cards {
+  display: flex;
+  flex-direction: column;
+}
+
+.shortlist-more {
+  display: flex;
+  justify-content: center;
+  margin: 18px 0 6px;
+}

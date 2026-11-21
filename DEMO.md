@@ -37,7 +37,7 @@ Say: "I'm signed in as the editor. The wallet has 2.00 testnet USDC. The project
 
 Screen: `https://grant-roan.vercel.app/app/catalog`
 
-Action: Open the catalog. Find Studio Pulse. Click Review. The purchase page opens in the refused state. Scroll just enough to show the refusal reasons.
+Action: Open the shortlist first. Read two reasons. Click Show all matching tracks to open the catalog. Find Studio Pulse. Click Review. The purchase page opens in the refused state. Scroll just enough to show the refusal reasons.
 
 Say: "This is the refusal state. The brief asks for Instagram and TikTok, worldwide, for 90 days. This offer is YouTube only, Nigeria only, 30 days. Grant refuses before any signature, reservation, or charge."
 
@@ -47,7 +47,7 @@ Action: Click Review another track to return to the catalog.
 
 Screen: `https://grant-roan.vercel.app/app/catalog`
 
-Action: Choose Morning Edit. Play the 40-second excerpt. Point at the progress bar and the remaining time. Then click Review and show the quote, the clearance strip, and the exclusions. Scroll to the approval button.
+Action: From the catalog, choose Morning Edit. Play the 40-second excerpt. Point at the progress bar and the remaining time. Then click Review and show the quote, the clearance strip, and the exclusions. Scroll to the approval button.
 
 Say: "Morning Edit covers the brief. This is the 40-second preview, not the full file. The quote shows the exact terms and the exclusions. I approve these exact terms."
 

@@ -10,7 +10,7 @@ license PDF, and a link your client can open.
 
 ![live](https://img.shields.io/badge/live-grant--roan.vercel.app-0D3B22?style=flat-square)
 ![network](https://img.shields.io/badge/network-Stellar%20testnet-6FCF97?style=flat-square)
-![tests](https://img.shields.io/badge/tests-112%20passing-0D3B22?style=flat-square)
+![tests](https://img.shields.io/badge/tests-126%20passing-0D3B22?style=flat-square)
 ![language](https://img.shields.io/badge/TypeScript-strict-C9F24C?style=flat-square)
 
 [Open the live app](https://grant-roan.vercel.app) · [Try it in 5 minutes](#try-grant) · [See a real payment](#a-real-payment-you-can-check) · [How it is built](#how-it-is-built)
@@ -88,7 +88,7 @@ instead of signing again.
 1. **Write the brief.** One sentence, then four groups of chips: platforms, how long,
    where, and who it's for. The chips are the real input. There is no AI guessing what
    you meant.
-2. **Hear the tracks.** Browse the catalog, each with its coverage strip and price. Play a 40-second excerpt. If you picked footage on the brief, the player shows it muted under the music.
+2. **Get a shortlist.** Grant ranks eight tracks against the brief and gives each one a true reason. Open the full catalogue for more. Play a 40-second excerpt. If you picked footage on the brief, the player shows it muted under the music.
 3. **Read the review screen.** What's covered, what isn't, what the price leaves in your
    budget, and one Approve button.
 4. **Approve.** The app reserves the amount and signs one payment from your wallet.
@@ -169,7 +169,7 @@ which term is missing, and charges nothing.
 | Payments | Stellar testnet with x402 (`@x402/*` 2.30.0) |
 | Files | Cloudflare R2, private bucket, short-lived download links |
 | PDF | pdf-lib |
-| Tests | Vitest, 112 tests |
+| Tests | Vitest, 126 tests |
 
 The browser never holds a signing key. Each person gets their own Stellar account, and
 the secret is encrypted before it is stored. Downloads are only issued after the app
@@ -187,11 +187,12 @@ npm run dev
 ```
 
 ```bash
-npm test            # 112 tests
+npm test            # 126 tests
 npm run typecheck
 npm run lint
 npm run build
 npm run demo:reset  # fresh account and project for a new recording
+# Seller applications live at /app/sellers/apply and stay in submitted status.
 npm run catalog:ingest # Freesound ingest; requires FREESOUND_API_KEY
 npm run previews:prepare # 40-second previews for tracks that lack one
 ```

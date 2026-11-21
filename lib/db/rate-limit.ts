@@ -3,7 +3,7 @@ import type { GrantDatabase } from "./client";
 import { RepositoryError } from "./errors";
 import { rateLimits } from "./schema";
 
-export type RateLimitAction = "quote" | "approve" | "pay" | "reconcile" | "delivery" | "share" | "wallet" | "faucet";
+export type RateLimitAction = "quote" | "approve" | "pay" | "reconcile" | "delivery" | "share" | "wallet" | "faucet" | "seller";
 
 const defaults: Record<RateLimitAction, { limit: number; windowSeconds: number }> = {
   quote: { limit: 20, windowSeconds: 60 },
@@ -14,6 +14,7 @@ const defaults: Record<RateLimitAction, { limit: number; windowSeconds: number }
   share: { limit: 10, windowSeconds: 60 },
   wallet: { limit: 20, windowSeconds: 60 },
   faucet: { limit: 3, windowSeconds: 60 },
+  seller: { limit: 5, windowSeconds: 60 },
 };
 
 export async function consumeRateLimit(

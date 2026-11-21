@@ -15,6 +15,7 @@ import {
   type Purchase,
   type PurchaseView,
   type QuoteOutcome,
+  type SellerApplication,
 } from "./api";
 import type { Brief } from "../licensing/schema";
 
@@ -54,6 +55,16 @@ export async function createProject(input: {
 
 export async function getProject(projectId: string): Promise<ProjectView> {
   return request(`/api/projects/${projectId}`);
+}
+
+export async function createSellerApplication(input: {
+  name: string;
+  email: string;
+  payoutAddress: string;
+  catalogueUrl: string;
+  termsGranted: string;
+}): Promise<{ application: SellerApplication }> {
+  return request("/api/sellers/applications", { method: "POST", body: JSON.stringify(input) });
 }
 
 let catalogCache: { promise: Promise<CatalogResponse>; createdAt: number } | null = null;

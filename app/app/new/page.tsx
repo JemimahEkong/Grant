@@ -21,6 +21,8 @@ const termOptions = [
   { value: 365, label: "1 year" },
 ];
 
+const moodOptions = ["minimal", "playful", "cinematic", "driving", "tense", "uplifting", "warm", "gritty"];
+
 const territoryOptions = [
   { value: "worldwide", label: "Worldwide", code: null },
   { value: "NG", label: "Nigeria", code: "NG" },
@@ -41,6 +43,8 @@ export default function NewBriefPage() {
   const [termDays, setTermDays] = useState(90);
   const [territory, setTerritory] = useState("worldwide");
   const [clipDuration, setClipDuration] = useState(30);
+  const [mood, setMood] = useState("any");
+  const [energy, setEnergy] = useState(0);
   const [clientDelivery, setClientDelivery] = useState(true);
   const [reposting, setReposting] = useState(false);
   const [futureCampaigns, setFutureCampaigns] = useState(false);
@@ -59,8 +63,10 @@ export default function NewBriefPage() {
       : "no platforms";
     const useText = intendedUse === "paid_ad" ? "paid ad" : "organic";
     const territoryText = selectedTerritory.code ? selectedTerritory.label : "worldwide";
-    return `${clipDuration} second ${useText} video, ${platformText}, ${termDays === 365 ? "1 year" : `${termDays} days`}, ${territoryText}, for ${clientName.trim() || "your client"}. ${clientDelivery ? "Client delivery allowed" : "Client delivery excluded"}. ${reposting ? "Reposting allowed" : "Reposting excluded"}. ${futureCampaigns ? "Future campaigns allowed" : "Future campaigns excluded"}.`;
-  }, [clientDelivery, clientName, clipDuration, futureCampaigns, intendedUse, platforms, reposting, selectedTerritory, termDays]);
+    const moodText = mood === "any" ? "" : `${mood} mood, `;
+    const energyText = energy === 0 ? "" : `energy ${energy}, `;
+    return `${clipDuration} second ${useText} video, ${moodText}${energyText}${platformText}, ${termDays === 365 ? "1 year" : `${termDays} days`}, ${territoryText}, for ${clientName.trim() || "your client"}. ${clientDelivery ? "Client delivery allowed" : "Client delivery excluded"}. ${reposting ? "Reposting allowed" : "Reposting excluded"}. ${futureCampaigns ? "Future campaigns allowed" : "Future campaigns excluded"}.`;
+  }, [clientDelivery, clientName, clipDuration, energy, futureCampaigns, intendedUse, mood, platforms, reposting, selectedTerritory, termDays]);
 
   function togglePlatform(platform: Platform) {
     setPlatforms(current => (current.includes(platform) ? current.filter(item => item !== platform) : [...current, platform]));
@@ -93,6 +99,8 @@ export default function NewBriefPage() {
       territory: selectedTerritory.code ? { worldwide: false, countries: [selectedTerritory.code] } : { worldwide: true, countries: [] },
       termDays,
       clipDurationSeconds: clipDuration,
+      ...(mood === "any" ? {} : { mood }),
+      ...(energy === 0 ? {} : { energy }),
       clientDelivery,
       reposting,
       futureCampaigns,
@@ -106,7 +114,7 @@ export default function NewBriefPage() {
       });
       await refreshProjects(result.project.id);
       selectProjectId(result.project.id);
-      router.push("/app/catalog");
+      router.push("/app/shortlist");
     } catch (failure) {
       setError((failure as Error).message);
     } finally {
@@ -290,6 +298,62 @@ export default function NewBriefPage() {
               {videoError}
             </p>
           ) : null}
+        </div>
+
+        <div className="field">
+          <div className="row-between">
+            <span className="micro">Mood (optional)</span>
+            <span className="muted" style={{ fontSize: 13 }}>Used for ranking</span>
+          </div>
+          <div className="chip-group">
+            <button
+              type="button"
+              className={`chip-toggle${mood === "any" ? " on" : ""}`}
+              aria-pressed={mood === "any"}
+              onClick={() => setMood("any")}
+            >
+              Any mood
+            </button>
+            {moodOptions.map(option => (
+              <button
+                key={option}
+                type="button"
+                className={`chip-toggle${mood === option ? " on" : ""}`}
+                aria-pressed={mood === option}
+                onClick={() => setMood(option)}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="field">
+          <div className="row-between">
+            <span className="micro">Energy (optional)</span>
+            <span className="muted" style={{ fontSize: 13 }}>1 calm to 5 driving</span>
+          </div>
+          <div className="chip-group">
+            <button
+              type="button"
+              className={`chip-toggle${energy === 0 ? " on" : ""}`}
+              aria-pressed={energy === 0}
+              onClick={() => setEnergy(0)}
+            >
+              Any energy
+            </button>
+            {[1, 2, 3, 4, 5].map(level => (
+              <button
+                key={level}
+                type="button"
+                className={`chip-toggle${energy === level ? " on" : ""}`}
+                aria-pressed={energy === level}
+                onClick={() => setEnergy(level)}
+              >
+                {level}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="field">
