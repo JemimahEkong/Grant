@@ -169,7 +169,7 @@ which term is missing, and charges nothing.
 | Payments | Stellar testnet with x402 (`@x402/*` 2.30.0) |
 | Files | Cloudflare R2, private bucket, short-lived download links |
 | PDF | pdf-lib |
-| Tests | Vitest, 97 tests |
+| Tests | Vitest, 104 tests |
 
 The browser never holds a signing key. Each person gets their own Stellar account, and
 the secret is encrypted before it is stored. Downloads are only issued after the app
@@ -186,7 +186,7 @@ npm run dev
 ```
 
 ```bash
-npm test            # 97 tests
+npm test            # 104 tests
 npm run typecheck
 npm run lint
 npm run build
