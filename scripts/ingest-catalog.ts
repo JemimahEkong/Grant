@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { createDatabase, resolveDatabaseUrl } from "../lib/db/client";
-import { searchFreesound } from "../lib/catalog/adapters/freesound";
+import { FreesoundApiError, searchFreesound } from "../lib/catalog/adapters/freesound";
 import { ingestCandidate } from "../lib/catalog/ingest";
 
 const reportPath = "agent-state/catalog-ingest-report.json";
@@ -33,6 +33,11 @@ function writeReport() {
   fs.writeFileSync(reportPath, JSON.stringify(report, null, 2) + "\n");
 }
 
+function redact(value: string | null | undefined): string | null | undefined {
+  if (!value || !apiKey) return value;
+  return value.split(apiKey).join("[redacted]");
+}
+
 async function main() {
   if (!apiKey) {
     writeReport();
@@ -54,17 +59,30 @@ async function main() {
     "tense gritty",
   ];
   const seen = new Set<string>();
+  let stop = false;
 
   try {
     for (const query of queries) {
-      if (report.accepted.length >= limit) break;
+      if (stop || report.accepted.length >= limit) break;
       let page = 1;
       while (report.accepted.length < limit) {
         let result;
         try {
           result = await searchFreesound({ apiKey, query, page, pageSize: 50 });
         } catch (error) {
-          report.failed.push({ sourceId: `search:${query}:${page}`, reason: error instanceof Error ? error.message : "search_failed" });
+          if (error instanceof FreesoundApiError && (error.status === 401 || error.status === 403)) {
+            const reason = redact(`Freesound rejected the API key with HTTP ${error.status}: ${error.apiMessage ?? "No API message."}`);
+            report.status = "blocked";
+            report.reason = reason ?? "Freesound rejected the API key.";
+            report.failed.push({ sourceId: "search", reason: report.reason });
+            stop = true;
+            process.exitCode = 1;
+            break;
+          }
+          report.failed.push({
+            sourceId: `search:${query}:${page}`,
+            reason: redact(error instanceof Error ? error.message : "search_failed") ?? "search_failed",
+          });
           break;
         }
         if (result.candidates.length === 0) break;
@@ -92,12 +110,13 @@ async function main() {
             });
           }
         }
-        if (!result.next) break;
+        if (stop || !result.next) break;
         page += 1;
         await new Promise(resolve => setTimeout(resolve, 250));
       }
+      if (stop) break;
     }
-    report.status = report.accepted.length >= limit ? "completed" : "partial";
+    if (!stop) report.status = report.accepted.length >= limit ? "completed" : "partial";
   } finally {
     await database.close();
     writeReport();
@@ -110,7 +129,7 @@ async function main() {
 
 main().catch(error => {
   report.status = "failed";
-  report.reason = error instanceof Error ? error.message : "unknown_error";
+  report.reason = redact(error instanceof Error ? error.message : "unknown_error") ?? "unknown_error";
   writeReport();
   console.error("Catalog ingest failed:", report.reason);
   process.exitCode = 1;

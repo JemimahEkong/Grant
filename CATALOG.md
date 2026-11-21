@@ -3,7 +3,7 @@
 How Grant goes from three placeholder tracks to a real library of 200, without signing a
 single rights holder, without mainnet, and without lying about any license.
 
-Status: Phase 1 is built and deployed. The three existing tracks carry source license records and credits. The Phase 2 Freesound adapter and report path are built, but ingestion is blocked on `FREESOUND_API_KEY`. No scraping was attempted. Phases 3 through 5 are pending.
+Status: Phase 1 is built and deployed. The three existing tracks carry source license records and credits. The Phase 2 Freesound adapter is built. The first run accepted 52 tracks before the 30-minute command limit and produced a partial report recovered from the database. The broad query included non-music results, so a music-only filter and incremental reporting are required before the 150-track run. Phase 3 through 5 are pending.
 
 ---
 

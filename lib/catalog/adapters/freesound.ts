@@ -17,6 +17,16 @@ export type FreesoundSearchResult = {
   count: number;
 };
 
+export class FreesoundApiError extends Error {
+  constructor(
+    public readonly status: number,
+    public readonly apiMessage: string | null,
+  ) {
+    super(`Freesound rejected the request with HTTP ${status}.`);
+    this.name = "FreesoundApiError";
+  }
+}
+
 const fields = "id,name,username,license,duration,description,tags,previews";
 
 export function normalizeFreesoundSound(sound: FreesoundSound): CatalogCandidate | null {
@@ -53,7 +63,16 @@ export async function searchFreesound(input: {
 
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`Freesound search failed with ${response.status}.`);
+    let apiMessage: string | null = null;
+    try {
+      const body = (await response.json()) as { detail?: unknown; error?: unknown; message?: unknown };
+      const raw = body.detail ?? body.error ?? body.message;
+      if (typeof raw === "string") apiMessage = raw;
+      else if (raw) apiMessage = JSON.stringify(raw);
+    } catch {
+      apiMessage = null;
+    }
+    throw new FreesoundApiError(response.status, apiMessage);
   }
   const body = (await response.json()) as {
     count?: number;

@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { normalizeFreesoundSound } from "../lib/catalog/adapters/freesound";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { FreesoundApiError, normalizeFreesoundSound, searchFreesound } from "../lib/catalog/adapters/freesound";
 import { draftMetadata, isDurationAllowed, licenseFactsFor, mapFreesoundLicense } from "../lib/catalog/license-policy";
 
 describe("Freesound license mapping", () => {
@@ -95,5 +95,27 @@ describe("catalog quality gates", () => {
         duration: 30,
       }),
     ).toBeNull();
+  });
+});
+
+describe("Freesound API errors", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("surfaces a 403 status and API message without exposing the key", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        new Response(JSON.stringify({ detail: "Invalid token" }), {
+          status: 403,
+          headers: { "content-type": "application/json" },
+        }),
+      ),
+    );
+    const key = "test-secret-key";
+    const error = await searchFreesound({ apiKey: key, query: "test" }).catch(caught => caught);
+    expect(error).toBeInstanceOf(FreesoundApiError);
+    expect(error).toMatchObject({ status: 403, apiMessage: "Invalid token" });
+    expect(String(error.message)).not.toContain(key);
+    expect(JSON.stringify(error.apiMessage)).not.toContain(key);
   });
 });

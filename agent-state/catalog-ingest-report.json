@@ -1,11 +1,272 @@
 {
-  "status": "blocked",
+  "status": "partial",
   "source": "freesound",
-  "reason": "FREESOUND_API_KEY is missing",
-  "startedAt": "2026-11-20T21:03:15.748Z",
-  "finishedAt": "2026-11-20T21:03:15.752Z",
+  "reason": "The first ingest exceeded the 30 minute command limit before writing the report. Accepted tracks were recovered from the database. No rejection or failure entries were written by the timed-out process.",
+  "startedAt": "2026-11-21T07:47:12.677Z",
+  "finishedAt": "2026-11-21T07:47:12.677Z",
   "requestedLimit": 150,
-  "accepted": [],
+  "accepted": [
+    {
+      "sourceId": "132020",
+      "title": "Lazaro Valiente @ San Lazaro",
+      "trackId": "freesound-132020"
+    },
+    {
+      "sourceId": "187513",
+      "title": "[FX] ambient echo 2",
+      "trackId": "freesound-187513"
+    },
+    {
+      "sourceId": "187515",
+      "title": "[FX] ambient echo 1",
+      "trackId": "freesound-187515"
+    },
+    {
+      "sourceId": "187518",
+      "title": "[FX] ambient echo 5",
+      "trackId": "freesound-187518"
+    },
+    {
+      "sourceId": "187520",
+      "title": "[FX] ambient echo 3",
+      "trackId": "freesound-187520"
+    },
+    {
+      "sourceId": "187522",
+      "title": "[FX] ambient echo 7",
+      "trackId": "freesound-187522"
+    },
+    {
+      "sourceId": "202968",
+      "title": "Gliss.aif",
+      "trackId": "freesound-202968"
+    },
+    {
+      "sourceId": "252704",
+      "title": "140812_Vienna_CafeZentral_R.wav",
+      "trackId": "freesound-252704"
+    },
+    {
+      "sourceId": "252705",
+      "title": "140812_Vienna_CafeZentral_F.wav",
+      "trackId": "freesound-252705"
+    },
+    {
+      "sourceId": "263394",
+      "title": "Orchestra_Warm_Up.wav",
+      "trackId": "freesound-263394"
+    },
+    {
+      "sourceId": "347815",
+      "title": "Warm Breeze.mp3",
+      "trackId": "freesound-347815"
+    },
+    {
+      "sourceId": "458425",
+      "title": "Warm guitar rhythm Intro",
+      "trackId": "freesound-458425"
+    },
+    {
+      "sourceId": "458426",
+      "title": "Warm guitar rhythm glitched Intro",
+      "trackId": "freesound-458426"
+    },
+    {
+      "sourceId": "51230",
+      "title": "Atmospheric Ambient Spacy Synth Beat.wav",
+      "trackId": "freesound-51230"
+    },
+    {
+      "sourceId": "520974",
+      "title": "ambientPiece",
+      "trackId": "freesound-520974"
+    },
+    {
+      "sourceId": "541865",
+      "title": "Minimal Ambient",
+      "trackId": "freesound-541865"
+    },
+    {
+      "sourceId": "545851",
+      "title": "Acoustical Blues G-Am-C-D.wav",
+      "trackId": "freesound-545851"
+    },
+    {
+      "sourceId": "548174",
+      "title": "Tender Moments Acoustic Loop C.wav",
+      "trackId": "freesound-548174"
+    },
+    {
+      "sourceId": "566342",
+      "title": "Acoustic traffic signal for blind pedestrians",
+      "trackId": "freesound-566342"
+    },
+    {
+      "sourceId": "575249",
+      "title": "warm up on acoustic guitar 190629_0045.wav",
+      "trackId": "freesound-575249"
+    },
+    {
+      "sourceId": "706730",
+      "title": "lofi1 110BPM Dmin.wav",
+      "trackId": "freesound-706730"
+    },
+    {
+      "sourceId": "710122",
+      "title": "Friendly 80BPM BMIN",
+      "trackId": "freesound-710122"
+    },
+    {
+      "sourceId": "724493",
+      "title": "98bpm 49bpm drum kit and drum machine",
+      "trackId": "freesound-724493"
+    },
+    {
+      "sourceId": "744879",
+      "title": "Soft Piano and Acoustic Guitar",
+      "trackId": "freesound-744879"
+    },
+    {
+      "sourceId": "745587",
+      "title": "Tranquil Guitar Harmony",
+      "trackId": "freesound-745587"
+    },
+    {
+      "sourceId": "746694",
+      "title": "Elevated Mood with Acoustic Guitar",
+      "trackId": "freesound-746694"
+    },
+    {
+      "sourceId": "761373",
+      "title": "Calm Acoustic Guitar for Serene Moments",
+      "trackId": "freesound-761373"
+    },
+    {
+      "sourceId": "780545",
+      "title": "Gentle, Subtle guitar background noise for Game/film/TV etc",
+      "trackId": "freesound-780545"
+    },
+    {
+      "sourceId": "832732",
+      "title": "Archtop Jazz Guitar Solo - Emotional, Chords and Solo Notes #001",
+      "trackId": "freesound-832732"
+    },
+    {
+      "sourceId": "837368",
+      "title": "Helsinki Cathedral – Organ Warm-Up & Natural Reverberation (Ambience)",
+      "trackId": "freesound-837368"
+    },
+    {
+      "sourceId": "852835",
+      "title": "Ambient Drone-based Soundscape with Shimmering Tones on Top",
+      "trackId": "freesound-852835"
+    },
+    {
+      "sourceId": "854858",
+      "title": "Breathing Cathedral Sacred Drone by Mantice",
+      "trackId": "freesound-854858"
+    },
+    {
+      "sourceId": "855740",
+      "title": "Spectrally Matched Rain Ambient - Part 5",
+      "trackId": "freesound-855740"
+    },
+    {
+      "sourceId": "859607",
+      "title": "Sleepy Upright Piano Seamless Loop",
+      "trackId": "freesound-859607"
+    },
+    {
+      "sourceId": "860123",
+      "title": "Low Frequency Organic Ambient Texture with Glitches on Top",
+      "trackId": "freesound-860123"
+    },
+    {
+      "sourceId": "861210",
+      "title": "Ambient Drones, Wind and Chimes Growing into your Mind Soundscape",
+      "trackId": "freesound-861210"
+    },
+    {
+      "sourceId": "863677",
+      "title": "26.07.21- Real Human Heartbeat - Contact Mic Recording 1",
+      "trackId": "freesound-863677"
+    },
+    {
+      "sourceId": "863678",
+      "title": "26.07.21- Real Human Heartbeat - Contact Mic Recording 2",
+      "trackId": "freesound-863678"
+    },
+    {
+      "sourceId": "863682",
+      "title": "26.07.21- Blood Flow and Heartbeat - Organic Body Resonance 1",
+      "trackId": "freesound-863682"
+    },
+    {
+      "sourceId": "863683",
+      "title": "26.07.21- Blood Flow and Heartbeat - Organic Body Resonance 2",
+      "trackId": "freesound-863683"
+    },
+    {
+      "sourceId": "863685",
+      "title": "26.07.21- Blood Flow and Heartbeat - Organic Body Resonance  3",
+      "trackId": "freesound-863685"
+    },
+    {
+      "sourceId": "863688",
+      "title": "26.07.21- Real Human Heartbeat - Contact Mic Recording 3",
+      "trackId": "freesound-863688"
+    },
+    {
+      "sourceId": "863689",
+      "title": "26.07.21- Real Human Heartbeat - Contact Mic Recording 4",
+      "trackId": "freesound-863689"
+    },
+    {
+      "sourceId": "863690",
+      "title": "26.07.21- Real Human Heartbeat - Contact Mic Recording 5",
+      "trackId": "freesound-863690"
+    },
+    {
+      "sourceId": "866345",
+      "title": "Ambient Soundscape with Human Voice and Drone in the Background",
+      "trackId": "freesound-866345"
+    },
+    {
+      "sourceId": "868783",
+      "title": "Steel_Tongue_Drum_SFX_01-2",
+      "trackId": "freesound-868783"
+    },
+    {
+      "sourceId": "868784",
+      "title": "Steel_Tongue_Drum_SFX_02-2",
+      "trackId": "freesound-868784"
+    },
+    {
+      "sourceId": "868785",
+      "title": "Steel_Tongue_Drum_SFX_03-2",
+      "trackId": "freesound-868785"
+    },
+    {
+      "sourceId": "868786",
+      "title": "Steel_Tongue_Drum_SFX_04-2",
+      "trackId": "freesound-868786"
+    },
+    {
+      "sourceId": "868787",
+      "title": "Steel_Tongue_Drum_SFX_05-2",
+      "trackId": "freesound-868787"
+    },
+    {
+      "sourceId": "873537",
+      "title": "Slow_Memory_80BPM",
+      "trackId": "freesound-873537"
+    },
+    {
+      "sourceId": "874990",
+      "title": "Warm Copyright Free Acoustic Guitar - \"The Color Orange\"",
+      "trackId": "freesound-874990"
+    }
+  ],
   "rejected": [],
   "failed": [],
   "skipped": []
