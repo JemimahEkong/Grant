@@ -13,5 +13,5 @@
 - Phase 3 verification: 149 of 150 tracks match the demo brief defaults (one track does not cover the brief). The screen shows 24 cards with Show 24 more of 149. Author search EchoCinematics matches 1, mood tense matches 82, energy 3 or more matches 53, and reset returns to 149. Load was 3.1s at 390px with zero horizontal overflow and no console errors.
 - Next: Phase 4 (video-optional preview) and Phase 5 (shortlist reasons, seller applications, freeze) per CATALOG.md.
 - Key handling: the Freesound key is in `.env.local` only, is gitignored, is absent from tracked files, and is not in Vercel. Rotate it after the hackathon. Never print, log, report, or commit it.
-- Blocker: missing Freesound API key. The test database is slow, so the suite runs with one worker, 60 second timeouts, and one short-lived test connection.
+- Blocker: none for the catalog. The Freesound key is present in `.env.local` only. The test database is slow, so the suite runs with one worker, 60 second timeouts, and one short-lived test connection.
 - Warnings: npm audit reports dev-tool vulnerabilities in drizzle-kit/esbuild and vitest/picomatch. Fixing them needs breaking major-version changes. Vitest emits a CommonJS/ESM native-loader warning.
