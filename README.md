@@ -15,6 +15,8 @@ license PDF, and a link your client can open.
 
 [Open the live app](https://grant-roan.vercel.app) · [Try it in 5 minutes](#try-grant) · [See a real payment](#a-real-payment-you-can-check) · [How it is built](#how-it-is-built)
 
+Built for [EmpowerHer: Building the Agent Economy](https://stallion.so/hackathons/cmvxtv3xe000l0klnb8go9zly) · agentic payments on Stellar with x402
+
 <img src="docs/hero.png" alt="Grant landing page" width="100%" />
 
 </div>
