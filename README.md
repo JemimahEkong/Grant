@@ -167,13 +167,15 @@ None of this is visible to the editor. That is the point.
 | Sign in | Email and password. No wallet app to install |
 | Setup | Four steps: create your test wallet, switch it on, add USDC, get free test money |
 | Home | Your balance, what's left in the budget, and what you bought |
-| Brief | One sentence and the chip groups |
-| Catalog | The catalog, with coverage and price |
+| Brief | One sentence, the chip groups, and an optional video whose length is read in the browser |
+| Shortlist | The eight best matches, each with one true reason, plus the full catalogue |
+| Catalog | All 150 tracks with search, filters, coverage and price |
 | Review | The strip, the exclusions, the price, and Approve |
 | Pending | Submitted, not confirmed. One button: check again |
 | License | PDF, audio, payment details, and a share link |
 | Purchases | Everything you bought, refused, or left unfinished |
 | Wallet | Your address, QR code, balance, and history |
+| Seller apply | A form for rights holders. Submissions stay in review; no payout is created |
 | Proof | The page your client opens. No account needed |
 
 ## Try Grant
@@ -183,9 +185,15 @@ Five minutes. No wallet extension. No real money.
 1. Open [grant-roan.vercel.app](https://grant-roan.vercel.app) and press **Start a demo project**.
 2. Make an account with any email and password.
 3. Finish the four setup steps. The faucet gives you 2.00 test USDC.
-4. Create a project and keep the default brief.
-5. Open **Quiet Cut**, read the strip, and approve.
-6. Download the PDF and the audio, then open the proof link in a private window.
+4. Create a project and keep the default brief. If you have a short video on your phone, add it: the length is read in the browser and the file never leaves your device.
+5. Read the shortlist of eight, play one track over your footage, then open **Quiet Cut** and read the strip.
+6. Approve. Download the PDF and the audio, then open the proof link in a private window.
+
+Then try the agent, which buys from a separate seller with no UI at all:
+
+```bash
+npm run demo:agent
+```
 
 To see a refusal instead, ask for paid ads on **Studio Pulse**. Grant says no, explains
 which term is missing, and charges nothing.
@@ -231,7 +239,7 @@ npm run previews:prepare # 40-second previews for tracks that lack one
 ## What it doesn't do yet
 
 - **Test money only.** The payment flow is real, the network is not.
-- **Demo music.** 150 CC0 and Freesound demo tracks with fixture sellers. No real deals yet.
+- **Demo music.** 150 CC0 and CC-BY tracks from Freesound with fixture sellers. No real deals yet.
 - **No refunds.** Once a license settles there is no way back.
 - **The app holds your key.** That is fine for a test build, not for real money.
 - **Test USDC looks like it's worth a dollar.** It isn't. Explorers use a stale price.
