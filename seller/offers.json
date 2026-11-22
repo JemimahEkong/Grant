@@ -1,0 +1,107 @@
+{
+  "offers": [
+    {
+      "id": "morning-edit",
+      "version": 1,
+      "title": "Morning Edit",
+      "artist": "Halcyon Fields",
+      "durationSeconds": 60,
+      "priceBaseUnits": "10000000",
+      "asset": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+      "network": "stellar:testnet",
+      "payee": "SELLER_PAYEE",
+      "moods": [
+        "warm",
+        "uplifting"
+      ],
+      "energy": 3,
+      "terms": {
+        "platforms": [
+          "tiktok",
+          "youtube"
+        ],
+        "termDays": 90,
+        "territory": {
+          "worldwide": true,
+          "countries": []
+        },
+        "paidAds": true,
+        "clientDelivery": true,
+        "reposting": false,
+        "futureCampaigns": false,
+        "licenseCode": "cc0",
+        "attributionText": "CC0 · public domain",
+        "previewAllowed": true
+      }
+    },
+    {
+      "id": "quiet-cut",
+      "version": 1,
+      "title": "Quiet Cut",
+      "artist": "Northline Audio",
+      "durationSeconds": 48,
+      "priceBaseUnits": "8000000",
+      "asset": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+      "network": "stellar:testnet",
+      "payee": "SELLER_PAYEE",
+      "moods": [
+        "cinematic",
+        "minimal"
+      ],
+      "energy": 1,
+      "terms": {
+        "platforms": [
+          "instagram",
+          "tiktok"
+        ],
+        "termDays": 90,
+        "territory": {
+          "worldwide": true,
+          "countries": []
+        },
+        "paidAds": false,
+        "clientDelivery": true,
+        "reposting": false,
+        "futureCampaigns": false,
+        "licenseCode": "cc0",
+        "attributionText": "CC0 · public domain",
+        "previewAllowed": true
+      }
+    },
+    {
+      "id": "studio-pulse",
+      "version": 1,
+      "title": "Studio Pulse",
+      "artist": "Kite & Co.",
+      "durationSeconds": 173,
+      "priceBaseUnits": "12000000",
+      "asset": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+      "network": "stellar:testnet",
+      "payee": "SELLER_PAYEE",
+      "moods": [
+        "driving",
+        "gritty"
+      ],
+      "energy": 4,
+      "terms": {
+        "platforms": [
+          "youtube"
+        ],
+        "termDays": 30,
+        "territory": {
+          "worldwide": false,
+          "countries": [
+            "NG"
+          ]
+        },
+        "paidAds": false,
+        "clientDelivery": true,
+        "reposting": false,
+        "futureCampaigns": false,
+        "licenseCode": "cc0",
+        "attributionText": "CC0 · public domain",
+        "previewAllowed": true
+      }
+    }
+  ]
+}

@@ -20,6 +20,7 @@
     "x402:vercel:buyer": "node --env-file-if-exists=.env.local scripts/x402-vercel-buyer.mjs",
     "r2:check": "node --env-file-if-exists=.env.local scripts/check-r2.mjs",
     "seller:create": "node --env-file-if-exists=.env.local scripts/create-seller-account.mjs",
+    "agent:buy": "node --env-file-if-exists=.env.local --import tsx scripts/agent/buy.ts",
     "catalog:ingest": "node --env-file-if-exists=.env.local --import tsx scripts/ingest-catalog.ts",
     "previews:prepare": "node --env-file-if-exists=.env.local --import tsx scripts/prepare-previews.ts",
     "demo:reset": "node --env-file-if-exists=.env.local scripts/demo-reset.mjs",

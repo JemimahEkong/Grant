@@ -117,6 +117,30 @@ if a seller address ever matches the faucet.
 You can also open a finished license and see it as a client would:
 [grant-roan.vercel.app/proof/…](https://grant-roan.vercel.app)
 
+## Agent economy
+
+Grant can also buy from an external seller that runs as its own service. The seller has its own package, Vercel project, Stellar payee, license table, download secret, and terms. It shares no runtime with the Grant app. The deployed demo is https://grant-seller.vercel.app with payee `GAONRKB5QBYD32SYJAG2EFFMFBNZOY73BHTNXLB2NVCXJALCTJTAXIFD`, separate from both the first-party seller and the faucet treasury.
+
+The seller publishes machine-readable offers at `/api/offers`. An unpaid license request returns `402` with the normal x402 Stellar testnet requirements plus `extensions["io.grant.terms"]`. The buyer agent reads those terms from the challenge, checks them against the listing and the brief, and signs only after both pass. Every decision is written as one JSON line.
+
+Deploy it from `seller/` with its own Vercel project and the five environment variables in `seller/README.md`. Set `SELLER_PUBLIC_URL` to the project origin and redeploy once so download and proof URLs use that origin.
+
+Repeat the refusal:
+
+```bash
+npm run agent:buy -- --brief scripts/agent/briefs/paid-ads-refusal.json --budget 20000000 --max-price 10000000 --sellers https://grant-seller.vercel.app
+```
+
+That exits `1` with `PAID_ADS_NOT_OFFERED` before any signing and leaves both balances unchanged.
+
+Repeat the paid run:
+
+```bash
+npm run agent:buy -- --brief scripts/agent/briefs/fit.json --budget 20000000 --max-price 10000000 --sellers https://grant-seller.vercel.app
+```
+
+The first paid run buys once and saves the license, receipt, challenge, and audio under `agent-runs/`. Repeating the same command returns `ALREADY_BOUGHT` and does not pay again. The buyer wallet needs testnet USDC and `AGENT_BUYER_SECRET` in `.env.local`.
+
 ## Why Stellar
 
 A music license costs about a dollar. Moving a dollar has to be instant and nearly free,

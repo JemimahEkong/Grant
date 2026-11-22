@@ -41,6 +41,7 @@ async function handler(request: NextRequest): Promise<NextResponse> {
   const { purchase } = await loadPurchaseWithGuard(token);
   return NextResponse.json({
     grantX402: "settled",
+    sellerType: "first-party",
     mode: "approved-purchase-seller",
     purchaseId: purchase.id,
     network,

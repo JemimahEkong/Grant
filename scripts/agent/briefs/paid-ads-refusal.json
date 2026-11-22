@@ -1,0 +1,13 @@
+{
+  "platforms": ["instagram"],
+  "termDays": 90,
+  "territory": { "worldwide": true, "countries": [] },
+  "paidAds": true,
+  "clientDelivery": true,
+  "reposting": false,
+  "futureCampaigns": false,
+  "clipSeconds": 20,
+  "moods": [],
+  "energy": 3,
+  "client": "Harbor Athletics"
+}

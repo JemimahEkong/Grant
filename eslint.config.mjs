@@ -14,5 +14,5 @@ export default defineConfig([
       "react/no-unescaped-entities": "off",
     },
   },
-  globalIgnores([".next/**", "coverage/**", "next-env.d.ts"]),
+  globalIgnores([".next/**", "seller/.next/**", "seller/node_modules/**", "coverage/**", "next-env.d.ts", "agent-runs/**", ".tmp-*/**"]),
 ]);

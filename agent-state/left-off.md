@@ -1,6 +1,18 @@
 # Left off
 
-- Task: catalog v1 and seller applications. Phases 1 through 5 are complete. The catalog has 150 tracks, 150 active base offers, and zero orphans. One ingested track was bought end to end. The shortlist and the manual seller application are live.
+- Task: agent economy layer. Complete and deployed. No further phase requested.
+- Done: `seller/` is a standalone Next app with its own Vercel project `kaelah-s-projects/grant-seller`, its own payee `GAONRKB5QBYD32SYJAG2EFFMFBNZOY73BHTNXLB2NVCXJALCTJTAXIFD`, its own `seller_licenses` table, and its own download secret. Public URL: https://grant-seller.vercel.app. Health and offers return 200. The payee differs from the first-party seller and the treasury.
+- Done: `GET /api/offers` returns three offers with full terms. `GET /api/offers/[id]/license` returns 402 with Stellar testnet x402 requirements and `extensions["io.grant.terms"]` in both the body and the `payment-required` header.
+- Done: the headless buyer at `scripts/agent/buy.ts` reads the challenge terms, compares them with the listing, maps them to the brief, refuses before signing, checks budget and max price, pays at most once, verifies authorization and settlement hashes separately, verifies the license, and saves the run.
+- Paid run: license `sl_f7c328aa794198b6`, authorization `f7c328aa794198b607cf3208def7c0002ace98337b08780d5cb9e66f12268430`, settlement `94745d99cbf96c1ae77a851854a09455945ab22c8bbb6b6c0fb1cc683e86da07`, ledger `5857655`, price 1.00 USDC. Buyer 3.00 to 2.00, seller 3.00 to 4.00. Audio 1,257,912 bytes through the signed URL.
+- Refusals: paid ads gives `PAID_ADS_NOT_OFFERED` with no challenge or signing, exit 1, balances unchanged. Max price gives `PRICE_ABOVE_MAX`, exit 1, balances unchanged. Replay gives `ALREADY_BOUGHT`, exit 0, no second payment.
+- Done: `/app/profile` has a read-only External sellers row fed by `/api/external-sellers`. The main app has `EXTERNAL_SELLER_URLS=https://grant-seller.vercel.app`. The first-party seller route labels itself `sellerType: "first-party"`.
+- Skipped: importing an external license into the main purchases ledger. It would add a source column and migration, so it is out of scope for this pass.
+- Verified: 138 tests in 20 files pass. Typecheck, lint, and build pass for the main app and for `seller/`.
+- Evidence: `agent-state/agent-economy-evidence.md`. Seller deploy notes: `seller/README.md`.
+- Next: record the demo video and do a final DEMO.md and SUBMISSION.md pass. Rotate the Freesound key after the hackathon.
+- Catalog: complete. 150 tracks, 150 active base offers, zero orphans. One ingested track was bought end to end. The shortlist and the manual seller application are live.
+- Deployed main app: `dpl_7sFFmpc9RuZ8LwSsmxgJvFFUMBBX` for the catalog phase, plus the agent economy deployment in this pass. The catalog task below is retained for context.
 - Done: migration 0006 adds track source, source URL/id, license code/URL, attribution, commercial/derivative/redistribution permissions, preview permission, genre, moods, energy, instrumental, BPM, key, and preview key. Migration 0007 adds the unique source and source id index. Migration 0008 adds source author. Migration 0009 adds seller applications. The three existing tracks are backfilled to Freesound CC0. Their offer ids are unchanged.
 - Done: one shared license credit line in the catalog card, review header, license PDF, and proof page. CC0 renders "CC0 · public domain". A CC-BY record renders its exact attribution. The PDF adds "Add this to your video description" when attribution is required.
 - Done: `lib/licensing/offer-license.ts` rejects an offer that exceeds the source grant. It is enforced in the seed, the testnet seed, and the quote transaction. The deliberate invalid-offer test throws `OFFER_EXCEEDS_LICENSE` with status 422.

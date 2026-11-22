@@ -16,11 +16,20 @@ import {
 import type { CatalogResponse, ProjectView, WalletView } from "../../../lib/ui/api";
 import { formatUsdcDecimal, initials, shortAddress } from "../../../lib/ui/format";
 
+type ExternalSeller = {
+  url: string;
+  healthy: boolean;
+  service?: string;
+  network?: string;
+  offerCount?: number;
+};
+
 export default function ProfilePage() {
   const router = useRouter();
   const { me } = useMe();
   const { projects, selectedProject, selectedProjectId, selectProjectId } = useProjects();
   const [wallet, setWallet] = useState<WalletView | null>(null);
+  const [externalSellers, setExternalSellers] = useState<ExternalSeller[]>([]);
   const [view, setView] = useState<ProjectView | null>(null);
   const [catalog, setCatalog] = useState<CatalogResponse | null>(null);
   const [shareStatuses, setShareStatuses] = useState<Record<string, boolean>>({});
@@ -36,6 +45,21 @@ export default function ProfilePage() {
       })
       .catch(failure => {
         if (active) setError((failure as Error).message);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/external-sellers", { cache: "no-store" })
+      .then(response => (response.ok ? response.json() : Promise.reject(new Error("External sellers unavailable"))))
+      .then((body: { sellers?: ExternalSeller[] }) => {
+        if (active) setExternalSellers(body.sellers ?? []);
+      })
+      .catch(() => {
+        if (active) setExternalSellers([]);
       });
     return () => {
       active = false;
@@ -211,6 +235,41 @@ export default function ProfilePage() {
           })}
         </div>
       )}
+
+      <div className="section-label" style={{ marginTop: 20 }}>
+        <span className="micro">External sellers</span>
+        <span className="muted" style={{ fontSize: 13 }}>
+          Read only
+        </span>
+      </div>
+      <GroupedList>
+        {externalSellers.length === 0 ? (
+          <Row className="list-row">
+            <span>
+              No external sellers configured
+              <span className="m" style={{ display: "block", marginTop: 2 }}>
+                Set EXTERNAL_SELLER_URLS to list them here.
+              </span>
+            </span>
+          </Row>
+        ) : (
+          externalSellers.map(seller => (
+            <Row key={seller.url} className="list-row">
+              <span>
+                {seller.url.replace(/^https?:\/\//, "")}
+                <span className="m" style={{ display: "block", marginTop: 2 }}>
+                  {seller.healthy
+                    ? `${seller.service ?? "seller"} · ${seller.offerCount ?? 0} offers · ${seller.network ?? "stellar:testnet"}`
+                    : "Health check failed"}
+                </span>
+              </span>
+              <span className={seller.healthy ? "micro" : "muted"}>
+                {seller.healthy ? "Online" : "Offline"}
+              </span>
+            </Row>
+          ))
+        )}
+      </GroupedList>
 
       <div className="section-label" style={{ marginTop: 20 }}>
         <span className="micro">Sell music</span>
