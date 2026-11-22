@@ -39,7 +39,8 @@
     "share:proof": "node --env-file-if-exists=.env.local scripts/share-proof.mjs",
     "test": "node --env-file-if-exists=.env.local ./node_modules/vitest/vitest.mjs run",
     "test:watch": "node --env-file-if-exists=.env.local ./node_modules/vitest/vitest.mjs",
-    "test:db": "node --env-file-if-exists=.env.local ./node_modules/vitest/vitest.mjs run tests/persistence.test.ts"
+    "test:db": "node --env-file-if-exists=.env.local ./node_modules/vitest/vitest.mjs run tests/persistence.test.ts",
+    "demo:agent": "node --env-file-if-exists=.env.local scripts/demo-agent.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.1170.0",

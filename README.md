@@ -10,7 +10,7 @@ license PDF, and a link your client can open.
 
 ![live](https://img.shields.io/badge/live-grant--roan.vercel.app-0D3B22?style=flat-square)
 ![network](https://img.shields.io/badge/network-Stellar%20testnet-6FCF97?style=flat-square)
-![tests](https://img.shields.io/badge/tests-126%20passing-0D3B22?style=flat-square)
+![tests](https://img.shields.io/badge/tests-138%20passing-0D3B22?style=flat-square)
 ![language](https://img.shields.io/badge/TypeScript-strict-C9F24C?style=flat-square)
 
 [Open the live app](https://grant-roan.vercel.app) · [Try it in 5 minutes](#try-grant) · [See a real payment](#a-real-payment-you-can-check) · [How it is built](#how-it-is-built)
@@ -125,21 +125,28 @@ The seller publishes machine-readable offers at `/api/offers`. An unpaid license
 
 Deploy it from `seller/` with its own Vercel project and the five environment variables in `seller/README.md`. Set `SELLER_PUBLIC_URL` to the project origin and redeploy once so download and proof URLs use that origin.
 
-Repeat the refusal:
+The full rehearsal runs all three briefs and exits non-zero if any expectation fails:
 
 ```bash
+npm run demo:agent
+```
+
+It spends at most one payment per invocation. A second run within ten minutes is refused unless you pass `--force`, and the forced run must show the already-bought guard and no second payment.
+
+The three individual commands:
+
+```bash
+# 1. Paid-ads refusal
 npm run agent:buy -- --brief scripts/agent/briefs/paid-ads-refusal.json --budget 20000000 --max-price 10000000 --sellers https://grant-seller.vercel.app
+
+# 2. Price refusal
+npm run agent:buy -- --brief scripts/agent/briefs/max-price.json --budget 20000000 --max-price 5000000 --sellers https://grant-seller.vercel.app
+
+# 3. Paid run
+npm run agent:buy -- --brief scripts/agent/briefs/demo-fit.json --budget 20000000 --max-price 10000000 --sellers https://grant-seller.vercel.app
 ```
 
-That exits `1` with `PAID_ADS_NOT_OFFERED` before any signing and leaves both balances unchanged.
-
-Repeat the paid run:
-
-```bash
-npm run agent:buy -- --brief scripts/agent/briefs/fit.json --budget 20000000 --max-price 10000000 --sellers https://grant-seller.vercel.app
-```
-
-The first paid run buys once and saves the license, receipt, challenge, and audio under `agent-runs/`. Repeating the same command returns `ALREADY_BOUGHT` and does not pay again. The buyer wallet needs testnet USDC and `AGENT_BUYER_SECRET` in `.env.local`.
+The first paid run buys once and saves the license, receipt, challenge, and audio under `agent-runs/`. Repeating the same brief returns `ALREADY_BOUGHT` and does not pay again. The buyer wallet needs testnet USDC and `AGENT_BUYER_SECRET` in `.env.local`.
 
 ## Why Stellar
 
@@ -193,7 +200,7 @@ which term is missing, and charges nothing.
 | Payments | Stellar testnet with x402 (`@x402/*` 2.30.0) |
 | Files | Cloudflare R2, private bucket, short-lived download links |
 | PDF | pdf-lib |
-| Tests | Vitest, 126 tests |
+| Tests | Vitest, 138 tests |
 
 The browser never holds a signing key. Each person gets their own Stellar account, and
 the secret is encrypted before it is stored. Downloads are only issued after the app
@@ -211,7 +218,7 @@ npm run dev
 ```
 
 ```bash
-npm test            # 126 tests
+npm test            # 138 tests
 npm run typecheck
 npm run lint
 npm run build

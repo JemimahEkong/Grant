@@ -1,132 +1,102 @@
 # Grant demo shot list
 
-Target length: 2:45. Hard stop: 3:00.
-
-This is a shot list for a 2 to 3 minute recording. Each beat has the exact screen, the exact action, and the exact words. Read the words naturally. Do not add claims about real money, mainnet, commercial rights, or legal clearance.
+Target length: 2:45. Hard stop: 3:00. Testnet only. No real funds, no mainnet, no claim of music ownership or legal clearance.
 
 ## Before recording
 
-1. Run `npm run demo:reset` in a terminal that is not on camera. It prints a fresh email, password, wallet address, balance, project ID, and faucet transaction.
+1. Run `npm run demo:reset` in a terminal that is not on camera. It prints a fresh email, password, wallet address, balance, project ID, and faucet transaction. Do not film that output.
 2. Sign in at `https://grant-roan.vercel.app/signin` with the printed account.
 3. Confirm Home shows 2.00 testnet USDC, a 5.00 USDC budget, and 0 of 2 purchases used.
-4. Clear downloads and close unrelated tabs. Use a 1280 by 800 window or larger. Keep the desktop left rail visible.
-5. Open the seller account in a background tab: `https://stellar.expert/explorer/testnet/account/GB53WOPIUPZTTTGPNDACTMZ3DJZ62HNRJP53ARI6EVSSBEWMLMF5SKBD`.
+4. Have one 20-second video file ready. Keep its name off screen.
+5. Open the terminal at the repo root and leave `https://grant-seller.vercel.app/api/health` open in a background tab.
 6. Open one private window for the proof beat. Leave it signed out.
-7. Do not film the terminal output. It contains the demo password. Do not film `.env.local` or any wallet secret.
-8. Use no background music, or use only owned or CC0 music. The app's demo audio is CC0.
+7. Rehearse `npm run demo:agent` once. The paid brief is then already bought. The on-camera run uses `--force` and shows the already-bought guard, not a second payment.
+8. Do not show `.env.local`, any wallet secret, the demo password, the seller database URL, or the seller's download secret.
 
-A clean reset account may already be available. If it is still unused, sign in with it and skip the reset command. If it has purchases, run `npm run demo:reset` for a fresh one.
+## 0:00 Terminal: 402, terms, refusal, unchanged balances
 
-## Beat 1, 0:00 to 0:10, cold open
+Screen: repo root terminal.
 
-Screen: `https://grant-roan.vercel.app/`
+Commands:
 
-Action: Hold on the landing hero and the clearance strip. Do not scroll yet.
+```bash
+curl -sS -D - https://grant-seller.vercel.app/api/offers/morning-edit/license | head -40
+npm run agent:buy -- --brief scripts/agent/briefs/paid-ads-refusal.json --budget 20000000 --max-price 10000000 --sellers https://grant-seller.vercel.app
+```
 
-Say: "Grant turns a client brief into a music license, a testnet payment, and a public proof."
+Show the 402 body with `extensions["io.grant.terms"]`, then the refusal line with `PAID_ADS_NOT_OFFERED`. Point at the buyer and seller balances in the refusal run.
 
-## Beat 2, 0:10 to 0:25, the clean account
+Say: "The agent asks the external seller for a license. The seller answers 402 and puts its full terms in the challenge. The agent reads those terms, sees the brief asks for paid ads, and refuses before it signs anything. The balances do not move."
 
-Screen: `https://grant-roan.vercel.app/app`
+## 0:30 The app: brief with a video, duration detected
 
-Action: Show the Home balance, the project budget, and the purchase counter. Point at the 2.00 USDC wallet balance and the 0 of 2 purchases label.
+Screen: `https://grant-roan.vercel.app/app/new`
 
-Say: "I'm signed in as the editor. The wallet has 2.00 testnet USDC. The project has a 5.00 budget and two purchase slots."
+Action: Choose a client and a 20-second video. Let the duration chip fill from the file. Do not upload. Point at the detected duration.
 
-## Beat 3, 0:25 to 0:50, the refusal
+Say: "I start with my own cut. Grant reads only the duration, width, and height in the browser. The footage never leaves this laptop."
 
-Screen: `https://grant-roan.vercel.app/app/catalog`
+## 0:50 Shortlist with reasons
 
-Action: Open the shortlist first. Read two reasons. Click Show all matching tracks to open the catalog. Find Studio Pulse. Click Review. The purchase page opens in the refused state. Scroll just enough to show the refusal reasons.
+Screen: `https://grant-roan.vercel.app/app/shortlist`
 
-Say: "This is the refusal state. The brief asks for Instagram and TikTok, worldwide, for 90 days. This offer is YouTube only, Nigeria only, 30 days. Grant refuses before any signature, reservation, or charge."
+Action: Submit the brief. Read the top two cards and their reasons. Point at the coverage and clip-length reasons.
 
-Action: Click Review another track to return to the catalog.
+Say: "Every card gives one reason from the data: what it covers, how long it runs, and what it costs against the budget."
 
-## Beat 4, 0:50 to 1:15, the approval
+## 1:10 Preview over the buyer's own footage
 
-Screen: `https://grant-roan.vercel.app/app/catalog`
+Screen: `https://grant-roan.vercel.app/app/catalog` or the shortlist.
 
-Action: From the catalog, choose Morning Edit. Play the 40-second excerpt. Point at the progress bar and the remaining time. Then click Review and show the quote, the clearance strip, and the exclusions. Scroll to the approval button.
+Action: Play the 40-second excerpt on the chosen track. Show the buyer's video previewing muted over the audio. Pause both.
 
-Say: "Morning Edit covers the brief. This is the 40-second preview, not the full file. The quote shows the exact terms and the exclusions. I approve these exact terms."
+Say: "This is the licensed 40-second excerpt, not the full file. I can hear it over my own cut before I buy."
 
-Action: Click Approve and pay 1.00. Keep the pointer away from the button after clicking.
+## 1:30 Review, strip, exclusions, approve
 
-## Beat 5, 1:15 to 1:30, the settlement
+Screen: The purchase review for the chosen track.
 
-Screen: `https://grant-roan.vercel.app/app/purchase/<base purchase id>`
+Action: Show the clearance strip, the platforms, the term, the territory, the paid-ad line, and the exclusions. Scroll to Approve.
 
-Action: Cut the network wait. Land on the settled page with the license ID and the transaction. Do not fake the state. Show the status chip and the license number.
+Say: "These are the exact terms. The strip says what is cleared. The exclusions say what is not. I approve these exact terms, not a summary."
 
-Say: "The payment is confirmed on testnet. Grant wrote the receipt and issued the license."
+## 2:00 Settlement, license, PDF, audio
 
-## Beat 6, 1:30 to 1:45, explorer tab, buyer and seller are different
+Screen: `https://grant-roan.vercel.app/app/purchase/<purchaseId>`
 
-Screen: Seller account tab, then `https://grant-roan.vercel.app/app/wallet`, then the base transaction on Stellar Expert.
+Action: Land on the settled state. Show the license number, the transaction hash, the PDF row, and the audio row. Open the PDF once.
 
-Action: [EXPLORER TAB] Switch to the seller account tab. Show the seller address. Then switch to the app wallet and show the buyer address. Then open the base transaction from the purchase page.
+Say: "The payment settled on Stellar testnet. The license, the PDF, and the audio are tied to this purchase. The wallet balance and the project budget both moved."
 
-Say: "Here is the buyer wallet. Here is the seller account. They are different addresses. The treasury only funded the buyer. The purchase paid the seller."
+## 2:30 Proof link opened signed out
 
-Note: The seller account is the dedicated payee. The treasury is not the seller. If the seller balance is 1.00 after the base purchase, that is expected. The add-on will bring it to 2.00.
+Screen: The public proof URL in the private window.
 
-## Beat 7, 1:45 to 2:00, PDF and audio
+Action: Open the proof while signed out. Show the public license summary, the credit line, and the absence of the client name and audio.
 
-Screen: `https://grant-roan.vercel.app/app/purchase/<base purchase id>`
+Say: "This is the public proof. It shows the license and the credit. It does not show my client, my email, the object key, or the audio."
 
-Action: Scroll to the download list. If the files are still preparing, wait for the ready state. Click License PDF. Then click Audio MP3. If the browser shows a download shelf, let it appear briefly.
+## 2:45 Agent run against the external seller, paid, license returned
 
-Say: "The PDF is the license. The MP3 is the CC0 demo track. Both are private objects behind short-lived signed links."
+Screen: The same repo root terminal.
 
-## Beat 8, 2:00 to 2:15, proof page opened signed out
+Command:
 
-Screen: `https://grant-roan.vercel.app/app/purchase/<base purchase id>`
+```bash
+npm run demo:agent -- --force
+```
 
-Action: Scroll to Proof link. Click Create proof link. Copy the link. Switch to the private window. Paste the proof URL. Show the public proof page. Do not sign in.
+Action: Let all three blocks print. Point at the `ALREADY_BOUGHT` paid block, the license id, both balances, the settlement hash, and `SUMMARY 3/3 PASS`.
 
-Say: "The client opens this without an account. It shows the terms, the seller, and the transaction. It hides the client name and the audio."
+Say: "This is the agent economy. The same brief was paid once in rehearsal. The guard returns the recorded license, the settlement hash, and no second payment. The agent still refuses the two briefs that do not fit."
 
-Action: Point at the proof page URL and the license number. Leave the proof page visible for two seconds.
+End on the `3/3 PASS` line. Do not add a new claim after it.
 
-## Beat 9, 2:15 to 2:25, the add-on offer
+## Do not put on camera
 
-Screen: `https://grant-roan.vercel.app/app/purchase/<base purchase id>`
-
-Action: Return to the signed-in window. Scroll to Add paid ads. Show the explicit delta, the end date, the unchanged base terms, and the 1.00 price.
-
-Say: "The base license leaves paid ads out. The add-on is an explicit second purchase."
-
-Action: Click Review add-on. The new purchase page opens.
-
-## Beat 10, 2:25 to 2:40, add-on settlement and combined coverage
-
-Screen: `https://grant-roan.vercel.app/app/purchase/<add-on purchase id>`
-
-Action: Approve and pay 1.00. Cut the wait. Land on the add-on page. Scroll to Combined coverage. Show the base license, the add-on license, each receipt, and the total 2.00 USDC.
-
-Say: "The add-on keeps the original term. It adds paid ads on the same platforms. It has its own receipt and license. Combined coverage shows both."
-
-Action: Point at the two license numbers and the two transaction lines. Do not open a second proof link.
-
-## Beat 11, 2:40 to 2:50, close
-
-Screen: The add-on Combined coverage panel, or the base proof page in the private window.
-
-Action: Hold on the two license numbers and the testnet badge.
-
-Say: "That is Grant. A brief, a human approval, a real testnet settlement, private files, and a public proof. Testnet only."
-
-## Recording checklist
-
-- The refusal is visible before the approval.
-- The approval button is shown before it is clicked.
-- The settlement state is real, even if the wait is cut.
-- The explorer tab shows the seller account and the buyer wallet as different addresses.
-- The PDF and MP3 download actions are visible.
-- The proof page is opened signed out in a private window.
-- The add-on is a second purchase, with its own receipt and license.
-- The combined coverage is visible.
-- The video is under 3:00.
-- No secret, password, raw token, or `.env.local` is visible.
-- No claim of real money, mainnet, commercial rights, or legal clearance.
+- The demo reset password and any terminal output that contains it.
+- `.env.local`, wallet secrets, the seller database URL, the download secret, or the buyer secret.
+- The seller's database or Vercel environment screens.
+- Unrelated projects, other users, or the settled evidence from earlier runs.
+- Any suggestion that testnet USDC has value, that this is mainnet, that the seller owns the music, or that the license is legal clearance.
+- The failed first rehearsal. It is not part of the script.

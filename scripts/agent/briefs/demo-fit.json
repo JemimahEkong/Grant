@@ -1,0 +1,20 @@
+{
+  "platforms": [
+    "tiktok"
+  ],
+  "termDays": 90,
+  "territory": {
+    "worldwide": true,
+    "countries": []
+  },
+  "paidAds": true,
+  "clientDelivery": true,
+  "reposting": false,
+  "futureCampaigns": false,
+  "clipSeconds": 20,
+  "moods": [
+    "warm"
+  ],
+  "energy": 3,
+  "client": "Agent economy demo take 2"
+}
