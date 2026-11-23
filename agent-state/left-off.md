@@ -1,6 +1,10 @@
 # Left off
 
-- Task: agent economy layer. Complete and deployed. No further phase requested.
+- Task: README and submission docs pass. Screenshots, problem/solution table, and Stellar tooling are done. Demo video remains.
+- Done: README now has a simple comparison table for editors (find a track, price, limits, budget, payment, client proof, agent buying), a Stellar tooling table with the real SDK, Horizon, USDC, x402, Soroban SAC, and explorer roles, and a nine-screen gallery in `docs/screens/` captured from production at 390px.
+- Done: strip labels were shortened for phone width (`Organic IG TT`, `World`) so no segment clips at 390px. The fund step now derives `2.00 USDC` from the wallet view instead of saying 5 USDC. Both deployed in `grant-1k30c9cbi-kaelah-s-projects.vercel.app` (production alias `grant-roan.vercel.app`).
+- Verified: 138 tests in 20 files pass. Typecheck, lint, and build pass. All README image paths resolve. Screenshot set is 612 KB total. The proof screenshot has the share token redacted; do not add an unredacted proof URL to docs.
+- Next: record the demo video, paste the video URL and an active proof link into SUBMISSION.md, and do the final DEMO.md pass. Rotate the Freesound key after the hackathon.
 - Done: `seller/` is a standalone Next app with its own Vercel project `kaelah-s-projects/grant-seller`, its own payee `GAONRKB5QBYD32SYJAG2EFFMFBNZOY73BHTNXLB2NVCXJALCTJTAXIFD`, its own `seller_licenses` table, and its own download secret. Public URL: https://grant-seller.vercel.app. Health and offers return 200. The payee differs from the first-party seller and the treasury.
 - Done: `GET /api/offers` returns three offers with full terms. `GET /api/offers/[id]/license` returns 402 with Stellar testnet x402 requirements and `extensions["io.grant.terms"]` in both the body and the `payment-required` header.
 - Done: the headless buyer at `scripts/agent/buy.ts` reads the challenge terms, compares them with the listing, maps them to the brief, refuses before signing, checks budget and max price, pays at most once, verifies authorization and settlement hashes separately, verifies the license, and saves the run.
@@ -11,7 +15,6 @@
 - Skipped: importing an external license into the main purchases ledger. It would add a source column and migration, so it is out of scope for this pass.
 - Verified: 138 tests in 20 files pass. Typecheck, lint, and build pass for the main app and for `seller/`.
 - Evidence: `agent-state/agent-economy-evidence.md`. Seller deploy notes: `seller/README.md`.
-- Next: record the demo video and do a final DEMO.md and SUBMISSION.md pass. Rotate the Freesound key after the hackathon.
 - Catalog: complete. 150 tracks, 150 active base offers, zero orphans. One ingested track was bought end to end. The shortlist and the manual seller application are live.
 - Deployed main app: `dpl_7sFFmpc9RuZ8LwSsmxgJvFFUMBBX` for the catalog phase, plus the agent economy deployment in this pass. The catalog task below is retained for context.
 - Done: migration 0006 adds track source, source URL/id, license code/URL, attribution, commercial/derivative/redistribution permissions, preview permission, genre, moods, energy, instrumental, BPM, key, and preview key. Migration 0007 adds the unique source and source id index. Migration 0008 adds source author. Migration 0009 adds seller applications. The three existing tracks are backfilled to Freesound CC0. Their offer ids are unchanged.

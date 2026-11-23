@@ -13,7 +13,7 @@ license PDF, and a link your client can open.
 ![tests](https://img.shields.io/badge/tests-138%20passing-0D3B22?style=flat-square)
 ![language](https://img.shields.io/badge/TypeScript-strict-C9F24C?style=flat-square)
 
-[Open the live app](https://grant-roan.vercel.app) · [Try it in 5 minutes](#try-grant) · [See a real payment](#a-real-payment-you-can-check) · [How it is built](#how-it-is-built)
+[Open the live app](https://grant-roan.vercel.app) · [See the screens](#screens) · [Try it in 5 minutes](#try-grant) · [See a real payment](#a-real-payment-you-can-check) · [How it is built](#how-it-is-built)
 
 Built for [EmpowerHer: Building the Agent Economy](https://stallion.so/hackathons/cmvxtv3xe000l0klnb8go9zly) · agentic payments on Stellar with x402
 
@@ -57,6 +57,22 @@ The same gap shows up four times:
    prove what you were allowed to do.
 4. **Retrying a failed payment can charge you twice.** Refresh the page at the wrong
    moment and you sign again, with no way to tell if the first one already went through.
+
+Most editors do this work in five tabs: a stock site, a license page, a spreadsheet, a
+card form, and an email thread. Grant puts the decisions in one place and shows the
+limits before money moves.
+
+### The usual way, and the Grant way
+
+| What you need to do | The usual way | With Grant |
+| --- | --- | --- |
+| Find a track | Open a few stock sites, preview, and keep names in a note | One catalog of 150 tracks. Eight are ranked for your brief, each with a reason you can check. |
+| Know the price | Add to cart first and see the total later | Every card shows the price before you open it. |
+| Know the limits | Read a long license and hope you understood it | One strip shows the platform, term, country, client delivery, reposting, and future campaigns. |
+| Stay inside the budget | Track it in a spreadsheet | The project budget is a hard cap, checked before every payment. |
+| Pay for one track | Card form, account, minimum spend, payout wait | From 1.00 testnet USDC, paid from your own wallet. It settles in seconds. |
+| Show the client what they got | Email a receipt and a screenshot | A license PDF, the audio, and a public proof link. |
+| Let an agent buy | Custom integration, or a person in the middle | An x402 seller publishes its terms. An agent reads them, refuses, or pays once. |
 
 ## What Grant does about it
 
@@ -116,8 +132,9 @@ Buyer, seller, and the faucet are three different accounts on purpose. A demo wh
 buyer pays the account that funded them would prove nothing, so the app refuses to run
 if a seller address ever matches the faucet.
 
-You can also open a finished license and see it as a client would:
-[grant-roan.vercel.app/proof/…](https://grant-roan.vercel.app)
+You can also create a proof link from a finished license and open it as a client would.
+The page shows the track, the credit, the terms, the amount, and the transaction, with no
+client name, email, object key, or audio entitlement.
 
 ## Agent economy
 
@@ -153,32 +170,77 @@ The first paid run buys once and saves the license, receipt, challenge, and audi
 ## Why Stellar
 
 A music license costs about a dollar. Moving a dollar has to be instant and nearly free,
-or the fee eats the sale.
+or the fee eats the sale. Stellar settles in seconds and costs a fraction of a cent. The
+app pays in USDC, a dollar asset on Stellar, so the price does not drift.
 
-Stellar settles in seconds and costs a fraction of a cent. The app pays with USDC, which
-keeps the price steady. The payment request travels over the same HTTP call that asks for
-the file, so there is no checkout page and no card form.
+The payment request travels over the same HTTP call that asks for the file. The seller
+answers `402 Payment Required` with its terms and a price. The buyer signs one USDC
+payment and retries the request with proof. There is no checkout page and no card form.
 
 None of this is visible to the editor. That is the point.
 
+Here is the Stellar tooling behind it:
+
+| Piece | Tool | What it does in Grant |
+| --- | --- | --- |
+| Accounts and keys | `@stellar/stellar-sdk` | Creates one testnet account per user, adds the USDC trustline, funds the XLM reserve, and signs the faucet transfer. |
+| Chain reads | Horizon API | Reads balances, checks account and trustline state, lists wallet history, and verifies the settlement transaction and the balance change on both sides. |
+| Money | USDC on Stellar | Prices are stored as whole numbers in 7-decimal base units. The app never uses floating-point math for money. |
+| Payment protocol | x402 (`@x402/core`, `@x402/next`, `@x402/stellar`, `@x402/fetch`) | Builds the 402 challenge with the terms, signs the exact payment, and settles it through the x402 facilitator. |
+| Token movement | Stellar Asset Contract on Soroban | x402 moves USDC with a SEP-41 token transfer, so the same asset works with smart contracts and classic Stellar accounts. |
+| Explorer | stellar.expert | Every license and proof page links the exact transaction. |
+
 ## Screens
 
-| Screen | What you see |
-| --- | --- |
-| Landing | The pitch, a finished license, and an example refusal |
-| Sign in | Email and password. No wallet app to install |
-| Setup | Four steps: create your test wallet, switch it on, add USDC, get free test money |
-| Home | Your balance, what's left in the budget, and what you bought |
-| Brief | One sentence, the chip groups, and an optional video whose length is read in the browser |
-| Shortlist | The eight best matches, each with one true reason, plus the full catalogue |
-| Catalog | All 150 tracks with search, filters, coverage and price |
-| Review | The strip, the exclusions, the price, and Approve |
-| Pending | Submitted, not confirmed. One button: check again |
-| License | PDF, audio, payment details, and a share link |
-| Purchases | Everything you bought, refused, or left unfinished |
-| Wallet | Your address, QR code, balance, and history |
-| Seller apply | A form for rights holders. Submissions stay in review; no payout is created |
-| Proof | The page your client opens. No account needed |
+Real screens from the production demo, at phone width. Tap any shot to open it full size.
+
+<table>
+  <tr>
+    <td align="center" width="33%" valign="top">
+      <a href="docs/screens/setup-wallet.png"><img src="docs/screens/setup-wallet.png" alt="Setup screen with the four steps and a Generate wallet button" width="100%" /></a>
+      <br /><sub><b>Setup</b><br />Four steps. No wallet extension to install.</sub>
+    </td>
+    <td align="center" width="33%" valign="top">
+      <a href="docs/screens/home.png"><img src="docs/screens/home.png" alt="Home screen with wallet balance, project budget, and quick actions" width="100%" /></a>
+      <br /><sub><b>Home</b><br />Balance, project budget, and what is left.</sub>
+    </td>
+    <td align="center" width="33%" valign="top">
+      <a href="docs/screens/catalog.png"><img src="docs/screens/catalog.png" alt="Catalog with search, coverage filters, and a price on every track" width="100%" /></a>
+      <br /><sub><b>Catalog</b><br />150 tracks with coverage filters and prices.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="33%" valign="top">
+      <a href="docs/screens/shortlist.png"><img src="docs/screens/shortlist.png" alt="Shortlist of eight tracks ranked for the brief, each with a reason" width="100%" /></a>
+      <br /><sub><b>Shortlist</b><br />Eight matches, each with a checkable reason.</sub>
+    </td>
+    <td align="center" width="33%" valign="top">
+      <a href="docs/screens/review.png"><img src="docs/screens/review.png" alt="Review screen with the clearance strip, exclusions, and approve action" width="100%" /></a>
+      <br /><sub><b>Review</b><br />What is covered, what is not, and the price.</sub>
+    </td>
+    <td align="center" width="33%" valign="top">
+      <a href="docs/screens/license.png"><img src="docs/screens/license.png" alt="License screen with license ID, PDF, audio, and chain details" width="100%" /></a>
+      <br /><sub><b>License</b><br />License ID, PDF, audio, and the chain record.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="33%" valign="top">
+      <a href="docs/screens/purchases.png"><img src="docs/screens/purchases.png" alt="Purchases ledger with spent and left totals and status chips" width="100%" /></a>
+      <br /><sub><b>Purchases</b><br />Every settled, pending, and refused purchase.</sub>
+    </td>
+    <td align="center" width="33%" valign="top">
+      <a href="docs/screens/wallet.png"><img src="docs/screens/wallet.png" alt="Wallet screen with live balance, Stellar address, and faucet" width="100%" /></a>
+      <br /><sub><b>Wallet</b><br />A real Stellar testnet account for every user.</sub>
+    </td>
+    <td align="center" width="33%" valign="top">
+      <a href="docs/screens/proof.png"><img src="docs/screens/proof.png" alt="Public proof page with license terms and a Stellar transaction" width="100%" /></a>
+      <br /><sub><b>Proof</b><br />The page a client opens. No account needed.</sub>
+    </td>
+  </tr>
+</table>
+
+Also in the app: sign in, the brief builder, add-on quotes, the seller application, and
+the pending state with its single **Check again** action.
 
 ## Try Grant
 
@@ -188,7 +250,7 @@ Five minutes. No wallet extension. No real money.
 2. Make an account with any email and password.
 3. Finish the four setup steps. The faucet gives you 2.00 test USDC.
 4. Create a project and keep the default brief. If you have a short video on your phone, add it: the length is read in the browser and the file never leaves your device.
-5. Read the shortlist of eight, play one track over your footage, then open **Quiet Cut** and read the strip.
+5. Read the shortlist of eight and play one over your footage. Open the full catalog, search for **Quiet Cut**, and read its strip on the review screen.
 6. Approve. Download the PDF and the audio, then open the proof link in a private window.
 
 Then try the agent, which buys from a separate seller with no UI at all:
@@ -207,7 +269,8 @@ which term is missing, and charges nothing.
 | App | Next.js 16, React 19, TypeScript |
 | Database | Neon Postgres with Drizzle |
 | Sign in | Better Auth, email and password |
-| Payments | Stellar testnet with x402 (`@x402/*` 2.30.0) |
+| Payments | Stellar testnet, USDC, `@stellar/stellar-sdk`, x402 2.30.0 |
+| Chain data | Horizon API and Soroban RPC |
 | Files | Cloudflare R2, private bucket, short-lived download links |
 | PDF | pdf-lib |
 | Tests | Vitest, 138 tests |

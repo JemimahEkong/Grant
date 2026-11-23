@@ -124,3 +124,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 <!-- END:nextjs-agent-rules -->
 - November 19 reference refinement supersedes v2 oversized controls: locally hosted Inter, compact icon-led quick actions, floating mobile navigation, and layered landing preview. Follow the refinement section in DESIGN.md. Preserve all backend/workflow handlers.
 - November 19 glass refinement supersedes the old blanket no-glass rule. Use the shared material tokens and keep blur/gradient treatments limited to the surfaces named in DESIGN.md. Preserve all backend/workflow handlers.
+- README screenshots live in `docs/screens/` and are captured from production at 390px. Redact share tokens, demo passwords, emails, object keys, and wallet secrets. The clearance strip uses short phone labels (`IG`, `TT`, `FB`, `YT`, `World`); check every segment at 390px before changing them.
