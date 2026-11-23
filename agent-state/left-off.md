@@ -1,6 +1,7 @@
 # Left off
 
-- Task: README, submission docs, and the 2:02 launch film with voiceover. All done. Demo video upload remains.
+- Task: README, submission docs, and the 2:02 launch film with voiceover. The film is published on YouTube. A final SUBMISSION.md pass remains.
+- Done: YouTube https://youtu.be/nlBHlO2Nres ("A hackathon project: Grant."). README top nav and Demo film section link to it with the local poster `docs/demo-poster.png`. SUBMISSION.md video row and DEMO.md point at it. The MP4 remains at `video/grant-demo/renders/grant-demo-final.mp4` (gitignored).
 - Done: `video/grant-demo` is a HyperFrames launch film at 1920x1080/30fps, 2:02, 23 MB. It follows the reference beat order and uses real production captures for the brief, shortlist, review, refusal, license, explorer, and proof. Testnet is labelled on screen. Calm female voiceover from Edge TTS `en-US-AvaNeural` (pitch -2Hz), timed per scene by `scripts/make-vo.py`. The bed is the CC0 Studio Pulse demo track.
 - Verified: `npx hyperframes check` reports 0 errors and 9 warnings, all `text_below_floor` on deliberate micro labels. Contrast is 23/23. Frames reviewed at 0, 3, 8, 14, 20, 28, 36, 45, 60, 75, 95, 118. Final audio is -16.07 LUFS and -1.46 dBTP.
 - Render: `video/grant-demo/renders/grant-demo-final.mp4` (gitignored). Rebuild with `cd video/grant-demo && python scripts/make-vo.py && npm run render`, then master the audio to -16 LUFS.

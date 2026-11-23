@@ -13,7 +13,7 @@ Use this list before pasting anything into the submission form. Open every publi
 | README | `https://github.com/JemimahEkong/Grant/blob/main/README.md` |
 | Demo script | `https://github.com/JemimahEkong/Grant/blob/main/DEMO.md` |
 | Design system | `https://github.com/JemimahEkong/Grant/blob/main/DESIGN.md` |
-| Video | `[paste the unlisted YouTube, Loom, or Vimeo URL]` |
+| Video | `https://youtu.be/nlBHlO2Nres` |
 | Proof link | `[paste the active proof link created during the recording]` |
 | Health | `https://grant-roan.vercel.app/api/health` |
 | Seller account | `https://stellar.expert/explorer/testnet/account/GB53WOPIUPZTTTGPNDACTMZ3DJZ62HNRJP53ARI6EVSSBEWMLMF5SKBD` |

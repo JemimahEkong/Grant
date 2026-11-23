@@ -13,7 +13,7 @@ license PDF, and a link your client can open.
 ![tests](https://img.shields.io/badge/tests-138%20passing-0D3B22?style=flat-square)
 ![language](https://img.shields.io/badge/TypeScript-strict-C9F24C?style=flat-square)
 
-[Open the live app](https://grant-roan.vercel.app) · [See the screens](#screens) · [Try it in 5 minutes](#try-grant) · [See a real payment](#a-real-payment-you-can-check) · [How it is built](#how-it-is-built)
+[Open the live app](https://grant-roan.vercel.app) · [Watch the 2:02 demo](https://youtu.be/nlBHlO2Nres) · [See the screens](#screens) · [Try it in 5 minutes](#try-grant) · [See a real payment](#a-real-payment-you-can-check) · [How it is built](#how-it-is-built)
 
 Built for [EmpowerHer: Building the Agent Economy](https://stallion.so/hackathons/cmvxtv3xe000l0klnb8go9zly) · agentic payments on Stellar with x402
 
@@ -244,18 +244,23 @@ the pending state with its single **Check again** action.
 
 ## Demo film
 
-The 2:02 launch film is in `video/grant-demo` (HyperFrames, 1920x1080, 30fps). It
-uses the real review, refusal, license, explorer, and proof captures, labels the payment
-TESTNET, and follows the reference's beat order without copying its identity. The
+[![Watch the 2:02 Grant launch film](docs/demo-poster.png)](https://youtu.be/nlBHlO2Nres)
+
+Watch the 2:02 film on YouTube: [youtu.be/nlBHlO2Nres](https://youtu.be/nlBHlO2Nres).
+
+It uses the real review, refusal, license, explorer, and proof captures, labels the
+payment TESTNET, and follows the reference's beat order without copying its identity. The
 voiceover is a calm female read generated with Edge TTS and timed to each scene.
+
+The source lives in `video/grant-demo`. Rebuild it with:
 
 ```bash
 cd video/grant-demo
+python scripts/make-vo.py
 npm run render
 ```
 
-The source, storyboard, and reference analysis are committed. The MP4 stays in
-`video/grant-demo/renders/` and is not tracked.
+The MP4 stays in `video/grant-demo/renders/` and is not tracked.
 
 ## Try Grant
 
