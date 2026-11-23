@@ -1,9 +1,9 @@
 # Left off
 
-- Task: README and submission docs pass, plus the 2:02 launch film. Both are done. Demo video upload remains.
-- Done: `video/grant-demo` is a HyperFrames launch film at 1920x1080/30fps, 2:02, 23.4 MB. It follows the reference beat order and uses real production captures for the brief, shortlist, review, refusal, license, explorer, and proof. Testnet is labelled on screen. No voiceover; the bed is the CC0 Studio Pulse demo track.
-- Verified: `npx hyperframes check` reports 0 errors and 9 warnings, all `text_below_floor` on deliberate micro labels. Contrast is 23/23. Frames reviewed at 0, 3, 8, 14, 20, 28, 36, 45, 60, 75, 95, 118. Audio peaks at -8.7 dB.
-- Render: `video/grant-demo/renders/grant-demo_2026-11-23_14-08-38.mp4` (gitignored). Rebuild with `cd video/grant-demo && npm run render`.
+- Task: README, submission docs, and the 2:02 launch film with voiceover. All done. Demo video upload remains.
+- Done: `video/grant-demo` is a HyperFrames launch film at 1920x1080/30fps, 2:02, 23 MB. It follows the reference beat order and uses real production captures for the brief, shortlist, review, refusal, license, explorer, and proof. Testnet is labelled on screen. Calm female voiceover from Edge TTS `en-US-AvaNeural` (pitch -2Hz), timed per scene by `scripts/make-vo.py`. The bed is the CC0 Studio Pulse demo track.
+- Verified: `npx hyperframes check` reports 0 errors and 9 warnings, all `text_below_floor` on deliberate micro labels. Contrast is 23/23. Frames reviewed at 0, 3, 8, 14, 20, 28, 36, 45, 60, 75, 95, 118. Final audio is -16.07 LUFS and -1.46 dBTP.
+- Render: `video/grant-demo/renders/grant-demo-final.mp4` (gitignored). Rebuild with `cd video/grant-demo && python scripts/make-vo.py && npm run render`, then master the audio to -16 LUFS.
 - Done: README now has a simple comparison table for editors (find a track, price, limits, budget, payment, client proof, agent buying), a Stellar tooling table with the real SDK, Horizon, USDC, x402, Soroban SAC, and explorer roles, a nine-screen gallery in `docs/screens/`, and a Demo film section.
 - Done: strip labels were shortened for phone width (`Organic IG TT`, `World`) so no segment clips at 390px. The fund step now derives `2.00 USDC` from the wallet view instead of saying 5 USDC. Both deployed in `grant-1k30c9cbi-kaelah-s-projects.vercel.app` (production alias `grant-roan.vercel.app`).
 - Verified: 138 tests in 20 files pass. Typecheck, lint, and build pass. All README image paths resolve. Screenshot set is 612 KB total. The proof screenshot has the share token redacted; do not add an unredacted proof URL to docs.

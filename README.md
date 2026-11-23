@@ -246,7 +246,8 @@ the pending state with its single **Check again** action.
 
 The 2:02 launch film is in `video/grant-demo` (HyperFrames, 1920x1080, 30fps). It
 uses the real review, refusal, license, explorer, and proof captures, labels the payment
-TESTNET, and follows the reference's beat order without copying its identity.
+TESTNET, and follows the reference's beat order without copying its identity. The
+voiceover is a calm female read generated with Edge TTS and timed to each scene.
 
 ```bash
 cd video/grant-demo
