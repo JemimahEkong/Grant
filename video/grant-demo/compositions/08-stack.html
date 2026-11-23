@@ -1,0 +1,144 @@
+<template>
+  <style>
+    #stack {
+      position: absolute;
+      inset: 0;
+      background: #f4f6f0;
+      color: #0f1a12;
+      overflow: hidden;
+    }
+    #stack-kicker {
+      position: absolute;
+      left: 140px;
+      top: 86px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #0d3b22;
+      opacity: 0;
+    }
+    #stack-title {
+      position: absolute;
+      left: 140px;
+      top: 118px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 68px;
+      line-height: 1;
+      letter-spacing: -0.05em;
+      color: #0f1a12;
+      opacity: 0;
+    }
+    #stack-lede {
+      position: absolute;
+      left: 140px;
+      top: 208px;
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 27px;
+      color: #4a544c;
+      opacity: 0;
+    }
+    #stack-table {
+      position: absolute;
+      left: 140px;
+      top: 286px;
+      width: 1640px;
+    }
+    .stack-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 88px;
+      border-top: 1px solid #e3e7dc;
+    }
+    .stack-row:last-child {
+      border-bottom: 1px solid #e3e7dc;
+    }
+    .stack-row .name {
+      width: 380px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 30px;
+      letter-spacing: -0.03em;
+      color: #0f1a12;
+      opacity: 0;
+    }
+    .stack-row .detail {
+      width: 700px;
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 26px;
+      color: #4a544c;
+      opacity: 0;
+    }
+    .stack-row .value {
+      flex: 1;
+      text-align: right;
+      font-family: var(--font-mono);
+      font-size: 22px;
+      color: #0d3b22;
+      opacity: 0;
+    }
+    .stack-row .value .mark,
+    .stack-row .detail .mark {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #c9f24c;
+      color: #14210f;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+    #stack-cap {
+      position: absolute;
+      left: 50%;
+      bottom: 46px;
+      transform: translateX(-50%);
+      padding: 15px 26px 16px;
+      border-radius: 999px;
+      background: #0d3b22;
+      color: #f4f6f0;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 27px;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      opacity: 0;
+    }
+  </style>
+  <div id="stack" data-composition-id="stack" data-width="1920" data-height="1080">
+    <div id="stack-kicker">The stack</div>
+    <div id="stack-title">Built on Stellar, end to end.</div>
+    <div id="stack-lede">The same code runs the live demo.</div>
+
+    <div id="stack-table">
+      <div class="stack-row"><div class="name">App</div><div class="detail">Next.js 16, React 19</div><div class="value">TypeScript strict</div></div>
+      <div class="stack-row"><div class="name">Data</div><div class="detail">Neon Postgres, Drizzle</div><div class="value">21 tables</div></div>
+      <div class="stack-row"><div class="name">Auth</div><div class="detail">Better Auth</div><div class="value">email + password</div></div>
+      <div class="stack-row"><div class="name">Wallets</div><div class="detail"><span class="mark">Stellar SDK</span>, AES-256-GCM</div><div class="value">one account per user</div></div>
+      <div class="stack-row"><div class="name">Payments</div><div class="detail">x402, USDC</div><div class="value">Horizon + Soroban</div></div>
+      <div class="stack-row"><div class="name">Files</div><div class="detail">Cloudflare R2, pdf-lib</div><div class="value">private, signed</div></div>
+      <div class="stack-row"><div class="name">Tests</div><div class="detail">Vitest</div><div class="value">138 passing</div></div>
+    </div>
+
+    <div id="stack-cap">No hidden services. The proof is in the repo.</div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    tl.fromTo("#stack-kicker", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.36, ease: "power3.out" }, 0.15);
+    tl.fromTo("#stack-title", { opacity: 0, y: 18, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, 0.25);
+    tl.fromTo("#stack-lede", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0.55);
+    tl.fromTo(".stack-row .name, .stack-row .detail, .stack-row .value", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.34, stagger: 0.045, ease: "power3.out" }, 0.8);
+    tl.fromTo("#stack-cap", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 2.6);
+    tl.to("#stack-table", { y: -5, duration: 4.0, ease: "none" }, 3.0);
+
+    tl.to("#stack-table", { y: -12, duration: 1.2, ease: "power2.inOut" }, 7.2);
+    tl.to("#stack-cap", { opacity: 0, duration: 0.24, ease: "power2.in" }, 9.45);
+
+    window.__timelines["stack"] = tl;
+  </script>
+</template>

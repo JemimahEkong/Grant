@@ -1,0 +1,177 @@
+<template>
+  <style>
+    #reveal {
+      position: absolute;
+      inset: 0;
+      background: #f4f6f0;
+      color: #0f1a12;
+      overflow: hidden;
+    }
+    #reveal-left {
+      position: absolute;
+      left: 124px;
+      top: 150px;
+      width: 520px;
+    }
+    .reveal-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: #e6f6ec;
+      color: #0d3b22;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 20px;
+      letter-spacing: -0.01em;
+      opacity: 0;
+    }
+    .reveal-pill .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #17a34a;
+    }
+    #reveal-word {
+      margin-top: 44px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 112px;
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      color: #0f1a12;
+      clip-path: inset(0 100% 0 0);
+    }
+    #reveal-word .dot {
+      color: #0d3b22;
+    }
+    #reveal-tagline {
+      margin-top: 26px;
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 40px;
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+      color: #4a544c;
+      max-width: 470px;
+      opacity: 0;
+    }
+    #reveal-facts {
+      margin-top: 50px;
+      border-top: 1px solid #e3e7dc;
+      width: 450px;
+    }
+    .reveal-fact {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid #e3e7dc;
+      opacity: 0;
+    }
+    .reveal-fact b {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 28px;
+      letter-spacing: -0.03em;
+      color: #0d3b22;
+      min-width: 165px;
+    }
+    .reveal-fact span {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 20px;
+      color: #4a544c;
+      letter-spacing: -0.01em;
+    }
+    #reveal-card {
+      position: absolute;
+      left: 706px;
+      top: 188px;
+      width: 1100px;
+      height: 688px;
+      border-radius: 30px;
+      background: #ffffff;
+      border: 1px solid #e3e7dc;
+      box-shadow: 0 30px 80px rgba(15, 26, 18, 0.16);
+      overflow: hidden;
+      opacity: 0;
+    }
+    #reveal-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      transform-origin: top center;
+    }
+    #reveal-card-shade {
+      position: absolute;
+      inset: 0;
+      border-radius: 30px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+      pointer-events: none;
+    }
+    .reveal-caption {
+      position: absolute;
+      left: 50%;
+      bottom: 46px;
+      transform: translateX(-50%);
+      padding: 16px 28px 17px;
+      border-radius: 999px;
+      background: #0d3b22;
+      color: #f4f6f0;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      opacity: 0;
+    }
+  </style>
+  <div id="reveal" data-composition-id="reveal" data-width="1920" data-height="1080">
+    <div id="reveal-left">
+      <div class="reveal-pill"><span class="dot"></span>Live · Stellar testnet</div>
+      <div id="reveal-word">Grant<span class="dot">.</span></div>
+      <div id="reveal-tagline">Know what the license covers before you export.</div>
+      <div id="reveal-facts">
+        <div class="reveal-fact"><b>150 tracks</b><span>one catalogue</span></div>
+        <div class="reveal-fact"><b>8 ranked</b><span>for your brief</span></div>
+        <div class="reveal-fact"><b>1 approval</b><span>per purchase</span></div>
+      </div>
+    </div>
+
+    <div id="reveal-card">
+      <img src="assets/screens/review.png" alt="Grant review screen for Quiet Cut" data-layout-allow-overflow />
+      <div id="reveal-card-shade"></div>
+    </div>
+
+    <div class="reveal-caption" id="rev-cap-1">Real screens. Real terms. No mockup.</div>
+    <div class="reveal-caption" id="rev-cap-2">One review screen shows the whole license.</div>
+    <div class="reveal-caption" id="rev-cap-3">Before you approve, before anything is signed.</div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    tl.fromTo(".reveal-pill", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.42, ease: "expo.out" }, 0.25);
+    tl.fromTo("#reveal-card", { opacity: 0, y: 56, scale: 0.965 }, { opacity: 1, y: 0, scale: 1, duration: 0.86, ease: "expo.out" }, 0.35);
+    tl.to("#reveal-card img", { scale: 1.028, duration: 6.2, ease: "none" }, 3.0);
+    tl.fromTo("#reveal-word", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.72, ease: "expo.out" }, 0.95);
+    tl.fromTo("#reveal-tagline", { opacity: 0, y: 16, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 1.5);
+    tl.fromTo(".reveal-fact", { opacity: 0, x: -18 }, { opacity: 1, x: 0, duration: 0.42, stagger: 0.12, ease: "expo.out" }, 2.1);
+
+    tl.fromTo("#rev-cap-1", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 0.7);
+    tl.to("#rev-cap-1", { opacity: 0, y: -8, duration: 0.24, ease: "power2.in" }, 4.35);
+    tl.fromTo("#rev-cap-2", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 4.5);
+    tl.to("#rev-cap-2", { opacity: 0, y: -8, duration: 0.24, ease: "power2.in" }, 8.35);
+    tl.fromTo("#rev-cap-3", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 8.5);
+
+    tl.to("#reveal-card", { scale: 1.035, duration: 1.4, ease: "power2.inOut" }, 10.4);
+    tl.to("#reveal-left", { opacity: 0, y: -14, duration: 0.5, ease: "power2.in" }, 10.5);
+    tl.to("#rev-cap-3", { opacity: 0, y: -8, duration: 0.26, ease: "power2.in" }, 12.45);
+
+    window.__timelines["reveal"] = tl;
+  </script>
+</template>

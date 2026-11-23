@@ -1,0 +1,238 @@
+<template>
+  <style>
+    #strip {
+      position: absolute;
+      inset: 0;
+      background: #f4f6f0;
+      color: #0f1a12;
+      overflow: hidden;
+    }
+    #strip-kicker {
+      position: absolute;
+      left: 160px;
+      top: 92px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #0d3b22;
+      opacity: 0;
+    }
+    #strip-title {
+      position: absolute;
+      left: 160px;
+      top: 132px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 104px;
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+      color: #0f1a12;
+      opacity: 0;
+    }
+    #strip-lede {
+      position: absolute;
+      left: 160px;
+      top: 274px;
+      width: 1180px;
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 32px;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+      color: #4a544c;
+      opacity: 0;
+    }
+    #strip-band {
+      position: absolute;
+      left: 160px;
+      top: 440px;
+      width: 1600px;
+      height: 196px;
+      display: flex;
+      gap: 8px;
+      opacity: 0;
+    }
+    .strip-seg {
+      position: relative;
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 16px 18px;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 26px;
+      line-height: 1.08;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      overflow: hidden;
+    }
+    .strip-seg .rule {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 5px;
+      transform-origin: left center;
+      transform: scaleX(0);
+    }
+    .strip-seg.covered {
+      background: rgba(234, 248, 201, 0);
+      color: #0d3b22;
+    }
+    .strip-seg.covered .rule {
+      background: #17a34a;
+    }
+    .strip-seg.excluded {
+      background: rgba(255, 255, 255, 0.5);
+      color: #4a544c;
+      border-bottom: 2px dashed rgba(217, 224, 208, 1);
+    }
+    .strip-seg.excluded .rule {
+      background: #c98a00;
+    }
+    .strip-seg .seg-label {
+      opacity: 0;
+    }
+    .strip-dims {
+      position: absolute;
+      left: 160px;
+      top: 656px;
+      width: 1600px;
+      display: flex;
+      gap: 8px;
+    }
+    .strip-dim {
+      flex: 1;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 17px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: #8a938b;
+      opacity: 0;
+    }
+    #strip-legend {
+      position: absolute;
+      left: 160px;
+      top: 724px;
+      display: flex;
+      gap: 42px;
+      opacity: 0;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 22px;
+      color: #4a544c;
+    }
+    .legend-line {
+      width: 44px;
+      height: 5px;
+      border-radius: 999px;
+    }
+    #strip-insight {
+      position: absolute;
+      left: 160px;
+      top: 806px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      color: #4a544c;
+      opacity: 0;
+    }
+    #strip-insight .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #d1453b;
+    }
+    .strip-caption {
+      position: absolute;
+      left: 50%;
+      bottom: 44px;
+      transform: translateX(-50%);
+      padding: 16px 28px 17px;
+      border-radius: 999px;
+      background: #0d3b22;
+      color: #f4f6f0;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      opacity: 0;
+    }
+  </style>
+  <div id="strip" data-composition-id="strip" data-width="1920" data-height="1080">
+    <div id="strip-kicker">The clearance strip</div>
+    <div id="strip-title">See the edges.</div>
+    <div id="strip-lede">Every quote is six checks: platform, term, territory, client delivery, reposting and future campaigns.</div>
+
+    <div id="strip-band">
+      <div class="strip-seg covered" id="st-1"><span class="rule"></span><span class="seg-label">Organic IG TT</span></div>
+      <div class="strip-seg covered" id="st-2"><span class="rule"></span><span class="seg-label">90 days</span></div>
+      <div class="strip-seg covered" id="st-3"><span class="rule"></span><span class="seg-label">World</span></div>
+      <div class="strip-seg covered" id="st-4"><span class="rule"></span><span class="seg-label">Client</span></div>
+      <div class="strip-seg excluded" id="st-5"><span class="rule"></span><span class="seg-label">Repost</span></div>
+      <div class="strip-seg excluded" id="st-6"><span class="rule"></span><span class="seg-label">Future</span></div>
+    </div>
+
+    <div class="strip-dims">
+      <div class="strip-dim">Platform</div>
+      <div class="strip-dim">Term</div>
+      <div class="strip-dim">Territory</div>
+      <div class="strip-dim">Client</div>
+      <div class="strip-dim">Repost</div>
+      <div class="strip-dim">Future</div>
+    </div>
+
+    <div id="strip-legend">
+      <div class="legend-item"><span class="legend-line" style="background:#17a34a"></span>Covered</div>
+      <div class="legend-item"><span class="legend-line" style="background:#c98a00"></span>Not covered</div>
+    </div>
+
+    <div id="strip-insight"><span class="dot"></span>Organic coverage does not include paid ads.</div>
+
+    <div class="strip-caption" id="strip-cap-1">Every license is six checks.</div>
+    <div class="strip-caption" id="strip-cap-2">You see the covered and the missing terms.</div>
+    <div class="strip-caption" id="strip-cap-3">The same checks run before any payment.</div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    tl.fromTo("#strip-kicker", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0.15);
+    tl.fromTo("#strip-title", { opacity: 0, y: 24, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.62, ease: "expo.out" }, 0.25);
+    tl.fromTo("#strip-lede", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.48, ease: "power3.out" }, 0.55);
+    tl.fromTo("#strip-band", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.56, ease: "expo.out" }, 0.6);
+    tl.to("#strip-band", { scale: 1.012, duration: 5.0, ease: "none" }, 3.0);
+    tl.fromTo(".strip-seg .rule", { scaleX: 0 }, { scaleX: 1, duration: 0.55, stagger: 0.075, ease: "expo.out" }, 0.85);
+    tl.fromTo(".strip-seg .seg-label", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.06, ease: "power3.out" }, 1.1);
+    tl.to(".strip-seg.covered", { backgroundColor: "rgba(234,248,201,1)", duration: 0.5, stagger: 0.05, ease: "power2.out" }, 2.0);
+    tl.fromTo(".strip-dim", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.06, ease: "power3.out" }, 4.6);
+    tl.fromTo("#strip-legend", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 6.2);
+    tl.fromTo("#strip-insight", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 8.1);
+
+    tl.fromTo("#strip-cap-1", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 0.8);
+    tl.to("#strip-cap-1", { opacity: 0, y: -8, duration: 0.24, ease: "power2.in" }, 5.35);
+    tl.fromTo("#strip-cap-2", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 5.48);
+    tl.to("#strip-cap-2", { opacity: 0, y: -8, duration: 0.24, ease: "power2.in" }, 10.35);
+    tl.fromTo("#strip-cap-3", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 10.48);
+
+    tl.to("#strip-band", { scale: 1.055, duration: 1.2, ease: "power2.inOut" }, 13.6);
+    tl.to("#strip-title, #strip-lede, #strip-kicker", { opacity: 0, y: -10, duration: 0.4, ease: "power2.in" }, 13.8);
+    tl.to("#strip-cap-3", { opacity: 0, duration: 0.24, ease: "power2.in" }, 14.9);
+
+    window.__timelines["strip"] = tl;
+  </script>
+</template>

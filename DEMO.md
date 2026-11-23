@@ -1,5 +1,9 @@
 # Grant demo shot list
 
+There are two cuts. The 2:02 launch film lives in `video/grant-demo` and is built from
+real production captures, with no voiceover. The live screen-recording shot list below is
+for the raw 2:45 demo. Use one or the other, not both, in the submission.
+
 Target length: 2:45. Hard stop: 3:00. Testnet only. No real funds, no mainnet, no claim of music ownership or legal clearance.
 
 ## Before recording

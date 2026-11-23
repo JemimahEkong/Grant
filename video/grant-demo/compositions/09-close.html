@@ -1,0 +1,161 @@
+<template>
+  <style>
+    #close {
+      position: absolute;
+      inset: 0;
+      background: #0d3b22;
+      color: #f4f6f0;
+      overflow: hidden;
+    }
+    #close-strip {
+      position: absolute;
+      left: 510px;
+      top: 166px;
+      width: 900px;
+      height: 96px;
+      display: flex;
+      gap: 5px;
+      opacity: 0;
+    }
+    .close-seg {
+      position: relative;
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 8px 10px;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      overflow: hidden;
+    }
+    .close-seg .rule {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 3px;
+      transform-origin: left center;
+      transform: scaleX(0);
+    }
+    .close-seg.covered {
+      background: #eaf8c9;
+      color: #0d3b22;
+    }
+    .close-seg.covered .rule {
+      background: #17a34a;
+    }
+    .close-seg.excluded {
+      color: rgba(244, 246, 240, 0.55);
+      border-bottom: 1px dashed rgba(244, 246, 240, 0.26);
+    }
+    .close-seg.excluded .rule {
+      background: #c98a00;
+    }
+    #close-word {
+      position: absolute;
+      left: 50%;
+      top: 344px;
+      transform: translateX(-50%);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 176px;
+      line-height: 1;
+      letter-spacing: -0.065em;
+      color: #f4f6f0;
+      clip-path: inset(0 100% 0 0);
+      white-space: nowrap;
+    }
+    #close-word .dot {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      margin-left: 10px;
+      border-radius: 50%;
+      background: #c9f24c;
+      vertical-align: baseline;
+    }
+    #close-tagline {
+      position: absolute;
+      left: 50%;
+      top: 570px;
+      transform: translateX(-50%);
+      width: 1040px;
+      text-align: center;
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 38px;
+      line-height: 1.25;
+      letter-spacing: -0.03em;
+      color: rgba(244, 246, 240, 0.9);
+      opacity: 0;
+    }
+    #close-cta {
+      position: absolute;
+      left: 50%;
+      top: 700px;
+      transform: translateX(-50%);
+      padding: 16px 30px 17px;
+      border-radius: 999px;
+      background: #c9f24c;
+      color: #14210f;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 27px;
+      letter-spacing: -0.02em;
+      opacity: 0;
+    }
+    #close-testnet {
+      position: absolute;
+      left: 50%;
+      top: 802px;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 19px;
+      letter-spacing: 0.08em;
+      color: rgba(244, 246, 240, 0.56);
+      opacity: 0;
+    }
+    #close-rule {
+      position: absolute;
+      left: 50%;
+      top: 500px;
+      transform: translateX(-50%) scaleX(0);
+      width: 220px;
+      height: 1px;
+      background: rgba(244, 246, 240, 0.22);
+    }
+  </style>
+  <div id="close" data-composition-id="close" data-width="1920" data-height="1080">
+    <div id="close-strip">
+      <div class="close-seg covered"><span class="rule"></span>Organic</div>
+      <div class="close-seg covered"><span class="rule"></span>90 days</div>
+      <div class="close-seg covered"><span class="rule"></span>World</div>
+      <div class="close-seg covered"><span class="rule"></span>Client</div>
+      <div class="close-seg excluded"><span class="rule"></span>Repost</div>
+      <div class="close-seg excluded"><span class="rule"></span>Future</div>
+    </div>
+
+    <div id="close-word">Grant<span class="dot"></span></div>
+    <div id="close-rule"></div>
+    <div id="close-tagline">Know what the license covers before you export.</div>
+    <div id="close-cta">grant-roan.vercel.app</div>
+    <div id="close-testnet">Stellar testnet · no real money · demo music is CC0</div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    tl.fromTo("#close-strip", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.35);
+    tl.fromTo(".close-seg .rule", { scaleX: 0 }, { scaleX: 1, duration: 0.4, stagger: 0.05, ease: "expo.out" }, 0.55);
+    tl.fromTo("#close-word", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.8, ease: "expo.out" }, 1.0);
+    tl.fromTo("#close-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 2.15);
+    tl.fromTo("#close-tagline", { opacity: 0, y: 14, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 2.35);
+    tl.fromTo("#close-cta", { opacity: 0, y: 10, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "expo.out" }, 3.55);
+    tl.fromTo("#close-testnet", { opacity: 0 }, { opacity: 1, duration: 0.45 }, 4.4);
+
+    window.__timelines["close"] = tl;
+  </script>
+</template>

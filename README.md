@@ -242,6 +242,20 @@ Real screens from the production demo, at phone width. Tap any shot to open it f
 Also in the app: sign in, the brief builder, add-on quotes, the seller application, and
 the pending state with its single **Check again** action.
 
+## Demo film
+
+The 2:02 launch film is in `video/grant-demo` (HyperFrames, 1920x1080, 30fps). It
+uses the real review, refusal, license, explorer, and proof captures, labels the payment
+TESTNET, and follows the reference's beat order without copying its identity.
+
+```bash
+cd video/grant-demo
+npm run render
+```
+
+The source, storyboard, and reference analysis are committed. The MP4 stays in
+`video/grant-demo/renders/` and is not tracked.
+
 ## Try Grant
 
 Five minutes. No wallet extension. No real money.

@@ -8,3 +8,6 @@ coverage/
 !.env.example
 .DS_Store
 agent-runs/
+
+video/grant-demo/renders/
+video/grant-demo/.hyperframes/

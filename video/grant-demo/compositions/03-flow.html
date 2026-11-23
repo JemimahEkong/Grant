@@ -1,0 +1,145 @@
+<template>
+  <style>
+    #flow {
+      position: absolute;
+      inset: 0;
+      background: #f4f6f0;
+      color: #0f1a12;
+      overflow: hidden;
+    }
+    #flow-title {
+      position: absolute;
+      left: 320px;
+      top: 56px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 56px;
+      letter-spacing: -0.04em;
+      color: #0f1a12;
+      opacity: 0;
+    }
+    #flow-title-2 {
+      position: absolute;
+      left: 320px;
+      top: 56px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 56px;
+      letter-spacing: -0.04em;
+      color: #0f1a12;
+      opacity: 0;
+    }
+    .flow-card {
+      position: absolute;
+      left: 320px;
+      top: 142px;
+      width: 1280px;
+      height: 800px;
+      border-radius: 30px;
+      background: #fff;
+      border: 1px solid #e3e7dc;
+      box-shadow: 0 30px 80px rgba(15, 26, 18, 0.16);
+      overflow: hidden;
+    }
+    .flow-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      transform-origin: top center;
+    }
+    #flow-brief {
+      opacity: 0;
+    }
+    #flow-shortlist {
+      opacity: 0;
+    }
+    #flow-highlight {
+      position: absolute;
+      left: 320px;
+      top: 142px;
+      width: 1280px;
+      height: 800px;
+      border-radius: 30px;
+      border: 4px solid #c9f24c;
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 0 0 1px rgba(20, 33, 15, 0.2);
+    }
+    .flow-caption {
+      position: absolute;
+      left: 50%;
+      bottom: 46px;
+      transform: translateX(-50%);
+      padding: 16px 28px 17px;
+      border-radius: 999px;
+      background: #0d3b22;
+      color: #f4f6f0;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      opacity: 0;
+    }
+    #flow-step {
+      position: absolute;
+      right: 320px;
+      top: 62px;
+      font-family: var(--font-mono);
+      font-size: 20px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #8a938b;
+      opacity: 0;
+    }
+  </style>
+  <div id="flow" data-composition-id="flow" data-width="1920" data-height="1080">
+    <div id="flow-title">Tell it what you're making.</div>
+    <div id="flow-title-2">Eight tracks, one reason each.</div>
+    <div id="flow-step">01 / BRIEF</div>
+
+    <div class="flow-card" id="flow-brief">
+      <img src="assets/screens/brief.png" alt="Grant brief screen with chips and a 60 second clip" data-layout-allow-overflow />
+    </div>
+    <div class="flow-card" id="flow-shortlist">
+      <img src="assets/screens/shortlist.png" alt="Grant shortlist ranked for the brief" data-layout-allow-overflow />
+    </div>
+    <div id="flow-highlight"></div>
+
+    <div class="flow-caption" id="flow-cap-1">One sentence and six chip groups. The file never leaves the browser.</div>
+    <div class="flow-caption" id="flow-cap-2">Eight tracks. Every reason comes from the offer.</div>
+    <div class="flow-caption" id="flow-cap-3">Open one and the whole license becomes a strip.</div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    tl.fromTo("#flow-title", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.2);
+    tl.fromTo("#flow-step", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0.25);
+    tl.fromTo("#flow-brief", { opacity: 0, y: 54, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.78, ease: "expo.out" }, 0.38);
+    tl.to("#flow-brief img", { scale: 1.025, duration: 5.0, ease: "none" }, 0.7);
+    tl.fromTo("#flow-cap-1", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 0.92);
+
+    tl.to("#flow-brief", { opacity: 0, duration: 0.12, ease: "power1.in" }, 5.98);
+    tl.set("#flow-title", { opacity: 0 }, 6.0);
+    tl.fromTo("#flow-title-2", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.34, ease: "power3.out" }, 6.0);
+    tl.fromTo("#flow-shortlist", { opacity: 0, y: 54, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.72, ease: "expo.out" }, 6.08);
+    tl.to("#flow-shortlist img", { scale: 1.025, duration: 6.0, ease: "none" }, 6.4);
+    tl.to("#flow-cap-1", { opacity: 0, y: -8, duration: 0.24, ease: "power2.in" }, 5.78);
+    tl.fromTo("#flow-cap-2", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 6.18);
+    tl.to("#flow-step", { opacity: 0, duration: 0.2 }, 5.98);
+
+    tl.fromTo("#flow-highlight", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }, 10.2);
+    tl.to("#flow-highlight", { opacity: 0, duration: 0.25 }, 12.3);
+    tl.to("#flow-cap-2", { opacity: 0, y: -8, duration: 0.24, ease: "power2.in" }, 10.0);
+    tl.fromTo("#flow-cap-3", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 10.12);
+
+    tl.to("#flow-shortlist", { scale: 1.08, y: -34, duration: 1.1, ease: "power2.inOut" }, 13.35);
+    tl.to("#flow-title-2", { opacity: 0, y: -12, duration: 0.4, ease: "power2.in" }, 13.35);
+    tl.to("#flow-cap-3", { opacity: 0, duration: 0.26, ease: "power2.in" }, 14.5);
+
+    window.__timelines["flow"] = tl;
+  </script>
+</template>

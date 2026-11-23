@@ -1,0 +1,229 @@
+<template>
+  <style>
+    #proof {
+      position: absolute;
+      inset: 0;
+      background: #f4f6f0;
+      color: #0f1a12;
+      overflow: hidden;
+    }
+    #proof-testnet {
+      position: absolute;
+      left: 140px;
+      top: 66px;
+      padding: 11px 18px;
+      border-radius: 999px;
+      background: #0d3b22;
+      color: #f4f6f0;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.14em;
+      opacity: 0;
+    }
+    #proof-amount {
+      position: absolute;
+      left: 134px;
+      top: 108px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 136px;
+      line-height: 1;
+      letter-spacing: -0.06em;
+      color: #0f1a12;
+      opacity: 0;
+    }
+    #proof-amount span {
+      font-size: 54px;
+      letter-spacing: -0.03em;
+      color: #4a544c;
+      margin-left: 12px;
+    }
+    #proof-mono {
+      position: absolute;
+      left: 144px;
+      top: 276px;
+      font-family: var(--font-mono);
+      font-size: 24px;
+      letter-spacing: 0.01em;
+      color: #4a544c;
+      opacity: 0;
+    }
+    #proof-license-line {
+      position: absolute;
+      left: 144px;
+      top: 330px;
+      opacity: 0;
+    }
+    #proof-license-line .k {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #8a938b;
+    }
+    #proof-license-line .v {
+      margin-top: 6px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 30px;
+      letter-spacing: 0.01em;
+      color: #0d3b22;
+    }
+    #proof-explorer {
+      position: absolute;
+      left: 900px;
+      top: 78px;
+      width: 880px;
+      height: 380px;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 26px 70px rgba(15, 26, 18, 0.2);
+      opacity: 0;
+      transform: translateX(52px);
+    }
+    #proof-explorer img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    #proof-explorer-tag {
+      position: absolute;
+      left: 22px;
+      top: 20px;
+      padding: 9px 16px;
+      border-radius: 999px;
+      background: #f4f6f0;
+      color: #0f1a12;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 18px;
+      letter-spacing: -0.01em;
+      opacity: 0;
+    }
+    .proof-card {
+      position: absolute;
+      width: 720px;
+      height: 450px;
+      border-radius: 26px;
+      background: #fff;
+      border: 1px solid #e3e7dc;
+      box-shadow: 0 26px 70px rgba(15, 26, 18, 0.15);
+      overflow: hidden;
+      opacity: 0;
+    }
+    .proof-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+    #proof-license {
+      left: 180px;
+      top: 520px;
+    }
+    #proof-public {
+      left: 1020px;
+      top: 520px;
+    }
+    .proof-card-tag {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #0d3b22;
+      color: #f4f6f0;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: 0.02em;
+      opacity: 0;
+    }
+    .proof-caption {
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 26px 16px;
+      border-radius: 999px;
+      background: #0d3b22;
+      color: #f4f6f0;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 27px;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      opacity: 0;
+    }
+    .proof-caption .lemon {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #c9f24c;
+      color: #14210f;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: 0.08em;
+    }
+    #proof-cap-1 {
+      bottom: 34px;
+    }
+  </style>
+  <div id="proof" data-composition-id="proof" data-width="1920" data-height="1080">
+    <div id="proof-testnet">TESTNET</div>
+    <div id="proof-amount">1.00<span>USDC</span></div>
+    <div id="proof-mono">buyer → seller · stellar:testnet · ledger 5881687</div>
+    <div id="proof-license-line"><div class="k">License</div><div class="v">GRANT-2026-CABBC9E9E7</div></div>
+
+    <div id="proof-explorer">
+      <img src="assets/screens/explorer-summary.png" alt="Stellar Expert transaction summary" />
+      <div id="proof-explorer-tag">Settlement · successful</div>
+    </div>
+
+    <div class="proof-card" id="proof-license">
+      <img src="assets/screens/license.png" alt="Grant license screen with PDF and audio ready" />
+      <div class="proof-card-tag">License + deliverables</div>
+    </div>
+    <div class="proof-card" id="proof-public">
+      <img src="assets/screens/proof.png" alt="Grant public proof page" />
+      <div class="proof-card-tag">Public proof link</div>
+    </div>
+
+    <div class="proof-caption" id="proof-cap-1">A real settlement, a real license, a real proof page.</div>
+    <div class="proof-caption" id="proof-cap-2"><span class="lemon">TESTNET</span>Real signing. No real money.</div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    tl.fromTo("#proof-testnet", { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.36, ease: "power3.out" }, 0.15);
+    tl.fromTo("#proof-amount", { opacity: 0, y: 28, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.66, ease: "expo.out" }, 0.28);
+    tl.fromTo("#proof-mono", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0.8);
+    tl.fromTo("#proof-license-line", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 1.05);
+
+    tl.fromTo("#proof-explorer", { opacity: 0, x: 52 }, { opacity: 1, x: 0, duration: 0.72, ease: "expo.out" }, 1.15);
+    tl.to("#proof-explorer", { scale: 1.012, duration: 5.0, ease: "none" }, 5.6);
+    tl.fromTo("#proof-explorer-tag", { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.34, ease: "power3.out" }, 1.6);
+    tl.fromTo("#proof-cap-1", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 2.15);
+
+    tl.fromTo("#proof-license", { opacity: 0, y: 48 }, { opacity: 1, y: 0, duration: 0.66, ease: "expo.out" }, 3.2);
+    tl.fromTo("#proof-public", { opacity: 0, y: 48 }, { opacity: 1, y: 0, duration: 0.66, ease: "expo.out" }, 3.7);
+    tl.fromTo("#proof-license .proof-card-tag", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 3.7);
+    tl.fromTo("#proof-public .proof-card-tag", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 4.2);
+
+    tl.to("#proof-cap-1", { opacity: 0, y: -8, duration: 0.24, ease: "power2.in" }, 10.55);
+    tl.fromTo("#proof-cap-2", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 10.7);
+
+    tl.to("#proof-explorer", { scale: 1.03, duration: 1.2, ease: "power2.inOut" }, 14.2);
+    tl.to("#proof-license, #proof-public", { y: -8, duration: 1.2, ease: "power2.inOut" }, 14.2);
+    tl.to("#proof-cap-2", { opacity: 0, duration: 0.24, ease: "power2.in" }, 17.45);
+
+    window.__timelines["proof"] = tl;
+  </script>
+</template>

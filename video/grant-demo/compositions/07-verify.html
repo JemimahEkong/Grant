@@ -1,0 +1,232 @@
+<template>
+  <style>
+    #verify {
+      position: absolute;
+      inset: 0;
+      background: #f4f6f0;
+      color: #0f1a12;
+      overflow: hidden;
+    }
+    #verify-kicker {
+      position: absolute;
+      left: 120px;
+      top: 76px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #0d3b22;
+      opacity: 0;
+    }
+    #verify-title {
+      position: absolute;
+      left: 120px;
+      top: 108px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 70px;
+      line-height: 1;
+      letter-spacing: -0.05em;
+      color: #0f1a12;
+      opacity: 0;
+    }
+    #verify-lede {
+      position: absolute;
+      left: 120px;
+      top: 196px;
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 28px;
+      color: #4a544c;
+      opacity: 0;
+    }
+    .terminal {
+      position: absolute;
+      top: 270px;
+      width: 820px;
+      height: 680px;
+      border-radius: 26px;
+      background: #0a120d;
+      border: 1px solid rgba(244, 246, 240, 0.1);
+      box-shadow: 0 28px 80px rgba(15, 26, 18, 0.24);
+      overflow: hidden;
+      opacity: 0;
+    }
+    #terminal-seller {
+      left: 120px;
+      transform: translateY(46px);
+    }
+    #terminal-buyer {
+      left: 980px;
+      transform: translateY(46px);
+    }
+    .terminal-bar {
+      height: 62px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 22px;
+      border-bottom: 1px solid rgba(244, 246, 240, 0.1);
+    }
+    .terminal-bar .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(244, 246, 240, 0.24);
+    }
+    .terminal-bar .name {
+      margin-left: 12px;
+      font-family: var(--font-mono);
+      font-size: 17px;
+      letter-spacing: 0.04em;
+      color: rgba(244, 246, 240, 0.56);
+    }
+    .terminal-body {
+      padding: 18px 24px;
+      font-family: var(--font-mono);
+      font-size: 19px;
+      line-height: 1.4;
+      color: rgba(244, 246, 240, 0.9);
+    }
+    .terminal-body .line {
+      white-space: pre;
+      opacity: 0;
+    }
+    .terminal-body .cmd {
+      color: #f4f6f0;
+      font-weight: 700;
+    }
+    .terminal-body .dim {
+      color: rgba(244, 246, 240, 0.48);
+    }
+    .terminal-body .hot {
+      color: #c9f24c;
+      font-weight: 700;
+    }
+    .terminal-body .warn {
+      color: #f0c766;
+    }
+    .terminal-body .ok {
+      color: #7ce0a0;
+      font-weight: 700;
+    }
+    .terminal-body .pass {
+      display: inline-block;
+      padding: 0 7px;
+      background: #17a34a;
+      color: #06170e;
+      font-weight: 700;
+    }
+    .terminal-body .summary {
+      color: #06170e;
+      background: #c9f24c;
+      padding: 2px 8px;
+      font-weight: 700;
+    }
+    .verify-caption {
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      padding: 15px 26px 16px;
+      border-radius: 999px;
+      background: #0d3b22;
+      color: #f4f6f0;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 27px;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      opacity: 0;
+    }
+    .verify-caption .mark {
+      color: #c9f24c;
+      font-weight: 700;
+    }
+  </style>
+  <div id="verify" data-composition-id="verify" data-width="1920" data-height="1080">
+    <div id="verify-kicker">Agent economy</div>
+    <div id="verify-title">Don't take our word for it.</div>
+    <div id="verify-lede">The seller publishes its terms. The agent checks them before it signs.</div>
+
+    <div class="terminal" id="terminal-seller">
+      <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="name">seller · grant-seller.vercel.app</span></div>
+      <div class="terminal-body" id="seller-body">
+        <div class="line cmd">$ curl -sS -D - \</div>
+        <div class="line cmd">    .../api/offers/morning-edit/license</div>
+        <div class="line"> </div>
+        <div class="line warn">HTTP/2 402 Payment Required</div>
+        <div class="line dim">payment-required: eyJ4NDAyVmVyc2lvbiI6MiwicmVzb3VyY2Vz...</div>
+        <div class="line"> </div>
+        <div class="line">{</div>
+        <div class="line">  "extensions": {</div>
+        <div class="line">    "io.grant.terms": {</div>
+        <div class="line">      "platforms": <span class="hot">["instagram", "tiktok"]</span>,</div>
+        <div class="line">      "termDays": <span class="hot">90</span>,</div>
+        <div class="line">      "territory": <span class="hot">"worldwide"</span>,</div>
+        <div class="line">      "clientDelivery": <span class="hot">true</span>,</div>
+        <div class="line">      "reposting": <span class="hot">true</span>,</div>
+        <div class="line">      "futureCampaigns": <span class="hot">false</span></div>
+        <div class="line">    }</div>
+        <div class="line">  }</div>
+        <div class="line">}</div>
+      </div>
+    </div>
+
+    <div class="terminal" id="terminal-buyer">
+      <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="name">buyer · npm run demo:agent</span></div>
+      <div class="terminal-body" id="buyer-body">
+        <div class="line cmd">$ npm run demo:agent</div>
+        <div class="line"> </div>
+        <div class="line dim">1/3  PAID-ADS REFUSAL</div>
+        <div class="line">code        PAID_ADS_NOT_OFFERED</div>
+        <div class="line">buyer       2.00 -&gt; 2.00</div>
+        <div class="line">seller      3.00 -&gt; 3.00</div>
+        <div class="line"><span class="pass">PASS</span>  refused before signing</div>
+        <div class="line"> </div>
+        <div class="line dim">2/3  PRICE REFUSAL</div>
+        <div class="line">code        PRICE_ABOVE_MAX</div>
+        <div class="line">buyer       2.00 -&gt; 2.00</div>
+        <div class="line">seller      3.00 -&gt; 3.00</div>
+        <div class="line"><span class="pass">PASS</span>  refused before signing</div>
+        <div class="line"> </div>
+        <div class="line dim">3/3  PAID RUN</div>
+        <div class="line">status      BOUGHT</div>
+        <div class="line">license     sl_050c6fcb9348828d</div>
+        <div class="line">settlement  01d01bf6...94195c</div>
+        <div class="line"><span class="pass">PASS</span>  paid once; license returned</div>
+        <div class="line"> </div>
+        <div class="line"><span class="summary">SUMMARY  3/3 PASS</span></div>
+      </div>
+    </div>
+
+    <div class="verify-caption" id="verify-cap-1">Three briefs. Two refusals. One payment.</div>
+    <div class="verify-caption" id="verify-cap-2"><span class="mark">No second payment.</span> The replay returns the first result.</div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    tl.fromTo("#verify-kicker", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.36, ease: "power3.out" }, 0.15);
+    tl.fromTo("#verify-title", { opacity: 0, y: 18, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, 0.25);
+    tl.fromTo("#verify-lede", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" }, 0.55);
+
+    tl.fromTo("#terminal-seller", { opacity: 0, y: 46 }, { opacity: 1, y: 0, duration: 0.62, ease: "expo.out" }, 0.8);
+    tl.fromTo("#seller-body .line", { opacity: 0 }, { opacity: 1, duration: 0.16, stagger: 0.085, ease: "none" }, 1.15);
+    tl.fromTo("#verify-cap-1", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 3.2);
+
+    tl.fromTo("#terminal-buyer", { opacity: 0, y: 46 }, { opacity: 1, y: 0, duration: 0.62, ease: "expo.out" }, 4.1);
+    tl.fromTo("#buyer-body .line", { opacity: 0 }, { opacity: 1, duration: 0.14, stagger: 0.095, ease: "none" }, 4.45);
+
+    tl.fromTo("#buyer-body .summary", { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "expo.out" }, 7.0);
+    tl.to("#verify-cap-1", { opacity: 0, y: -8, duration: 0.24, ease: "power2.in" }, 8.0);
+    tl.fromTo("#verify-cap-2", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 8.15);
+
+    tl.to("#terminal-seller", { scale: 1.02, duration: 1.3, ease: "power2.inOut" }, 11.0);
+    tl.to("#terminal-buyer", { scale: 1.02, duration: 1.3, ease: "power2.inOut" }, 11.0);
+    tl.to("#verify-cap-2", { opacity: 0, duration: 0.24, ease: "power2.in" }, 14.55);
+
+    window.__timelines["verify"] = tl;
+  </script>
+</template>
