@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { OnboardingStep } from "../../../../components/OnboardingStep";
 import { FundWallet } from "../../../../components/FundWallet";
 import { Spinner } from "../../../../components/ui";
+import { formatUsdc } from "../../../../lib/ui/format";
 import { getWallet } from "../../../../lib/ui/actions";
 import type { WalletView } from "../../../../lib/ui/api";
 
@@ -31,7 +32,7 @@ export default function FundWalletPage() {
     <OnboardingStep
       step={3}
       title="Fund your wallet"
-      lede="Use the faucet for a one-time 5 USDC grant, or send testnet USDC to your address from another wallet. The balance is read from chain."
+      lede={`Use the faucet for a one-time ${formatUsdc(wallet.faucetAmountBaseUnits)} USDC grant, or send testnet USDC to your address from another wallet. The balance is read from chain.`}
       hideAction
       error={error}
     >
